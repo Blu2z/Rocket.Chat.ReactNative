@@ -96,7 +96,7 @@ const ActionSheet = React.memo(
 
 		const renderHandle = () => (
 			<>
-				<Handle backgroundColor={data?.backgroundColor ? data.backgroundColor : colors.focusedBackground} />
+				<Handle />
 				{isValidElement(data?.customHeader) ? data.customHeader : null}
 			</>
 		);
@@ -129,7 +129,7 @@ const ActionSheet = React.memo(
 						handleComponent={renderHandle}
 						enablePanDownToClose
 						style={{ ...styles.container, ...bottomSheet }}
-						backgroundStyle={{ backgroundColor: data?.backgroundColor ? data.backgroundColor : colors.focusedBackground }}
+						backgroundStyle={{ backgroundColor: colors.focusedBackground }}
 						onChange={index => index === -1 && toggleVisible()}>
 						<BottomSheetContent options={data?.options} hide={hide} children={data?.children} hasCancel={data?.hasCancel} />
 					</BottomSheet>
