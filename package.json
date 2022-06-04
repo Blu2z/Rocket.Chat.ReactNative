@@ -110,7 +110,7 @@
 		"react-native-progress": "5.0.0",
 		"react-native-prompt-android": "^1.1.0",
 		"react-native-reanimated": "2.2.2",
-		"react-native-restart": "0.0.22",
+		"react-native-restart": "0.0.24",
 		"react-native-safe-area-context": "3.2.0",
 		"react-native-screens": "3.11.0",
 		"react-native-scrollable-tab-view": "^1.0.0",
@@ -132,13 +132,13 @@
 		"rn-fetch-blob": "0.12.0",
 		"rn-root-view": "1.0.3",
 		"semver": "7.3.5",
-		"ua-parser-js": "^0.7.24",
+		"ua-parser-js": "^1.0.2",
 		"url-parse": "1.5.10",
 		"use-deep-compare-effect": "1.6.1",
 		"xregexp": "5.0.2"
 	},
 	"resolutions": {
-		"ua-parser-js": "^0.7.24"
+		"ua-parser-js": "^1.0.2"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.12.9",
@@ -177,7 +177,7 @@
 		"codecov": "^3.8.3",
 		"detox": "19.7.0",
 		"eslint": "^7.31.0",
-		"eslint-config-prettier": "^8.3.0",
+		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-import": "2.22.0",
 		"eslint-plugin-jest": "24.7.0",
 		"eslint-plugin-jsx-a11y": "6.3.1",
