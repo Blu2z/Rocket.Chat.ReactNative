@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleProp, StyleSheet, Text, TextStyle, View } from 'react-native';
 import { Audio, AVPlaybackStatus } from 'expo-av';
-import Slider from '@react-native-community/slider';
 import moment from 'moment';
 import { dequal } from 'dequal';
 import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
@@ -12,13 +11,17 @@ import Markdown from '../markdown';
 import { CustomIcon } from '../CustomIcon';
 import sharedStyles from '../../views/Styles';
 import { themes } from '../../lib/constants';
-import { isAndroid, isIOS } from '../../lib/methods/helpers';
+import {
+	isAndroid
+	//  isIOS
+} from '../../lib/methods/helpers';
 import MessageContext from './Context';
 import ActivityIndicator from '../ActivityIndicator';
 import { withDimensions } from '../../dimensions';
 import { TGetCustomEmoji } from '../../definitions/IEmoji';
 import { IAttachment } from '../../definitions';
 import { TSupportedThemes } from '../../theme';
+import Slider from './Slider';
 
 interface IButton {
 	loading: boolean;
@@ -71,9 +74,6 @@ const styles = StyleSheet.create({
 	},
 	audioLoading: {
 		marginHorizontal: 8
-	},
-	slider: {
-		flex: 1
 	},
 	duration: {
 		marginHorizontal: 12,
@@ -257,7 +257,14 @@ class MessageAudio extends React.Component<IMessageAudioProps, IMessageAudioStat
 
 	render() {
 		const { loading, paused, currentTime, duration } = this.state;
-		const { file, getCustomEmoji, theme, scale, isReply, style } = this.props;
+		const {
+			file,
+			getCustomEmoji,
+			theme,
+			// scale,
+			isReply,
+			style
+		} = this.props;
 		const { description } = file;
 		const { baseUrl, user } = this.context;
 
@@ -289,16 +296,14 @@ class MessageAudio extends React.Component<IMessageAudioProps, IMessageAudioStat
 					]}>
 					<Button disabled={isReply} loading={loading} paused={paused} onPress={this.togglePlayPause} theme={theme} />
 					<Slider
-						disabled={isReply}
-						style={styles.slider}
 						value={currentTime}
 						maximumValue={duration}
-						minimumValue={0}
+						onValueChange={this.onValueChange}
 						thumbTintColor={thumbColor}
 						minimumTrackTintColor={themes[theme].tintColor}
+						disabled={isReply}
 						maximumTrackTintColor={themes[theme].auxiliaryText}
-						onValueChange={this.onValueChange}
-						thumbImage={isIOS ? { uri: 'audio_thumb', scale } : undefined}
+						// thumbImage={isIOS ? { uri: 'audio_thumb', scale } : undefined}
 					/>
 					<Text style={[styles.duration, { color: themes[theme].auxiliaryText }]}>{this.duration}</Text>
 				</View>
