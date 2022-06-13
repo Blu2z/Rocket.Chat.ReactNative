@@ -63,5 +63,8 @@ export default StyleSheet.create({
 	},
 	rightContainer: {
 		paddingLeft: 12
+	},
+	contentContainer: {
+		flex: 1
 	}
 });
