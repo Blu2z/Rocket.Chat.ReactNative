@@ -59,3 +59,5 @@ jest.mock('react-native-notifications', () => ({
 		})
 	}
 }));
+
+jest.mock('@gorhom/bottom-sheet', () => require('react-native-reanimated/mock'));
