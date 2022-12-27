@@ -537,13 +537,13 @@ workflows:
       #       - android-hold-google-play-beta-official
 
       # Android Automatic Experimental
-      - android-automatic-build-experimental:
-          filters:
-            branches:
-              only:
-                - develop
-          requires:
-            - lint-testunit
-      - android-google-play-production-experimental:
-          requires:
-            - android-automatic-build-experimental
+      # - android-automatic-build-experimental:
+      #     filters:
+      #       branches:
+      #         only:
+      #           - develop
+      #     requires:
+      #       - lint-testunit
+      # - android-google-play-production-experimental:
+      #     requires:
+      #       - android-automatic-build-experimental
