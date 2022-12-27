@@ -118,7 +118,7 @@ commands:
             if [[ $CIRCLE_JOB == "android-build-official" ]]; then
               echo -e "APPLICATION_ID=chat.gepur" >> ./gradle.properties
               echo -e "BugsnagAPIKey=$BUGSNAG_KEY_OFFICIAL" >> ./gradle.properties
-              echo $CHAT_ROCKET_ANDROID_STORE_FILE_BASE64_JKS | base64 --di > ./app/$KEYSTORE_OFFICIAL
+              echo $CHAT_ROCKET_ANDROID_STORE_FILE_BASE64_JKS | base64 -di > ./app/$KEYSTORE_OFFICIAL
               echo -e "KEYSTORE=$KEYSTORE_OFFICIAL" >> ./gradle.properties
               echo -e "KEYSTORE_PASSWORD=$CHAT_ROCKET_ANDROID_STORE_PASSWORD" >> ./gradle.properties
               echo -e "KEY_ALIAS=$CHAT_ROCKET_ANDROID_KEY_ALIAS" >> ./gradle.properties
@@ -126,7 +126,7 @@ commands:
             else
               echo -e "APPLICATION_ID=chat.gepur" >> ./gradle.properties
               echo -e "BugsnagAPIKey=$BUGSNAG_KEY" >> ./gradle.properties
-              echo $KEYSTORE_BASE64 | base64 --di > ./app/$KEYSTORE
+              echo $KEYSTORE_BASE64 | base64 -di > ./app/$KEYSTORE
               echo -e "KEYSTORE=$KEYSTORE" >> ./gradle.properties
               echo -e "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> ./gradle.properties
               echo -e "KEY_ALIAS=$KEY_ALIAS" >> ./gradle.properties
@@ -138,7 +138,7 @@ commands:
           name: Set Google Services
           command: |
             if [[ $KEYSTORE ]]; then
-              echo $GOOGLE_SERVICES_ANDROID | base64 --di > google-services.json
+              echo $GOOGLE_SERVICES_ANDROID | base64 -di > google-services.json
             fi
           working_directory: android/app
 
@@ -201,7 +201,7 @@ commands:
           name: Set Google Services
           command: |
             if [[ $KEYSTORE ]]; then
-              echo $GOOGLE_SERVICES_IOS | base64 --di > GoogleService-Info.plist
+              echo $GOOGLE_SERVICES_IOS | base64 -di > GoogleService-Info.plist
             fi
           working_directory: ios
       - run:
@@ -224,7 +224,7 @@ commands:
             fi
 
             if [[ $APP_STORE_CONNECT_API_BASE64 ]]; then
-              echo $APP_STORE_CONNECT_API_BASE64 | base64 --di > ./fastlane/app_store_connect_api_key.p8
+              echo $APP_STORE_CONNECT_API_BASE64 | base64 -di > ./fastlane/app_store_connect_api_key.p8
               if [[ $CIRCLE_JOB == "ios-build-official" ]]; then
                 bundle exec fastlane ios build_official
               else
@@ -259,7 +259,7 @@ commands:
           at: android
       - run:
           name: Store the google service account key
-          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 --di > service_account.json
+          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 -di > service_account.json
           working_directory: android
       - run: *update-fastlane-android
       - run:
@@ -276,7 +276,7 @@ commands:
           at: android
       - run:
           name: Store the google service account key
-          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 --di > service_account.json
+          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 -di > service_account.json
           working_directory: android
       - run: *update-fastlane-android
       - run:
@@ -294,7 +294,7 @@ commands:
           at: android
       - run:
           name: Store the google service account key
-          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 --di > service_account.json
+          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 -di > service_account.json
           working_directory: android
       - run: *update-fastlane-android
       - run:
@@ -318,7 +318,7 @@ commands:
       - run:
           name: Fastlane Tesflight Upload
           command: |
-            echo $APP_STORE_CONNECT_API_BASE64 | base64 --di > ./fastlane/app_store_connect_api_key.p8
+            echo $APP_STORE_CONNECT_API_BASE64 | base64 -di > ./fastlane/app_store_connect_api_key.p8
             bundle exec fastlane ios beta official:<< parameters.official >>
           working_directory: ios
       - save_cache: *save-gems-cache
