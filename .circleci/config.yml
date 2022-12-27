@@ -116,17 +116,17 @@ commands:
             echo -e "VERSIONCODE=$CIRCLE_BUILD_NUM" >> ./gradle.properties
 
             if [[ $CIRCLE_JOB == "android-build-official" ]]; then
-              echo -e "APPLICATION_ID=chat.rocket.android" >> ./gradle.properties
+              echo -e "APPLICATION_ID=chat.gepur" >> ./gradle.properties
               echo -e "BugsnagAPIKey=$BUGSNAG_KEY_OFFICIAL" >> ./gradle.properties
-              echo $CHAT_ROCKET_ANDROID_STORE_FILE_BASE64_JKS | base64 --decode > ./app/$KEYSTORE_OFFICIAL
+              echo $CHAT_ROCKET_ANDROID_STORE_FILE_BASE64_JKS | base64 --di > ./app/$KEYSTORE_OFFICIAL
               echo -e "KEYSTORE=$KEYSTORE_OFFICIAL" >> ./gradle.properties
               echo -e "KEYSTORE_PASSWORD=$CHAT_ROCKET_ANDROID_STORE_PASSWORD" >> ./gradle.properties
               echo -e "KEY_ALIAS=$CHAT_ROCKET_ANDROID_KEY_ALIAS" >> ./gradle.properties
               echo -e "KEY_PASSWORD=$CHAT_ROCKET_ANDROID_KEY_PASSWORD" >> ./gradle.properties
             else
-              echo -e "APPLICATION_ID=chat.rocket.reactnative" >> ./gradle.properties
+              echo -e "APPLICATION_ID=chat.gepur" >> ./gradle.properties
               echo -e "BugsnagAPIKey=$BUGSNAG_KEY" >> ./gradle.properties
-              echo $KEYSTORE_BASE64 | base64 --decode > ./app/$KEYSTORE
+              echo $KEYSTORE_BASE64 | base64 --di > ./app/$KEYSTORE
               echo -e "KEYSTORE=$KEYSTORE" >> ./gradle.properties
               echo -e "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> ./gradle.properties
               echo -e "KEY_ALIAS=$KEY_ALIAS" >> ./gradle.properties
@@ -138,7 +138,7 @@ commands:
           name: Set Google Services
           command: |
             if [[ $KEYSTORE ]]; then
-              echo $GOOGLE_SERVICES_ANDROID | base64 --decode > google-services.json
+              echo $GOOGLE_SERVICES_ANDROID | base64 --di > google-services.json
             fi
           working_directory: android/app
 
@@ -201,7 +201,7 @@ commands:
           name: Set Google Services
           command: |
             if [[ $KEYSTORE ]]; then
-              echo $GOOGLE_SERVICES_IOS | base64 --decode > GoogleService-Info.plist
+              echo $GOOGLE_SERVICES_IOS | base64 --di > GoogleService-Info.plist
             fi
           working_directory: ios
       - run:
@@ -224,7 +224,7 @@ commands:
             fi
 
             if [[ $APP_STORE_CONNECT_API_BASE64 ]]; then
-              echo $APP_STORE_CONNECT_API_BASE64 | base64 --decode > ./fastlane/app_store_connect_api_key.p8
+              echo $APP_STORE_CONNECT_API_BASE64 | base64 --di > ./fastlane/app_store_connect_api_key.p8
               if [[ $CIRCLE_JOB == "ios-build-official" ]]; then
                 bundle exec fastlane ios build_official
               else
@@ -259,7 +259,7 @@ commands:
           at: android
       - run:
           name: Store the google service account key
-          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 --decode > service_account.json
+          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 --di > service_account.json
           working_directory: android
       - run: *update-fastlane-android
       - run:
@@ -276,7 +276,7 @@ commands:
           at: android
       - run:
           name: Store the google service account key
-          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 --decode > service_account.json
+          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 --di > service_account.json
           working_directory: android
       - run: *update-fastlane-android
       - run:
@@ -294,7 +294,7 @@ commands:
           at: android
       - run:
           name: Store the google service account key
-          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 --decode > service_account.json
+          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 --di > service_account.json
           working_directory: android
       - run: *update-fastlane-android
       - run:
@@ -318,7 +318,7 @@ commands:
       - run:
           name: Fastlane Tesflight Upload
           command: |
-            echo $APP_STORE_CONNECT_API_BASE64 | base64 --decode > ./fastlane/app_store_connect_api_key.p8
+            echo $APP_STORE_CONNECT_API_BASE64 | base64 --di > ./fastlane/app_store_connect_api_key.p8
             bundle exec fastlane ios beta official:<< parameters.official >>
           working_directory: ios
       - save_cache: *save-gems-cache
@@ -354,15 +354,15 @@ jobs:
           command: |
             yarn lint
 
-      - run:
-          name: Test
-          command: |
-            yarn test -w 8
+      # - run:
+      #     name: Test
+      #     command: |
+      #       yarn test -w 8
 
-      - run:
-          name: Codecov
-          command: |
-            yarn codecov
+      # - run:
+      #     name: Codecov
+      #     command: |
+      #       yarn codecov
 
       - save_cache: *save-npm-cache-linux
 
@@ -390,72 +390,72 @@ jobs:
     steps:
       - android-build
 
-  android-build-official:
-    <<: *defaults
-    docker:
-      - image: cimg/android:2022.03.1-node
-    environment:
-      <<: *android-env
-      <<: *bash-env
-    resource_class: large
-    steps:
-      - android-build
+  # android-build-official:
+  #   <<: *defaults
+  #   docker:
+  #     - image: cimg/android:2022.03.1-node
+  #   environment:
+  #     <<: *android-env
+  #     <<: *bash-env
+  #   resource_class: large
+  #   steps:
+  #     - android-build
 
-  android-internal-app-sharing-experimental:
-    <<: *defaults
-    docker:
-      - image: cimg/android:2022.03.1-node
+  # android-internal-app-sharing-experimental:
+  #   <<: *defaults
+  #   docker:
+  #     - image: cimg/android:2022.03.1-node
 
-    steps:
-      - upload-to-internal-app-sharing
+  #   steps:
+  #     - upload-to-internal-app-sharing
 
-  android-google-play-beta-experimental:
-    <<: *defaults
-    docker:
-      - image: cimg/android:2022.03.1-node
+  # android-google-play-beta-experimental:
+  #   <<: *defaults
+  #   docker:
+  #     - image: cimg/android:2022.03.1-node
 
-    steps:
-      - upload-to-google-play-beta:
-          official: false
+  #   steps:
+  #     - upload-to-google-play-beta:
+  #         official: false
 
-  android-google-play-production-experimental:
-    <<: *defaults
-    docker:
-      - image: cimg/android:2022.03.1-node
-    steps:
-      - upload-to-google-play-production
+  # android-google-play-production-experimental:
+  #   <<: *defaults
+  #   docker:
+  #     - image: cimg/android:2022.03.1-node
+  #   steps:
+  #     - upload-to-google-play-production
 
-  android-google-play-beta-official:
-    <<: *defaults
-    docker:
-      - image: cimg/android:2022.03.1-node
+  # android-google-play-beta-official:
+  #   <<: *defaults
+  #   docker:
+  #     - image: cimg/android:2022.03.1-node
 
-    steps:
-      - upload-to-google-play-beta:
-          official: true
+    # steps:
+    #   - upload-to-google-play-beta:
+    #       official: true
 
   # iOS builds
-  ios-build-experimental:
-    executor: mac-env
-    steps:
-      - ios-build
+  # ios-build-experimental:
+  #   executor: mac-env
+  #   steps:
+  #     - ios-build
 
-  ios-build-official:
-    executor: mac-env
-    steps:
-      - ios-build
+  # ios-build-official:
+  #   executor: mac-env
+  #   steps:
+  #     - ios-build
 
-  ios-testflight-experimental:
-    executor: mac-env
-    steps:
-      - upload-to-testflight:
-          official: false
+  # ios-testflight-experimental:
+  #   executor: mac-env
+  #   steps:
+  #     - upload-to-testflight:
+  #         official: false
 
-  ios-testflight-official:
-    executor: mac-env
-    steps:
-      - upload-to-testflight:
-          official: true
+  # ios-testflight-official:
+  #   executor: mac-env
+  #   steps:
+  #     - upload-to-testflight:
+  #         official: true
 
 workflows:
   build-and-test:
@@ -463,32 +463,32 @@ workflows:
       - lint-testunit
 
       # iOS Experimental
-      - ios-hold-build-experimental:
-          type: approval
-          requires:
-              - lint-testunit
-      - ios-build-experimental:
-          requires:
-            - ios-hold-build-experimental
-      - ios-testflight-experimental:
-          requires:
-            - ios-build-experimental
+      # - ios-hold-build-experimental:
+      #     type: approval
+      #     requires:
+      #         - lint-testunit
+      # - ios-build-experimental:
+      #     requires:
+      #       - ios-hold-build-experimental
+      # - ios-testflight-experimental:
+      #     requires:
+      #       - ios-build-experimental
 
       # iOS Official
-      - ios-hold-build-official:
-          type: approval
-          requires:
-            - lint-testunit
-      - ios-build-official:
-          requires:
-            - ios-hold-build-official
-      - ios-hold-testflight-official:
-          type: approval
-          requires:
-            - ios-build-official
-      - ios-testflight-official:
-          requires:
-            - ios-hold-testflight-official
+      # - ios-hold-build-official:
+      #     type: approval
+      #     requires:
+      #       - lint-testunit
+      # - ios-build-official:
+      #     requires:
+      #       - ios-hold-build-official
+      # - ios-hold-testflight-official:
+      #     type: approval
+      #     requires:
+      #       - ios-build-official
+      # - ios-testflight-official:
+      #     requires:
+      #       - ios-hold-testflight-official
 
       # Android Experimental
       - android-hold-build-experimental:
@@ -502,39 +502,39 @@ workflows:
       - android-build-experimental:
           requires:
             - android-hold-build-experimental
-      - android-internal-app-sharing-experimental:
-          requires:
-            - android-build-experimental
-      - android-hold-google-play-beta-experimental:
-          type: approval
-          requires:
-            - android-build-experimental
-      - android-google-play-beta-experimental:
-          requires:
-            - android-hold-google-play-beta-experimental
-      - android-hold-google-play-production-experimental:
-          type: approval
-          requires:
-            - android-build-experimental
-      - android-google-play-production-experimental:
-          requires:
-            - android-hold-google-play-production-experimental
+      # - android-internal-app-sharing-experimental:
+      #     requires:
+      #       - android-build-experimental
+      # - android-hold-google-play-beta-experimental:
+      #     type: approval
+      #     requires:
+      #       - android-build-experimental
+      # - android-google-play-beta-experimental:
+      #     requires:
+      #       - android-hold-google-play-beta-experimental
+      # - android-hold-google-play-production-experimental:
+      #     type: approval
+      #     requires:
+      #       - android-build-experimental
+      # - android-google-play-production-experimental:
+      #     requires:
+      #       - android-hold-google-play-production-experimental
 
       # Android Official
-      - android-hold-build-official:
-          type: approval
-          requires:
-            - lint-testunit
-      - android-build-official:
-          requires:
-            - android-hold-build-official
-      - android-hold-google-play-beta-official:
-          type: approval
-          requires:
-            - android-build-official
-      - android-google-play-beta-official:
-          requires:
-            - android-hold-google-play-beta-official
+      # - android-hold-build-official:
+      #     type: approval
+      #     requires:
+      #       - lint-testunit
+      # - android-build-official:
+      #     requires:
+      #       - android-hold-build-official
+      # - android-hold-google-play-beta-official:
+      #     type: approval
+      #     requires:
+      #       - android-build-official
+      # - android-google-play-beta-official:
+      #     requires:
+      #       - android-hold-google-play-beta-official
 
       # Android Automatic Experimental
       - android-automatic-build-experimental:
