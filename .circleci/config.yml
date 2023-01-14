@@ -115,23 +115,13 @@ commands:
             echo -e "FLIPPER_VERSION=0.125.0" >> ./gradle.properties
             echo -e "VERSIONCODE=$CIRCLE_BUILD_NUM" >> ./gradle.properties
 
-            if [[ $CIRCLE_JOB == "android-build-official" ]]; then
-              echo -e "APPLICATION_ID=chat.gepur" >> ./gradle.properties
-              echo -e "BugsnagAPIKey=$BUGSNAG_KEY_OFFICIAL" >> ./gradle.properties
-              echo $CHAT_ROCKET_ANDROID_STORE_FILE_BASE64_JKS | base64 -di > ./app/$KEYSTORE_OFFICIAL
-              echo -e "KEYSTORE=$KEYSTORE_OFFICIAL" >> ./gradle.properties
-              echo -e "KEYSTORE_PASSWORD=$CHAT_ROCKET_ANDROID_STORE_PASSWORD" >> ./gradle.properties
-              echo -e "KEY_ALIAS=$CHAT_ROCKET_ANDROID_KEY_ALIAS" >> ./gradle.properties
-              echo -e "KEY_PASSWORD=$CHAT_ROCKET_ANDROID_KEY_PASSWORD" >> ./gradle.properties
-            else
-              echo -e "APPLICATION_ID=chat.gepur" >> ./gradle.properties
-              echo -e "BugsnagAPIKey=$BUGSNAG_KEY" >> ./gradle.properties
-              echo $KEYSTORE_BASE64 | base64 -di > ./app/$KEYSTORE
-              echo -e "KEYSTORE=$KEYSTORE" >> ./gradle.properties
-              echo -e "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> ./gradle.properties
-              echo -e "KEY_ALIAS=$KEY_ALIAS" >> ./gradle.properties
-              echo -e "KEY_PASSWORD=$KEYSTORE_PASSWORD" >> ./gradle.properties
-            fi
+            echo -e "APPLICATION_ID=chat.gepur" >> ./gradle.properties
+            echo -e "BugsnagAPIKey=$BUGSNAG_KEY" >> ./gradle.properties
+            echo $KEYSTORE_BASE64 | base64 -di > ./app/$KEYSTORE
+            echo -e "KEYSTORE=$KEYSTORE" >> ./gradle.properties
+            echo -e "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> ./gradle.properties
+            echo -e "KEY_ALIAS=$KEY_ALIAS" >> ./gradle.properties
+            echo -e "KEY_PASSWORD=$KEYSTORE_PASSWORD" >> ./gradle.properties
           working_directory: android
 
       - run:
@@ -145,9 +135,6 @@ commands:
       - run:
           name: Build App
           command: |
-            if [[ $CIRCLE_JOB == "android-build-official" ]]; then
-              ./gradlew bundleOfficialPlayRelease
-            fi
             if [[ $CIRCLE_JOB == "android-build-experimental" || "android-automatic-build-experimental" ]]; then
               ./gradlew bundleExperimentalPlayRelease
             fi
@@ -159,22 +146,12 @@ commands:
       - run:
           name: Upload sourcemaps to Bugsnag
           command: |
-            if [[ $CIRCLE_JOB == "android-build-official" ]]; then
-              npx bugsnag-source-maps upload-react-native \
-                --api-key=$BUGSNAG_KEY_OFFICIAL \
-                --app-version-code=$CIRCLE_BUILD_NUM \
-                --platform android \
-                --source-map=android/app/build/generated/sourcemaps/react/officialPlay/release/app.bundle.map \
-                --bundle android/app/build/generated/assets/react/officialPlay/release/app.bundle
-            fi
-            if [[ $CIRCLE_JOB == "android-build-experimental" || "android-automatic-build-experimental" ]]; then
-              npx bugsnag-source-maps upload-react-native \
-                --api-key=$BUGSNAG_KEY \
-                --app-version-code=$CIRCLE_BUILD_NUM \
-                --platform android \
-                --source-map=android/app/build/generated/sourcemaps/react/experimentalPlay/release/app.bundle.map \
-                --bundle android/app/build/generated/assets/react/experimentalPlay/release/app.bundle
-            fi
+            npx bugsnag-source-maps upload-react-native \
+              --api-key=$BUGSNAG_KEY \
+              --app-version-code=$CIRCLE_BUILD_NUM \
+              --platform android \
+              --source-map=android/app/build/generated/sourcemaps/react/experimentalPlay/release/app.bundle.map \
+              --bundle android/app/build/generated/assets/react/experimentalPlay/release/app.bundle
 
       - store_artifacts:
           path: android/app/build/outputs
