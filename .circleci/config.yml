@@ -412,10 +412,10 @@ jobs:
     #       official: true
 
   # iOS builds
-  # ios-build-experimental:
-  #   executor: mac-env
-  #   steps:
-  #     - ios-build
+  ios-build-experimental:
+    executor: mac-env
+    steps:
+      - ios-build
 
   # ios-build-official:
   #   executor: mac-env
@@ -439,17 +439,17 @@ workflows:
     jobs:
       - lint-testunit
 
-      # iOS Experimental
-      # - ios-hold-build-experimental:
-      #     type: approval
-      #     requires:
-      #         - lint-testunit
-      # - ios-build-experimental:
-      #     requires:
-      #       - ios-hold-build-experimental
-      # - ios-testflight-experimental:
-      #     requires:
-      #       - ios-build-experimental
+      iOS Experimental
+      - ios-hold-build-experimental:
+          type: approval
+          requires:
+              - lint-testunit
+      - ios-build-experimental:
+          requires:
+            - ios-hold-build-experimental
+      - ios-testflight-experimental:
+          requires:
+            - ios-build-experimental
 
       # iOS Official
       # - ios-hold-build-official:
