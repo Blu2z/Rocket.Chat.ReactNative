@@ -422,7 +422,7 @@ jobs:
   #   steps:
   #     - ios-build
 
-  # ios-testflight-experimental:
+  ios-testflight-experimental:
     executor: mac-env
     steps:
       - upload-to-testflight:
