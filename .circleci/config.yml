@@ -205,11 +205,11 @@ commands:
               if [[ $CIRCLE_JOB == "ios-build-official" ]]; then
                 bundle exec fastlane ios build_official
               else
-                # if [[ $KEYSTORE ]]; then
-                  # bundle exec fastlane ios build_experimental
-                # else
+                if [[ $KEYSTORE ]]; then
+                  bundle exec fastlane ios build_experimental
+                else
                   bundle exec fastlane ios build_fork
-                # fi
+                fi
               fi
             fi
           working_directory: ios
