@@ -52,7 +52,7 @@ const ServerInput = ({
 		<View style={styles.container}>
 			<FormTextInput
 				label={I18n.t('Enter_workspace_URL')}
-				placeholder={I18n.t('Workspace_URL_Example')}
+				placeholder='Example: https://demo.gepur.org'
 				containerStyle={styles.inputContainer}
 				value={text}
 				returnKeyType='send'
@@ -70,8 +70,7 @@ const ServerInput = ({
 					style={[
 						styles.serverHistory,
 						{ backgroundColor: themes[theme].backgroundColor, borderColor: themes[theme].separatorColor }
-					]}
-				>
+					]}>
 					<FlatList
 						data={serversHistory}
 						renderItem={({ item }) => (

@@ -13,7 +13,6 @@ import { CERTIFICATE_KEY, themes } from '../../lib/constants';
 import Button from '../../containers/Button';
 import FormContainer, { FormContainerInner } from '../../containers/FormContainer';
 import * as HeaderButton from '../../containers/HeaderButton';
-import OrSeparator from '../../containers/OrSeparator';
 import { IApplicationState, IBaseScreen, TServerHistoryModel } from '../../definitions';
 import { withDimensions } from '../../dimensions';
 import I18n from '../../i18n';
@@ -56,10 +55,6 @@ const styles = StyleSheet.create({
 	},
 	chooseCertificate: {
 		...sharedStyles.textSemibold
-	},
-	description: {
-		...sharedStyles.textRegular,
-		textAlign: 'center'
 	},
 	connectButton: {
 		marginBottom: 0
@@ -305,23 +300,19 @@ class NewServerView extends React.Component<INewServerViewProps, INewServerViewS
 					{
 						marginBottom: verticalScale({ size: previousServer && !isTablet ? 10 : 30, height })
 					}
-				]}
-			>
+				]}>
 				<Text
 					style={[
 						styles.chooseCertificateTitle,
 						{ color: themes[theme].auxiliaryText, fontSize: moderateScale({ size: 13, width }) }
-					]}
-				>
+					]}>
 					{certificate ? I18n.t('Your_certificate') : I18n.t('Do_you_have_a_certificate')}
 				</Text>
 				<TouchableOpacity
 					onPress={certificate ? this.handleRemove : this.chooseCertificate}
-					testID='new-server-choose-certificate'
-				>
+					testID='new-server-choose-certificate'>
 					<Text
-						style={[styles.chooseCertificate, { color: themes[theme].tintColor, fontSize: moderateScale({ size: 13, width }) }]}
-					>
+						style={[styles.chooseCertificate, { color: themes[theme].tintColor, fontSize: moderateScale({ size: 13, width }) }]}>
 						{certificate ?? I18n.t('Apply_Your_Certificate')}
 					</Text>
 				</TouchableOpacity>
@@ -358,9 +349,8 @@ class NewServerView extends React.Component<INewServerViewProps, INewServerViewS
 								fontSize: moderateScale({ size: 22, width }),
 								marginBottom: verticalScale({ size: 8, height })
 							}
-						]}
-					>
-						Rocket.Chat
+						]}>
+						Gepur Chat
 					</Text>
 					<Text
 						style={[
@@ -370,8 +360,7 @@ class NewServerView extends React.Component<INewServerViewProps, INewServerViewS
 								fontSize: moderateScale({ size: 16, width }),
 								marginBottom: verticalScale({ size: 30, height })
 							}
-						]}
-					>
+						]}>
 						{I18n.t('Onboarding_subtitle')}
 					</Text>
 					<ServerInput
@@ -392,8 +381,8 @@ class NewServerView extends React.Component<INewServerViewProps, INewServerViewS
 						style={[styles.connectButton, { marginTop: verticalScale({ size: 16, height }) }]}
 						testID='new-server-view-button'
 					/>
-					<OrSeparator theme={theme} />
-					<Text
+					{/* <OrSeparator theme={theme} /> */}
+					{/* <Text
 						style={[
 							styles.description,
 							{
@@ -404,8 +393,8 @@ class NewServerView extends React.Component<INewServerViewProps, INewServerViewS
 						]}
 					>
 						{I18n.t('Onboarding_join_open_description')}
-					</Text>
-					<Button
+					</Text> */}
+					{/* <Button
 						title={I18n.t('Join_our_open_workspace')}
 						type='secondary'
 						backgroundColor={themes[theme].chatComponentBackground}
@@ -413,7 +402,7 @@ class NewServerView extends React.Component<INewServerViewProps, INewServerViewS
 						disabled={connecting}
 						loading={connectingOpen && connecting}
 						testID='new-server-view-open'
-					/>
+					/> */}
 				</FormContainerInner>
 				{this.renderCertificatePicker()}
 			</FormContainer>
