@@ -54,7 +54,7 @@ platform :ios do
       key_filepath: 'fastlane/app_store_connect_api_key.p8',
       in_house: false
     )
-    # match(type: "appstore")
+    match(type: "appstore")
     get_provisioning_profile(app_identifier: "org.gepur.demo.ShareExtension")
     get_provisioning_profile(app_identifier: "org.gepur.demo.NotificationService")
     # pem(api_key: api_key) # still uses Spaceship http://docs.fastlane.tools/actions/pem/#how-does-it-work
