@@ -1525,7 +1525,7 @@
 					"$(SRCROOT)/../node_modules/@nozbe/watermelondb/native/ios/WatermelonDB/SupportingFiles/**",
 				);
 				INFOPLIST_FILE = RocketChatRN/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Chat Gepur";
+				INFOPLIST_KEY_CFBundleDisplayName = Gepur.Chat;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -1583,7 +1583,7 @@
 					"$(SRCROOT)/../node_modules/@nozbe/watermelondb/native/ios/WatermelonDB/SupportingFiles/**",
 				);
 				INFOPLIST_FILE = RocketChatRN/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Chat Gepur";
+				INFOPLIST_KEY_CFBundleDisplayName = Gepur.Chat;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
