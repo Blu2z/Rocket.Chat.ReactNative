@@ -68,6 +68,7 @@
 
   [RNBootSplash initWithStoryboard:@"LaunchScreen" rootView:rootView];
 
+  [super application:application didFinishLaunchingWithOptions:launchOptions];
   return YES;
 }
 
