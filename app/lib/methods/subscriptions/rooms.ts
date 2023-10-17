@@ -34,6 +34,7 @@ import { E2E_MESSAGE_TYPE } from '../../constants';
 import { getRoom } from '../getRoom';
 import { merge } from '../helpers/mergeSubscriptionsRooms';
 import { getRoomAvatar, getRoomTitle, getSenderName, random } from '../helpers';
+import { handleVideoConfIncomingWebsocketMessages } from '../../../actions/videoConf';
 
 const removeListener = (listener: { stop: () => void }) => listener.stop();
 
@@ -102,6 +103,7 @@ const createOrUpdateSubscription = async (subscription: ISubscription, room: ISe
 					encrypted: s.encrypted,
 					e2eKeyId: s.e2eKeyId,
 					E2EKey: s.E2EKey,
+					E2ESuggestedKey: s.E2ESuggestedKey,
 					avatarETag: s.avatarETag,
 					onHold: s.onHold,
 					hideMentionStatus: s.hideMentionStatus
@@ -165,6 +167,8 @@ const createOrUpdateSubscription = async (subscription: ISubscription, room: ISe
 			tmp = (await Encryption.decryptSubscription(tmp)) as ISubscription;
 			// Decrypt all pending messages of this room in parallel
 			Encryption.decryptPendingMessages(tmp.rid);
+		} else if (sub && subscription.E2ESuggestedKey) {
+			await Encryption.evaluateSuggestedKey(sub.rid, subscription.E2ESuggestedKey);
 		}
 
 		const batch: Model[] = [];
@@ -250,6 +254,8 @@ const debouncedUpdate = (subscription: ISubscription) => {
 					if (batch[key]) {
 						if (/SUB/.test(key)) {
 							const sub = batch[key] as ISubscription;
+							// When calling the api subscriptions.read passing readThreads as true it does not return this prop
+							if (!sub.tunread) sub.tunread = [];
 							const roomQueueId = getRoomQueueId(sub.rid);
 							const room = batch[roomQueueId] as IRoom;
 							delete batch[roomQueueId];
@@ -288,7 +294,7 @@ export default function subscribeRooms() {
 		const [type, data] = ddpMessage.fields.args;
 		const [, ev] = ddpMessage.fields.eventName.split('/');
 		if (/userData/.test(ev)) {
-			const [{ diff }] = ddpMessage.fields.args;
+			const [{ diff, unset }] = ddpMessage.fields.args;
 			if (diff?.statusLivechat) {
 				store.dispatch(setUser({ statusLivechat: diff.statusLivechat }));
 			}
@@ -297,6 +303,18 @@ export default function subscribeRooms() {
 			}
 			if ((['settings.preferences.alsoSendThreadToChannel'] as any) in diff) {
 				store.dispatch(setUser({ alsoSendThreadToChannel: diff['settings.preferences.alsoSendThreadToChannel'] }));
+			}
+			if (diff?.avatarETag) {
+				store.dispatch(setUser({ avatarETag: diff.avatarETag }));
+			}
+			if (unset?.avatarETag) {
+				store.dispatch(setUser({ avatarETag: '' }));
+			}
+			if (diff?.bio) {
+				store.dispatch(setUser({ bio: diff.bio }));
+			}
+			if (diff?.nickname) {
+				store.dispatch(setUser({ nickname: diff.nickname }));
 			}
 		}
 		if (/subscriptions/.test(ev)) {
@@ -319,6 +337,8 @@ export default function subscribeRooms() {
 					await db.write(async () => {
 						await db.batch(sub.prepareDestroyPermanently(), ...messagesToDelete, ...threadsToDelete, ...threadMessagesToDelete);
 					});
+
+					Encryption.stopRoom(data.rid);
 
 					const roomState = store.getState().room;
 					// Delete and remove events come from this stream
@@ -396,6 +416,10 @@ export default function subscribeRooms() {
 			} catch (e) {
 				log(e);
 			}
+		}
+		if (/video-conference/.test(ev)) {
+			const [action, params] = ddpMessage.fields.args;
+			store.dispatch(handleVideoConfIncomingWebsocketMessages({ action, params }));
 		}
 	});
 

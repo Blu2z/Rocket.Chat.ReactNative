@@ -20,7 +20,16 @@ import { updatePermission } from '../../actions/permissions';
 import EventEmitter from '../methods/helpers/events';
 import { updateSettings } from '../../actions/settings';
 import { defaultSettings, MIN_ROCKETCHAT_VERSION } from '../constants';
-import { getSettings, IActiveUsers, unsubscribeRooms, _activeUsers, _setUser, _setUserTimer, onRolesChanged } from '../methods';
+import {
+	getSettings,
+	IActiveUsers,
+	unsubscribeRooms,
+	_activeUsers,
+	_setUser,
+	_setUserTimer,
+	onRolesChanged,
+	setPresenceCap
+} from '../methods';
 import { compareServerVersion, isIOS, isSsl } from '../methods/helpers';
 
 interface IServices {
@@ -144,6 +153,10 @@ function connect({ server, logoutOnError = false }: { server: string; logoutOnEr
 							});
 						}
 						store.dispatch(updateSettings(_id, value));
+
+						if (_id === 'Presence_broadcast_disabled') {
+							setPresenceCap(value);
+						}
 					} catch (e) {
 						log(e);
 					}
@@ -291,7 +304,9 @@ async function login(credentials: ICredentials, isFromWebView = false): Promise<
 			isFromWebView,
 			showMessageInMainThread,
 			enableMessageParserEarlyAdoption,
-			alsoSendThreadToChannel: result.me.settings?.preferences?.alsoSendThreadToChannel
+			alsoSendThreadToChannel: result.me.settings?.preferences?.alsoSendThreadToChannel,
+			bio: result.me.bio,
+			nickname: result.me.nickname
 		};
 		return user;
 	}

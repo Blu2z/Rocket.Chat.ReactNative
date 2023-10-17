@@ -91,7 +91,7 @@ interface IMessageReply {
 	timeFormat?: string;
 	index: number;
 	getCustomEmoji: TGetCustomEmoji;
-	messageId: string;
+	msg?: string;
 }
 
 const Title = React.memo(
@@ -198,7 +198,7 @@ const Fields = React.memo(
 );
 
 const Reply = React.memo(
-	({ attachment, timeFormat, index, getCustomEmoji, messageId }: IMessageReply) => {
+	({ attachment, timeFormat, index, getCustomEmoji, msg }: IMessageReply) => {
 		const [loading, setLoading] = useState(false);
 		const { theme } = useTheme();
 		const { baseUrl, user, jumpToMessage } = useContext(MessageContext);
@@ -232,12 +232,14 @@ const Reply = React.memo(
 
 		return (
 			<>
+				{/* The testID is to test properly quoted messages using it as ancestor  */}
 				<Touchable
+					testID={`reply-${attachment?.author_name}-${attachment?.text}`}
 					onPress={onPress}
 					style={[
 						styles.button,
 						index > 0 && styles.marginTop,
-						attachment.description && styles.marginBottom,
+						msg && styles.marginBottom,
 						{
 							borderColor
 						}
@@ -247,16 +249,15 @@ const Reply = React.memo(
 				>
 					<View style={styles.attachmentContainer}>
 						<Title attachment={attachment} timeFormat={timeFormat} theme={theme} />
+						<Description attachment={attachment} getCustomEmoji={getCustomEmoji} theme={theme} />
+						<UrlImage image={attachment.thumb_url} />
 						<Attachments
 							attachments={attachment.attachments}
 							getCustomEmoji={getCustomEmoji}
 							timeFormat={timeFormat}
 							style={[{ color: themes[theme].auxiliaryTintColor, fontSize: 14, marginBottom: 8 }]}
 							isReply
-							id={messageId}
 						/>
-						<UrlImage image={attachment.thumb_url} />
-						<Description attachment={attachment} getCustomEmoji={getCustomEmoji} theme={theme} />
 						<Fields attachment={attachment} getCustomEmoji={getCustomEmoji} theme={theme} />
 						{loading ? (
 							<View style={[styles.backdrop]}>
@@ -271,7 +272,7 @@ const Reply = React.memo(
 						) : null}
 					</View>
 				</Touchable>
-				<Markdown msg={attachment.description} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
+				<Markdown msg={msg} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
 			</>
 		);
 	},

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, Keyboard, NativeModules, Text, View, BackHandler } from 'react-native';
+import { Alert, NativeModules, Text, View, BackHandler } from 'react-native';
 import { connect } from 'react-redux';
 import { KeyboardAccessoryView } from 'react-native-ui-lib/keyboard';
 import ImagePicker, { Image, ImageOrVideo, Options } from 'react-native-image-crop-picker';
@@ -21,8 +21,6 @@ import { themes, emojis } from '../../lib/constants';
 import LeftButtons from './LeftButtons';
 import RightButtons from './RightButtons';
 import { canUploadFile } from '../../lib/methods/helpers/media';
-import EventEmiter from '../../lib/methods/helpers/events';
-import { KEY_COMMAND, handleCommandShowUpload, handleCommandSubmit, handleCommandTyping } from '../../commands';
 import getMentionRegexp from './getMentionRegexp';
 import Mentions from './Mentions';
 import MessageboxContext from './Context';
@@ -140,8 +138,6 @@ class MessageBox extends Component<IMessageBoxProps, IMessageBoxState> {
 
 	private selection: { start: number; end: number };
 
-	private focused: boolean;
-
 	private imagePickerConfig: Options;
 
 	private libraryPickerConfig: Options;
@@ -192,7 +188,6 @@ class MessageBox extends Component<IMessageBoxProps, IMessageBoxState> {
 		};
 		this.text = '';
 		this.selection = { start: 0, end: 0 };
-		this.focused = false;
 
 		const libPickerLabels = {
 			cropperChooseText: I18n.t('Choose'),
@@ -268,10 +263,6 @@ class MessageBox extends Component<IMessageBoxProps, IMessageBoxState> {
 			this.setShowSend(true);
 		}
 
-		if (isTablet) {
-			EventEmiter.addEventListener(KEY_COMMAND, this.handleCommands);
-		}
-
 		if (usedCannedResponse) {
 			this.onChangeText(usedCannedResponse);
 		}
@@ -302,7 +293,7 @@ class MessageBox extends Component<IMessageBoxProps, IMessageBoxState> {
 		if (usedCannedResponse !== nextProps.usedCannedResponse) {
 			this.onChangeText(nextProps.usedCannedResponse ?? '');
 		}
-		if (sharing) {
+		if (sharing && !replying) {
 			this.setInput(nextProps.message.msg ?? '');
 			return;
 		}
@@ -446,9 +437,6 @@ class MessageBox extends Component<IMessageBoxProps, IMessageBoxState> {
 		if (this.unsubscribeBlur) {
 			this.unsubscribeBlur();
 		}
-		if (isTablet) {
-			EventEmiter.removeListener(KEY_COMMAND, this.handleCommands);
-		}
 		BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
 	}
 
@@ -487,7 +475,9 @@ class MessageBox extends Component<IMessageBoxProps, IMessageBoxState> {
 		this.handleTyping(!isTextEmpty);
 		const { start, end } = this.selection;
 		const cursor = Math.max(start, end);
-		const txt = cursor < text.length ? text.substr(0, cursor).split(' ') : text.split(' ');
+		const whiteSpaceOrBreakLineRegex = /[\s\n]+/;
+		const txt =
+			cursor < text.length ? text.substr(0, cursor).split(whiteSpaceOrBreakLineRegex) : text.split(whiteSpaceOrBreakLineRegex);
 		const lastWord = txt[txt.length - 1];
 		const result = lastWord.substring(1);
 
@@ -857,14 +847,21 @@ class MessageBox extends Component<IMessageBoxProps, IMessageBoxState> {
 	};
 
 	openShareView = (attachments: any) => {
-		const { message, replyCancel, replyWithMention } = this.props;
+		const { message, replyCancel, replyWithMention, replying } = this.props;
 		// Start a thread with an attachment
 		let value: TThreadModel | IMessage = this.thread;
 		if (replyWithMention) {
 			value = message;
 			replyCancel();
 		}
-		Navigation.navigate('ShareView', { room: this.room, thread: value, attachments });
+		Navigation.navigate('ShareView', {
+			room: this.room,
+			thread: value,
+			attachments,
+			replying,
+			replyingMessage: message,
+			closeReply: replyCancel
+		});
 	};
 
 	createDiscussion = () => {
@@ -1042,16 +1039,7 @@ class MessageBox extends Component<IMessageBoxProps, IMessageBoxState> {
 
 				// Legacy reply or quote (quote is a reply without mention)
 			} else {
-				const { user, roomType } = this.props;
-				const permalink = await this.getPermalink(replyingMessage);
-				let msg = `[ ](${permalink}) `;
-
-				// if original message wasn't sent by current user and neither from a direct room
-				if (user.username !== replyingMessage?.u?.username && roomType !== 'd' && replyWithMention) {
-					msg += `@${replyingMessage?.u?.username} `;
-				}
-
-				msg = `${msg} ${message}`;
+				const msg = await this.formatReplyMessage(replyingMessage, message);
 				onSubmit(msg);
 			}
 			replyCancel();
@@ -1061,6 +1049,20 @@ class MessageBox extends Component<IMessageBoxProps, IMessageBoxState> {
 			// @ts-ignore
 			onSubmit(message, undefined, tmid ? tshow : false);
 		}
+	};
+
+	formatReplyMessage = async (replyingMessage: IMessage, message = '') => {
+		const { user, roomType, replyWithMention, serverVersion } = this.props;
+		const permalink = await this.getPermalink(replyingMessage);
+		let msg = `[ ](${permalink}) `;
+
+		// if original message wasn't sent by current user and neither from a direct room
+		if (user.username !== replyingMessage?.u?.username && roomType !== 'd' && replyWithMention) {
+			msg += `@${replyingMessage?.u?.username} `;
+		}
+
+		const connectionString = compareServerVersion(serverVersion, 'lowerThan', '5.0.0') ? ' ' : '\n';
+		return `${msg}${connectionString}${message}`;
 	};
 
 	updateMentions = (keyword: any, type: string) => {
@@ -1097,21 +1099,6 @@ class MessageBox extends Component<IMessageBoxProps, IMessageBoxState> {
 			commandPreview: [],
 			showCommandPreview: false
 		});
-	};
-
-	handleCommands = ({ event }: { event: any }) => {
-		if (handleCommandTyping(event)) {
-			if (this.focused) {
-				Keyboard.dismiss();
-			} else {
-				this.component.focus();
-			}
-			this.focused = !this.focused;
-		} else if (handleCommandSubmit(event)) {
-			this.submit();
-		} else if (handleCommandShowUpload(event)) {
-			this.showMessageBoxActions();
-		}
 	};
 
 	onPressSendToChannel = () => this.setState(({ tshow }) => ({ tshow: !tshow }));

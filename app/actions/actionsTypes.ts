@@ -28,7 +28,9 @@ export const ROOM = createRequestTypes('ROOM', [
 	'DELETE',
 	'REMOVED',
 	'FORWARD',
-	'USER_TYPING'
+	'USER_TYPING',
+	'HISTORY_REQUEST',
+	'HISTORY_FINISHED'
 ]);
 export const INQUIRY = createRequestTypes('INQUIRY', [
 	...defaultTypes,
@@ -38,7 +40,15 @@ export const INQUIRY = createRequestTypes('INQUIRY', [
 	'QUEUE_UPDATE',
 	'QUEUE_REMOVE'
 ]);
-export const APP = createRequestTypes('APP', ['START', 'READY', 'INIT', 'INIT_LOCAL_SETTINGS', 'SET_MASTER_DETAIL']);
+export const APP = createRequestTypes('APP', [
+	'START',
+	'READY',
+	'INIT',
+	'INIT_LOCAL_SETTINGS',
+	'SET_MASTER_DETAIL',
+	'SET_NOTIFICATION_PRESENCE_CAP',
+	'SET_NET_INFO_STATE'
+]);
 export const MESSAGES = createRequestTypes('MESSAGES', ['REPLY_BROADCAST']);
 export const CREATE_CHANNEL = createRequestTypes('CREATE_CHANNEL', [...defaultTypes]);
 export const CREATE_DISCUSSION = createRequestTypes('CREATE_DISCUSSION', [...defaultTypes]);
@@ -75,3 +85,14 @@ export const ENCRYPTION = createRequestTypes('ENCRYPTION', ['INIT', 'STOP', 'DEC
 
 export const PERMISSIONS = createRequestTypes('PERMISSIONS', ['SET', 'UPDATE']);
 export const ROLES = createRequestTypes('ROLES', ['SET', 'UPDATE', 'REMOVE']);
+export const USERS_ROLES = createRequestTypes('USERS_ROLES', ['SET']);
+export const VIDEO_CONF = createRequestTypes('VIDEO_CONF', [
+	'HANDLE_INCOMING_WEBSOCKET_MESSAGES',
+	'SET',
+	'REMOVE',
+	'CLEAR',
+	'INIT_CALL',
+	'CANCEL_CALL',
+	'ACCEPT_CALL',
+	'SET_CALLING'
+]);

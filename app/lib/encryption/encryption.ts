@@ -34,6 +34,7 @@ class Encryption {
 			handshake: Function;
 			decrypt: Function;
 			encrypt: Function;
+			importRoomKey: Function;
 		};
 	};
 
@@ -95,6 +96,10 @@ class Encryption {
 			.catch(() => {
 				this.ready = false;
 			});
+	};
+
+	stopRoom = (rid: string) => {
+		delete this.roomInstances[rid];
 	};
 
 	// When a new participant join and request a new room encryption key
@@ -194,10 +199,16 @@ class Encryption {
 
 		// Encode the private key
 		const encodedPrivateKey = await this.encodePrivateKey(EJSON.stringify(privateKey), password, this.userId as string);
+
+		// This public key is already encoded using EJSON.stringify in the `persistKeys` method
 		const publicKey = UserPreferences.getString(`${server}-${E2E_PUBLIC_KEY}`);
 
+		if (!publicKey) {
+			throw new Error('Public key not found in local storage, password not changed');
+		}
+
 		// Send the new keys to the server
-		await Services.e2eSetUserPublicAndPrivateKeys(EJSON.stringify(publicKey), encodedPrivateKey);
+		await Services.e2eSetUserPublicAndPrivateKeys(publicKey, encodedPrivateKey);
 	};
 
 	// get a encryption room instance
@@ -218,6 +229,19 @@ class Encryption {
 		await roomE2E.handshake();
 
 		return roomE2E;
+	};
+
+	evaluateSuggestedKey = async (rid: string, E2ESuggestedKey: string) => {
+		try {
+			if (this.privateKey) {
+				const roomE2E = await this.getRoomInstance(rid);
+				await roomE2E.importRoomKey(E2ESuggestedKey, this.privateKey);
+				delete this.roomInstances[rid];
+				await Services.e2eAcceptSuggestedGroupKey(rid);
+			}
+		} catch (e) {
+			await Services.e2eRejectSuggestedGroupKey(rid);
+		}
 	};
 
 	// Logic to decrypt all pending messages/threads/threadMessages

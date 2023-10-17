@@ -8,5 +8,8 @@ export * from './localAuthentication';
 export * from './localPath';
 export * from './messagesStatus';
 export * from './messageTypeLoad';
+export * from './notifications';
 export * from './defaultSettings';
 export * from './tablet';
+export * from './mediaAutoDownload';
+export * from './userAgent';

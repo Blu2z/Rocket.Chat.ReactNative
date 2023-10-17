@@ -36,6 +36,7 @@ import {
 	subscribeUsersPresence
 } from '../lib/methods';
 import { Services } from '../lib/services';
+import { setUsersRoles } from '../actions/usersRoles';
 
 const getServer = state => state.server.server;
 const loginWithPasswordCall = args => Services.loginWithPassword(args);
@@ -141,6 +142,13 @@ const fetchRoomsFork = function* fetchRoomsFork() {
 	yield put(roomsRequest());
 };
 
+const fetchUsersRoles = function* fetchRoomsFork() {
+	const roles = yield Services.getUsersRoles();
+	if (roles.length) {
+		yield put(setUsersRoles(roles));
+	}
+};
+
 const handleLoginSuccess = function* handleLoginSuccess({ user }) {
 	try {
 		getUserPresence(user.id);
@@ -156,6 +164,7 @@ const handleLoginSuccess = function* handleLoginSuccess({ user }) {
 		yield fork(fetchEnterpriseModulesFork, { user });
 		yield fork(subscribeSettingsFork);
 		yield put(encryptionInit());
+		yield fork(fetchUsersRoles);
 
 		setLanguage(user?.language);
 
@@ -171,7 +180,9 @@ const handleLoginSuccess = function* handleLoginSuccess({ user }) {
 			roles: user.roles,
 			isFromWebView: user.isFromWebView,
 			showMessageInMainThread: user.showMessageInMainThread,
-			avatarETag: user.avatarETag
+			avatarETag: user.avatarETag,
+			bio: user.bio,
+			nickname: user.nickname
 		};
 		yield serversDB.action(async () => {
 			try {
@@ -247,6 +258,22 @@ const handleLogout = function* handleLogout({ forcedByServer, message }) {
 };
 
 const handleSetUser = function* handleSetUser({ user }) {
+	if ('avatarETag' in user) {
+		const userId = yield select(state => state.login.user.id);
+		const serversDB = database.servers;
+		const userCollections = serversDB.get('users');
+		yield serversDB.write(async () => {
+			try {
+				const userRecord = await userCollections.find(userId);
+				await userRecord.update(record => {
+					record.avatarETag = user.avatarETag;
+				});
+			} catch {
+				//
+			}
+		});
+	}
+
 	setLanguage(user?.language);
 
 	if (user?.statusLivechat && isOmnichannelModuleAvailable()) {

@@ -10,14 +10,11 @@ import { OutsideModalParamList } from '../stacks/types';
 import StatusBar from '../containers/StatusBar';
 import ActivityIndicator from '../containers/ActivityIndicator';
 import { TSupportedThemes, withTheme } from '../theme';
-import { debounce, isIOS } from '../lib/methods/helpers';
+import { userAgent } from '../lib/constants';
+import { debounce } from '../lib/methods/helpers';
 import * as HeaderButton from '../containers/HeaderButton';
 import { Services } from '../lib/services';
 import { IApplicationState, ICredentials } from '../definitions';
-
-const userAgent = isIOS
-	? 'Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1'
-	: 'Mozilla/5.0 (Linux; Android 6.0.1; SM-G920V Build/MMB29K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.98 Mobile Safari/537.36';
 
 // iframe uses a postMessage to send the token to the client
 // We'll handle this sending the token to the hash of the window.location
