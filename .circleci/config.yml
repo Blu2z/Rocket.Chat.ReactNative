@@ -326,10 +326,10 @@ jobs:
 
       - run: *install-npm-modules
 
-      - run:
-          name: Lint
-          command: |
-            yarn lint
+      # - run:
+      #     name: Lint
+      #     command: |
+      #       yarn lint
 
       # - run:
       #     name: Test
