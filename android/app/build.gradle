@@ -140,7 +140,8 @@ def reactNativeArchitectures() {
 
 android {
     ndkVersion rootProject.ext.ndkVersion
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    // compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdkVersion 31
 
     defaultConfig {
         applicationId APPLICATION_ID
@@ -248,6 +249,7 @@ android {
     }
     buildTypes {
         release {
+            project.ext.hermesEnabled = true
             minifyEnabled enableProguardInReleaseBuilds
             setProguardFiles([getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'])
             signingConfig signingConfigs.release
