@@ -1,4 +1,4 @@
-package chat.rocket.reactnative.networking;
+package chat.gepur.networking;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;

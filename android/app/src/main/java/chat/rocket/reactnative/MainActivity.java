@@ -1,4 +1,4 @@
-package chat.rocket.reactnative;
+package chat.gepur;
 
 import android.content.Intent;
 import android.content.res.Configuration;

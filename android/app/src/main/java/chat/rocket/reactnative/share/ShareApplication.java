@@ -1,6 +1,6 @@
-package chat.rocket.reactnative.share;
+package chat.gepur.share;
 
-import chat.rocket.reactnative.BuildConfig;
+import chat.gepur.BuildConfig;
 
 import chat.rocket.SharePackage;
 
