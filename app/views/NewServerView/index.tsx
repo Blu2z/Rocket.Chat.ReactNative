@@ -12,7 +12,6 @@ import { CERTIFICATE_KEY, themes } from '../../lib/constants';
 import Button from '../../containers/Button';
 import FormContainer, { FormContainerInner } from '../../containers/FormContainer';
 import * as HeaderButton from '../../containers/HeaderButton';
-import OrSeparator from '../../containers/OrSeparator';
 import { IApplicationState, IBaseScreen, TServerHistoryModel } from '../../definitions';
 import { withDimensions } from '../../dimensions';
 import I18n from '../../i18n';
@@ -55,10 +54,6 @@ const styles = StyleSheet.create({
 	},
 	chooseCertificate: {
 		...sharedStyles.textSemibold
-	},
-	description: {
-		...sharedStyles.textRegular,
-		textAlign: 'center'
 	},
 	connectButton: {
 		marginBottom: 0
@@ -356,7 +351,7 @@ class NewServerView extends React.Component<INewServerViewProps, INewServerViewS
 							}
 						]}
 					>
-						Rocket.Chat
+						Gepur Chat
 					</Text>
 					<Text
 						style={[
@@ -388,7 +383,7 @@ class NewServerView extends React.Component<INewServerViewProps, INewServerViewS
 						style={[styles.connectButton, { marginTop: verticalScale({ size: 16, height }) }]}
 						testID='new-server-view-button'
 					/>
-					{isIOS ? (
+					{/* {isIOS ? (
 						<>
 							<OrSeparator theme={theme} />
 							<Text
@@ -413,7 +408,7 @@ class NewServerView extends React.Component<INewServerViewProps, INewServerViewS
 								testID='new-server-view-open'
 							/>
 						</>
-					) : null}
+					) : null} */}
 				</FormContainerInner>
 				{this.renderCertificatePicker()}
 			</FormContainer>
