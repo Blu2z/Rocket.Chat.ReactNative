@@ -133,6 +133,12 @@ commands:
           working_directory: android/app
 
       - run:
+          name: Cat Google Services
+          command: |
+              cat google-services.json
+          working_directory: android/app
+
+      - run:
           name: Build App
           command: |
             if [[ $CIRCLE_JOB == "android-build-experimental" || "android-automatic-build-experimental" ]]; then
