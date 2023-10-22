@@ -134,7 +134,7 @@ commands:
               echo -e "KEY_ALIAS=$KEYSTORE_OFFICIAL_ALIAS" >> ./gradle.properties
               echo -e "KEY_PASSWORD=$KEYSTORE_OFFICIAL_PASSWORD" >> ./gradle.properties
             else
-              echo -e "APPLICATION_ID=chat.rocket.reactnative" >> ./gradle.properties
+              echo -e "APPLICATION_ID=chat.gepur" >> ./gradle.properties
               echo -e "BugsnagAPIKey=$BUGSNAG_KEY" >> ./gradle.properties
               echo $KEYSTORE_BASE64 | base64 -di > ./app/$KEYSTORE
               echo -e "KEYSTORE=$KEYSTORE" >> ./gradle.properties
@@ -482,7 +482,7 @@ jobs:
             echo -e "newArchEnabled=false" >> ./gradle.properties
             echo -e "FLIPPER_VERSION=0.125.0" >> ./gradle.properties
             echo -e "VERSIONCODE=$CIRCLE_BUILD_NUM" >> ./gradle.properties
-            echo -e "APPLICATION_ID=chat.rocket.reactnative" >> ./gradle.properties
+            echo -e "APPLICATION_ID=chat.gepur" >> ./gradle.properties
             echo -e "BugsnagAPIKey=$BUGSNAG_KEY" >> ./gradle.properties
             echo $KEYSTORE_BASE64 | base64 -di > ./app/$KEYSTORE
             echo -e "KEYSTORE=$KEYSTORE" >> ./gradle.properties
