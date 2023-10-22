@@ -53,7 +53,7 @@ export const MessageImage = React.memo(({ imgUri, cached, loading }: { imgUri: s
 			<FastImage
 				style={[styles.image, { borderColor: colors.borderColor }]}
 				source={{ uri: encodeURI(imgUri) }}
-				resizeMode={FastImage.resizeMode.cover}
+				resizeMode={FastImage.resizeMode.contain}
 			/>
 			{!cached ? (
 				<BlurComponent loading={loading} style={[styles.image, styles.imageBlurContainer]} iconName='arrow-down-circle' />
@@ -70,7 +70,8 @@ const ImageContainer = ({
 	style,
 	isReply,
 	author,
-	msg
+	msg,
+	msgImages
 }: IMessageImage): React.ReactElement | null => {
 	const [imageCached, setImageCached] = useState(file);
 	const [cached, setCached] = useState(false);
@@ -165,7 +166,7 @@ const ImageContainer = ({
 		if (!showAttachment) {
 			return;
 		}
-		showAttachment(imageCached);
+		showAttachment(imageCached, msgImages);
 	};
 
 	if (msg) {

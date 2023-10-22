@@ -3,7 +3,7 @@ import { HeaderBackground, useHeaderHeight } from '@react-navigation/elements';
 import { StackNavigationOptions } from '@react-navigation/stack';
 import { ResizeMode, Video } from 'expo-av';
 import React from 'react';
-import { PermissionsAndroid, useWindowDimensions, View } from 'react-native';
+import { PermissionsAndroid, useWindowDimensions, View, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shallowEqual } from 'react-redux';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -141,7 +141,7 @@ const AttachmentView = (): React.ReactElement => {
 	};
 
 	React.useLayoutEffect(() => {
-		setHeader();
+		// setHeader();
 	}, [navigation]);
 
 	const handleSave = async () => {

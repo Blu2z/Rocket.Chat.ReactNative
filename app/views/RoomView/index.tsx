@@ -861,10 +861,10 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 		this.handleCloseEmoji(this.messageActions?.showMessageActions, message);
 	};
 
-	showAttachment = (attachment: IAttachment) => {
+	showAttachment = (attachment: IAttachment, allAttachments: any[]) => {
 		const { navigation } = this.props;
 		// @ts-ignore
-		navigation.navigate('AttachmentView', { attachment });
+		navigation.navigate('AttachmentView', { attachment, attachments: allAttachments });
 	};
 
 	onReactionPress = async (emoji: IEmoji, messageId: string) => {
@@ -1285,7 +1285,12 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 		Navigation.navigate('CannedResponsesListView', { rid: room.rid });
 	};
 
-	renderItem = (item: TAnyMessageModel, previousItem: TAnyMessageModel, highlightedMessage?: string) => {
+	renderItem = (
+		item: TAnyMessageModel,
+		previousItem: TAnyMessageModel,
+		highlightedMessage?: string,
+		msgImages: TAnyMessageModel[]
+	) => {
 		const { room, lastOpen, canAutoTranslate } = this.state;
 		const { user, Message_GroupingPeriod, Message_TimeFormat, useRealName, baseUrl, Message_Read_Receipt_Enabled, theme } =
 			this.props;
@@ -1354,6 +1359,7 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 					highlighted={highlightedMessage === item.id}
 					theme={theme}
 					closeEmojiAndAction={this.handleCloseEmoji}
+					msgImages={msgImages}
 				/>
 			);
 		}

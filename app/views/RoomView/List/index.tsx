@@ -54,9 +54,10 @@ const ListContainer = forwardRef<IListContainerRef, IListContainerProps>(
 			return null;
 		};
 
-		const renderItem: IListProps['renderItem'] = ({ item, index }) => (
-			<View style={styles.inverted}>{renderRow(item, messages[index + 1], highlightedMessageId)}</View>
-		);
+		const renderItem: IListProps['renderItem'] = ({ item, index }) => {
+			const msgImages = messages.filter((item: any) => item.attachments.length && item.attachments[0].image_url);
+			return <View style={styles.inverted}>{renderRow(item, messages[index + 1], highlightedMessageId, msgImages)}</View>;
+		};
 
 		return (
 			<>
