@@ -22,6 +22,19 @@ import { useTheme } from '../../theme';
 import RightIcons from './Components/RightIcons';
 
 const MessageInner = React.memo((props: IMessageInner) => {
+	if (props.isPreview) {
+		return (
+			<>
+				<User {...props} />
+				<>
+					<Content {...props} />
+					<Attachments {...props} />
+				</>
+				<Urls {...props} />
+			</>
+		);
+	}
+
 	if (props.type === 'discussion-created') {
 		return (
 			<>
@@ -124,8 +137,7 @@ const MessageTouchable = React.memo((props: IMessageTouchable & IMessage) => {
 			onLongPress={onLongPress}
 			onPress={onPress}
 			disabled={(props.isInfo && !props.isThreadReply) || props.archived || props.isTemp || props.type === 'jitsi_call_started'}
-			style={{ backgroundColor: props.highlighted ? themes[theme].headerBackground : undefined }}
-		>
+			style={{ backgroundColor: props.highlighted ? themes[theme].headerBackground : undefined }}>
 			<View>
 				<Message {...props} />
 			</View>

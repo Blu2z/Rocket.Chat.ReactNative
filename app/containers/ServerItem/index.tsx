@@ -1,9 +1,7 @@
 import React from 'react';
-// @ts-ignore // TODO: Remove on react-native update
 import { Pressable, Text, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
-import { IServerInfo } from '../../definitions';
 import Check from '../Check';
 import styles, { ROW_HEIGHT } from './styles';
 import { themes } from '../../lib/constants';
@@ -13,7 +11,12 @@ import { useTheme } from '../../theme';
 export { ROW_HEIGHT };
 
 export interface IServerItem {
-	item: IServerInfo;
+	item: {
+		id: string;
+		iconURL: string;
+		name: string;
+		useRealName?: boolean;
+	};
 	onPress(): void;
 	onLongPress?(): void;
 	hasCheck?: boolean;
@@ -31,8 +34,7 @@ const ServerItem = React.memo(({ item, onPress, onLongPress, hasCheck }: IServer
 			android_ripple={{ color: themes[theme].bannerBackground }}
 			style={({ pressed }: { pressed: boolean }) => ({
 				backgroundColor: isIOS && pressed ? themes[theme].bannerBackground : themes[theme].backgroundColor
-			})}
-		>
+			})}>
 			<View style={styles.serverItemContainer}>
 				{item.iconURL ? (
 					<FastImage

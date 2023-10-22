@@ -250,7 +250,8 @@ class ShareListView extends React.Component<IShareListViewProps, IState> {
 			prid: item.prid,
 			uids: item.uids,
 			usernames: item.usernames,
-			topic: item.topic
+			topic: item.topic,
+			teamMain: item.teamMain
 		}));
 	};
 
@@ -380,6 +381,7 @@ class ShareListView extends React.Component<IShareListViewProps, IState> {
 				type={item.prid ? 'discussion' : item.t}
 				onPress={() => this.shareMessage(item)}
 				testID={`share-extension-item-${item.name}`}
+				teamMain={item.teamMain}
 			/>
 		);
 	};
@@ -437,8 +439,7 @@ class ShareListView extends React.Component<IShareListViewProps, IState> {
 				<SafeAreaView>
 					<ScrollView
 						style={{ backgroundColor: themes[theme].backgroundColor }}
-						contentContainerStyle={[styles.container, styles.centered, { backgroundColor: themes[theme].backgroundColor }]}
-					>
+						contentContainerStyle={[styles.container, styles.centered, { backgroundColor: themes[theme].backgroundColor }]}>
 						<Text style={[styles.permissionTitle, { color: themes[theme].titleText }]}>{permission.title}</Text>
 						<Text style={[styles.permissionMessage, { color: themes[theme].bodyText }]}>{permission.message}</Text>
 					</ScrollView>

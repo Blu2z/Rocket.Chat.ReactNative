@@ -3,7 +3,6 @@
 //
 
 #import <MMKV/MMKV.h>
-#import <Expo/Expo.h>
 #import <react-native-mmkv-storage/SecureStorage.h>
 #import <react-native-notifications/RNNotificationEventHandler.h>
 #import <react-native-notifications/RNNotificationCenter.h>

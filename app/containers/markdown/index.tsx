@@ -140,10 +140,10 @@ class Markdown extends PureComponent<IMarkdownProps, any> {
 	}
 
 	renderText = ({ context, literal }: { context: []; literal: string }) => {
-		const { numberOfLines, style = [] } = this.props;
+		const { numberOfLines } = this.props;
 		const defaultStyle = [this.isMessageContainsOnlyEmoji ? styles.textBig : {}, ...context.map(type => styles[type])];
 		return (
-			<Text accessibilityLabel={literal} style={[styles.text, defaultStyle, ...style]} numberOfLines={numberOfLines}>
+			<Text accessibilityLabel={literal} style={[styles.text, defaultStyle]} numberOfLines={numberOfLines}>
 				{literal}
 			</Text>
 		);
@@ -161,8 +161,7 @@ class Markdown extends PureComponent<IMarkdownProps, any> {
 						borderColor: themes[theme!].bannerBackground
 					},
 					...style
-				]}
-			>
+				]}>
 				{literal}
 			</Text>
 		);
@@ -180,8 +179,7 @@ class Markdown extends PureComponent<IMarkdownProps, any> {
 						borderColor: themes[theme!].bannerBackground
 					},
 					...style
-				]}
-			>
+				]}>
 				{literal}
 			</Text>
 		);
@@ -193,12 +191,12 @@ class Markdown extends PureComponent<IMarkdownProps, any> {
 	};
 
 	renderParagraph = ({ children }: any) => {
-		const { numberOfLines, style, theme } = this.props;
+		const { numberOfLines, style = [], theme } = this.props;
 		if (!children || children.length === 0) {
 			return null;
 		}
 		return (
-			<Text style={[styles.text, style, { color: themes[theme!].bodyText }]} numberOfLines={numberOfLines}>
+			<Text style={[styles.text, { color: themes[theme!].bodyText }, ...style]} numberOfLines={numberOfLines}>
 				{children}
 			</Text>
 		);

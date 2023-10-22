@@ -3,11 +3,18 @@
 <plist version="1.0">
 <dict>
 	<key>AppGroup</key>
-	<string>group.Gepur.Chat</string>
+	<string>group.ios.chat.rocket</string>
+	<key>IS_OFFICIAL</key>
+	<false/>
+	<key>bugsnag</key>
+	<dict>
+		<key>apiKey</key>
+		<string>apiKeyValue</string>
+	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Gepur.Chat Experimental</string>
+	<string>Rocket.Chat Experimental</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -19,13 +26,11 @@
 	<key>CFBundlePackageType</key>
 	<string>XPC!</string>
 	<key>CFBundleShortVersionString</key>
-	<string>4.34.0</string>
+	<string>4.42.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
-	<key>IS_OFFICIAL</key>
-	<false/>
 	<key>KeychainGroup</key>
-	<string>$(AppIdentifierPrefix)Gepur.Chat.reactnative</string>
+	<string>$(AppIdentifierPrefix)chat.rocket.reactnative</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -67,10 +72,5 @@
 		<string>custom.ttf</string>
 		<string>Inter.ttf</string>
 	</array>
-	<key>bugsnag</key>
-	<dict>
-		<key>apiKey</key>
-		<string>apiKeyValue</string>
-	</dict>
 </dict>
 </plist>

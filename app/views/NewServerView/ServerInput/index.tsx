@@ -52,7 +52,7 @@ const ServerInput = ({
 		<View style={styles.container}>
 			<FormTextInput
 				label={I18n.t('Enter_workspace_URL')}
-				placeholder='Example: https://demo.gepur.org'
+				placeholder={I18n.t('Workspace_URL_Example')}
 				containerStyle={styles.inputContainer}
 				value={text}
 				returnKeyType='send'

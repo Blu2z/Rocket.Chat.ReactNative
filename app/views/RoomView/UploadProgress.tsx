@@ -160,7 +160,7 @@ class UploadProgress extends Component<IUploadProgressProps, IUploadProgressStat
 					item.error = false;
 				});
 			});
-			await sendFileMessage(rid, item, undefined, server, user);
+			await sendFileMessage(rid, item, item.tmid, server, user, true);
 		} catch (e) {
 			log(e);
 		}
@@ -175,8 +175,7 @@ class UploadProgress extends Component<IUploadProgressProps, IUploadProgressStat
 					<CustomIcon name='attach' size={20} color={themes[theme!].auxiliaryText} />
 					<Text
 						style={[styles.descriptionContainer, styles.descriptionText, { color: themes[theme!].auxiliaryText }]}
-						numberOfLines={1}
-					>
+						numberOfLines={1}>
 						{I18n.t('Uploading')} {item.name}
 					</Text>
 					<CustomIcon name='close' size={20} color={themes[theme!].auxiliaryText} onPress={() => this.handleCancelUpload(item)} />
@@ -217,8 +216,7 @@ class UploadProgress extends Component<IUploadProgressProps, IUploadProgressStat
 						backgroundColor: themes[theme!].chatComponentBackground,
 						borderColor: themes[theme!].borderColor
 					}
-				]}
-			>
+				]}>
 				{this.renderItemContent(item)}
 			</View>
 		);

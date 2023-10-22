@@ -21,15 +21,17 @@ export default StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 		marginBottom: 20,
-		paddingVertical: 8
+		paddingBottom: 8,
+		paddingTop: 32
 	},
 	avatar: {
 		marginHorizontal: 10
 	},
 	roomTitleContainer: {
-		paddingTop: 20,
+		paddingTop: 32,
 		marginHorizontal: 16,
-		alignItems: 'center'
+		alignItems: 'center',
+		flexDirection: 'row'
 	},
 	roomTitle: {
 		fontSize: 20,

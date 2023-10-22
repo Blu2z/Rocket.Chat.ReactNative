@@ -1,8 +1,24 @@
+import { device, waitFor, element, by } from 'detox';
 import EJSON from 'ejson';
 
 import data from '../../data';
-import { tapBack, checkServer, navigateToRegister, platformTypes, TTextMatcher } from '../../helpers/app';
-import { get, login, sendMessage } from '../../helpers/data_setup';
+import {
+	tapBack,
+	checkServer,
+	navigateToRegister,
+	platformTypes,
+	TTextMatcher,
+	expectValidRegisterOrRetry
+} from '../../helpers/app';
+import {
+	IDeleteCreateUser,
+	createRandomRoom,
+	createRandomUser,
+	deleteCreatedUsers,
+	login,
+	sendMessage
+} from '../../helpers/data_setup';
+import random from '../../helpers/random';
 
 const DEEPLINK_METHODS = { AUTH: 'auth', ROOM: 'room' };
 
@@ -17,20 +33,30 @@ const getDeepLink = (method: string, server: string, params?: string) => {
 describe('Deep linking', () => {
 	let userId: string;
 	let authToken: string;
-	let scrollViewType: string;
 	let threadId: string;
 	let textMatcher: TTextMatcher;
-	const threadMessage = `to-thread-${data.random}`;
-	before(async () => {
-		const loginResult = await login(data.users.regular.username, data.users.regular.password);
+	let rid: string;
+	let room: string;
+	const threadMessage = `to-thread-${random()}`;
+
+	const deleteUsersAfterAll: IDeleteCreateUser[] = [];
+
+	beforeAll(async () => {
+		const user = await createRandomUser();
+		({ _id: rid, name: room } = await createRandomRoom(user, 'p'));
+		const loginResult = await login(user.username, user.password);
 		({ userId, authToken } = loginResult);
 		const deviceType = device.getPlatform();
 		amp = deviceType === 'android' ? '\\&' : '&';
-		({ scrollViewType, textMatcher } = platformTypes[deviceType]);
+		({ textMatcher } = platformTypes[deviceType]);
 		// create a thread with api
-		const result = await sendMessage(data.users.regular, data.groups.alternate2.name, threadMessage);
+		const result = await sendMessage(user, room, threadMessage);
 		threadId = result.message._id;
-		await sendMessage(data.users.regular, result.message.rid, data.random, threadId);
+		await sendMessage(user, result.message.rid, random(), threadId);
+	});
+
+	afterAll(async () => {
+		await deleteCreatedUsers(deleteUsersAfterAll);
 	});
 
 	describe('Authentication', () => {
@@ -40,7 +66,7 @@ describe('Deep linking', () => {
 				delete: true,
 				url: getDeepLink(DEEPLINK_METHODS.AUTH, data.server, `userId=123${amp}token=abc`)
 			});
-			await waitFor(element(by[textMatcher]("You've been logged out by the server. Please log in again.")))
+			await waitFor(element(by[textMatcher]("You've been logged out by the workspace. Please log in again.")))
 				.toExist()
 				.withTimeout(30000); // TODO: we need to improve this message
 		});
@@ -49,13 +75,9 @@ describe('Deep linking', () => {
 			await device.launchApp({
 				permissions: { notifications: 'YES' },
 				newInstance: true,
-				url: getDeepLink(
-					DEEPLINK_METHODS.AUTH,
-					data.server,
-					`userId=${userId}${amp}token=${authToken}${amp}path=group/${data.groups.private.name}`
-				)
+				url: getDeepLink(DEEPLINK_METHODS.AUTH, data.server, `userId=${userId}${amp}token=${authToken}${amp}path=group/${room}`)
 			});
-			await waitFor(element(by.id(`room-view-title-${data.groups.private.name}`)))
+			await waitFor(element(by.id(`room-view-title-${room}`)))
 				.toExist()
 				.withTimeout(30000);
 			await tapBack();
@@ -63,7 +85,7 @@ describe('Deep linking', () => {
 				.toBeVisible()
 				.withTimeout(10000);
 			await checkServer(data.server);
-			await waitFor(element(by.id(`rooms-list-view-item-${data.groups.private.name}`)))
+			await waitFor(element(by.id(`rooms-list-view-item-${room}`)))
 				.toExist()
 				.withTimeout(2000);
 		};
@@ -75,15 +97,15 @@ describe('Deep linking', () => {
 		it('should authenticate while logged in another server', async () => {
 			await device.launchApp({ permissions: { notifications: 'YES' }, delete: true });
 			await navigateToRegister(data.alternateServer);
-			await element(by.id('register-view-name')).replaceText(data.registeringUser4.username);
-			await element(by.id('register-view-username')).replaceText(data.registeringUser4.username);
-			await element(by.id('register-view-email')).replaceText(data.registeringUser4.email);
-			await element(by.id('register-view-password')).replaceText(data.registeringUser4.password);
-			await element(by.type(scrollViewType)).atIndex(0).scrollTo('bottom');
-			await element(by.id('register-view-submit')).tap();
-			await waitFor(element(by.id('rooms-list-view')))
-				.toBeVisible()
-				.withTimeout(10000);
+			const randomUser = data.randomUser();
+			await element(by.id('register-view-name')).replaceText(randomUser.name);
+			await element(by.id('register-view-username')).replaceText(randomUser.username);
+			await element(by.id('register-view-email')).replaceText(randomUser.email);
+			await element(by.id('register-view-password')).replaceText(randomUser.password);
+			await element(by.id('register-view-password')).tapReturnKey();
+			await expectValidRegisterOrRetry(device.getPlatform());
+			deleteUsersAfterAll.push({ server: data.alternateServer, username: randomUser.username });
+
 			await authAndNavigate();
 		});
 	});
@@ -94,9 +116,9 @@ describe('Deep linking', () => {
 				await device.launchApp({
 					permissions: { notifications: 'YES' },
 					newInstance: true,
-					url: getDeepLink(DEEPLINK_METHODS.ROOM, data.server, `path=group/${data.groups.private.name}`)
+					url: getDeepLink(DEEPLINK_METHODS.ROOM, data.server, `path=group/${room}`)
 				});
-				await waitFor(element(by.id(`room-view-title-${data.groups.private.name}`)))
+				await waitFor(element(by.id(`room-view-title-${room}`)))
 					.toExist()
 					.withTimeout(30000);
 			});
@@ -105,7 +127,7 @@ describe('Deep linking', () => {
 				await device.launchApp({
 					permissions: { notifications: 'YES' },
 					newInstance: true,
-					url: getDeepLink(DEEPLINK_METHODS.ROOM, data.server, `path=group/${data.groups.alternate2.name}/thread/${threadId}`)
+					url: getDeepLink(DEEPLINK_METHODS.ROOM, data.server, `path=group/${room}/thread/${threadId}`)
 				});
 				await waitFor(element(by.id(`room-view-title-${threadMessage}`)))
 					.toExist()
@@ -113,13 +135,12 @@ describe('Deep linking', () => {
 			});
 
 			it('should navigate to the room using rid', async () => {
-				const roomResult = await get(`groups.info?roomName=${data.groups.private.name}`);
 				await device.launchApp({
 					permissions: { notifications: 'YES' },
 					newInstance: true,
-					url: getDeepLink(DEEPLINK_METHODS.ROOM, data.server, `rid=${roomResult.data.group._id}`)
+					url: getDeepLink(DEEPLINK_METHODS.ROOM, data.server, `rid=${rid}`)
 				});
-				await waitFor(element(by.id(`room-view-title-${data.groups.private.name}`)))
+				await waitFor(element(by.id(`room-view-title-${room}`)))
 					.toExist()
 					.withTimeout(30000);
 				await tapBack();
@@ -129,13 +150,17 @@ describe('Deep linking', () => {
 			});
 
 			it('should resume from background and navigate to the room', async () => {
+				if (device.getPlatform() === 'android') {
+					console.log('Skipped on Android');
+					return;
+				}
 				await device.sendToHome();
 				await device.launchApp({
 					permissions: { notifications: 'YES' },
 					newInstance: false,
-					url: getDeepLink(DEEPLINK_METHODS.ROOM, data.server, `path=group/${data.groups.private.name}`)
+					url: getDeepLink(DEEPLINK_METHODS.ROOM, data.server, `path=group/${room}`)
 				});
-				await waitFor(element(by.id(`room-view-title-${data.groups.private.name}`)))
+				await waitFor(element(by.id(`room-view-title-${room}`)))
 					.toExist()
 					.withTimeout(30000);
 				await tapBack();
@@ -145,6 +170,10 @@ describe('Deep linking', () => {
 			});
 
 			it('should simulate a tap on a push notification and navigate to the room', async () => {
+				if (device.getPlatform() === 'android') {
+					console.log('Skipped on Android');
+					return;
+				}
 				/**
 				 * Ideally, we would repeat this test to simulate a resume from background,
 				 * but for some reason it was not working as expected
@@ -164,13 +193,13 @@ describe('Deep linking', () => {
 							ejson: EJSON.stringify({
 								rid: null,
 								host: data.server,
-								name: data.groups.private.name,
+								name: room,
 								type: 'p'
 							})
 						}
 					}
 				});
-				await waitFor(element(by.id(`room-view-title-${data.groups.private.name}`)))
+				await waitFor(element(by.id(`room-view-title-${room}`)))
 					.toExist()
 					.withTimeout(30000);
 				await tapBack();
@@ -195,9 +224,9 @@ describe('Deep linking', () => {
 				await device.launchApp({
 					permissions: { notifications: 'YES' },
 					newInstance: true,
-					url: getDeepLink(DEEPLINK_METHODS.ROOM, data.server, `path=group/${data.groups.private.name}`)
+					url: getDeepLink(DEEPLINK_METHODS.ROOM, data.server, `path=group/${room}`)
 				});
-				await waitFor(element(by.id(`room-view-title-${data.groups.private.name}`)))
+				await waitFor(element(by.id(`room-view-title-${room}`)))
 					.toExist()
 					.withTimeout(30000);
 			});

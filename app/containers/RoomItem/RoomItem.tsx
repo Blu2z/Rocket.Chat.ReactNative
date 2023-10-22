@@ -16,6 +16,7 @@ import { IRoomItemProps } from './interfaces';
 
 const RoomItem = ({
 	rid,
+	userId,
 	type,
 	prid,
 	name,
@@ -68,12 +69,12 @@ const RoomItem = ({
 		type={type}
 		isFocused={!!isFocused}
 		swipeEnabled={swipeEnabled}
-		displayMode={displayMode}
-	>
+		displayMode={displayMode}>
 		<Wrapper
 			accessibilityLabel={accessibilityLabel}
 			avatar={avatar}
 			type={type}
+			userId={userId}
 			rid={rid}
 			prid={prid}
 			status={status}
@@ -82,13 +83,13 @@ const RoomItem = ({
 			displayMode={displayMode}
 			showAvatar={showAvatar}
 			showLastMessage={!!showLastMessage}
-			sourceType={sourceType}
-		>
+			sourceType={sourceType}>
 			{showLastMessage && displayMode === DisplayMode.Expanded ? (
 				<>
 					<View style={styles.titleContainer}>
 						{showAvatar ? (
 							<TypeIcon
+								userId={userId}
 								type={type}
 								prid={prid}
 								status={status}
@@ -101,7 +102,7 @@ const RoomItem = ({
 						{autoJoin ? <Tag testID='auto-join-tag' name={I18n.t('Auto-join')} /> : null}
 						<UpdatedAt date={date} hideUnreadStatus={hideUnreadStatus} alert={alert} />
 					</View>
-					<View style={styles.row}>
+					<View style={styles.row} testID='room-item-last-message-container'>
 						<LastMessage
 							lastMessage={lastMessage}
 							type={type}
@@ -125,6 +126,7 @@ const RoomItem = ({
 			) : (
 				<View style={[styles.titleContainer, styles.flex]}>
 					<TypeIcon
+						userId={userId}
 						type={type}
 						prid={prid}
 						status={status}
