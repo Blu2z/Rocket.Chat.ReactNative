@@ -200,7 +200,8 @@ const Video = ({ file, showAttachment, getCustomEmoji, style, isReply, msg }: IM
 				disabled={isReply}
 				onPress={onPress}
 				style={[styles.button, messageStyles.mustWrapBlur, { backgroundColor: themes[theme].videoBackground }]}
-				background={Touchable.Ripple(themes[theme].bannerBackground)}>
+				background={Touchable.Ripple(themes[theme].bannerBackground)}
+			>
 				<Thumbnail loading={loading} cached={cached} />
 			</Touchable>
 		</>

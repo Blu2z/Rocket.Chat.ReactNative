@@ -31,7 +31,9 @@
 	},
 	"lint-staged": {
 		"*.{js,ts,tsx}": [
-			"prettier --write"
+			"prettier --write",
+			"eslint",
+			"jest --bail --findRelatedTests --passWithNoTests"
 		]
 	},
 	"dependencies": {

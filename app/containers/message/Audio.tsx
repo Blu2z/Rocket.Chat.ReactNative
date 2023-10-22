@@ -108,7 +108,8 @@ const Button = React.memo(({ loading, paused, onPress, disabled, cached }: IButt
 			disabled={disabled}
 			onPress={onPress}
 			hitSlop={BUTTON_HIT_SLOP}
-			background={Touchable.SelectableBackgroundBorderless()}>
+			background={Touchable.SelectableBackgroundBorderless()}
+		>
 			{loading ? (
 				<ActivityIndicator style={[styles.playPauseButton, styles.audioLoading]} />
 			) : (
@@ -371,7 +372,8 @@ class MessageAudio extends React.Component<IMessageAudioProps, IMessageAudioStat
 					style={[
 						styles.audioContainer,
 						{ backgroundColor: themes[theme].chatComponentBackground, borderColor: themes[theme].borderColor }
-					]}>
+					]}
+				>
 					<Button disabled={isReply} loading={loading} paused={paused} cached={cached} onPress={this.onPress} />
 					<Slider
 						disabled={isReply}

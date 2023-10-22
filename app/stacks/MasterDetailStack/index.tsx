@@ -85,7 +85,8 @@ const ChatsStackNavigator = React.memo(() => {
 
 	return (
 		<ChatsStack.Navigator
-			screenOptions={{ ...defaultHeader, ...themedHeader(theme), ...StackAnimation } as StackNavigationOptions}>
+			screenOptions={{ ...defaultHeader, ...themedHeader(theme), ...StackAnimation } as StackNavigationOptions}
+		>
 			<ChatsStack.Screen name='RoomView' component={RoomView} options={{ headerShown: false }} />
 		</ChatsStack.Navigator>
 	);
@@ -96,7 +97,8 @@ const Drawer = createDrawerNavigator<MasterDetailDrawerParamList>();
 const DrawerNavigator = React.memo(() => (
 	<Drawer.Navigator
 		screenOptions={{ drawerType: 'permanent', headerShown: false, drawerStyle: { ...drawerStyle } }}
-		drawerContent={({ navigation, state }) => <RoomsListView navigation={navigation} state={state} />}>
+		drawerContent={({ navigation, state }) => <RoomsListView navigation={navigation} state={state} />}
+	>
 		<Drawer.Screen name='ChatsStackNavigator' component={ChatsStackNavigator} />
 	</Drawer.Navigator>
 ));
@@ -111,7 +113,8 @@ const ModalStackNavigator = React.memo(({ navigation }: INavigation) => {
 	return (
 		<ModalContainer navigation={navigation} theme={theme}>
 			<ModalStack.Navigator
-				screenOptions={{ ...defaultHeader, ...themedHeader(theme), ...StackAnimation } as StackNavigationOptions}>
+				screenOptions={{ ...defaultHeader, ...themedHeader(theme), ...StackAnimation } as StackNavigationOptions}
+			>
 				<ModalStack.Screen name='RoomActionsView' component={RoomActionsView} />
 				{/* @ts-ignore */}
 				<ModalStack.Screen name='RoomInfoView' component={RoomInfoView} />
@@ -201,7 +204,8 @@ const InsideStackNavigator = React.memo(() => {
 					...FadeFromCenterModal,
 					presentation: 'transparentModal'
 				} as StackNavigationOptions
-			}>
+			}
+		>
 			<InsideStack.Screen name='DrawerNavigator' component={DrawerNavigator} options={{ headerShown: false }} />
 			<InsideStack.Screen name='ModalStackNavigator' component={ModalStackNavigator} options={{ headerShown: false }} />
 			<InsideStack.Screen name='AttachmentView' component={AttachmentView} />

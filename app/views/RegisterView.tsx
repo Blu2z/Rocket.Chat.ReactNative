@@ -176,7 +176,8 @@ class RegisterView extends React.Component<IProps, any> {
 										newValue[key] = value;
 										this.setState({ customFields: { ...customFields, ...newValue } });
 									}}
-									value={customFields[key]}>
+									value={customFields[key]}
+								>
 									<FormTextInput
 										inputRef={e => {
 											// @ts-ignore

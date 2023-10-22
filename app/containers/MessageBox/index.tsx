@@ -1132,7 +1132,8 @@ class MessageBox extends Component<IMessageBoxProps, IMessageBoxState> {
 			<TouchableWithoutFeedback
 				style={[styles.sendToChannelButton, { backgroundColor: themes[theme].messageboxBackground }]}
 				onPress={this.onPressSendToChannel}
-				testID='messagebox-send-to-channel'>
+				testID='messagebox-send-to-channel'
+			>
 				<CustomIcon
 					testID={tshow ? 'send-to-channel-checked' : 'send-to-channel-unchecked'}
 					name={tshow ? 'checkbox-checked' : 'checkbox-unchecked'}
@@ -1278,7 +1279,8 @@ class MessageBox extends Component<IMessageBoxProps, IMessageBoxState> {
 							{ backgroundColor: themes[theme].messageboxBackground },
 							!recording && editing && { backgroundColor: themes[theme].chatComponentBackground }
 						]}
-						testID='messagebox'>
+						testID='messagebox'
+					>
 						{textInputAndButtons}
 						{recordAudio}
 					</View>
@@ -1302,7 +1304,8 @@ class MessageBox extends Component<IMessageBoxProps, IMessageBoxState> {
 					onPressMention: this.onPressMention,
 					onPressCommandPreview: this.onPressCommandPreview,
 					onPressNoMatchCanned: this.onPressNoMatchCanned
-				}}>
+				}}
+			>
 				<KeyboardAccessoryView
 					ref={(ref: any) => (this.tracking = ref)}
 					renderContent={this.renderContent}

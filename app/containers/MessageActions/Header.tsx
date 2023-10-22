@@ -65,7 +65,8 @@ const HeaderItem = ({ item, onReaction, theme }: THeaderItem) => (
 	<Touch
 		testID={`message-actions-emoji-${item}`}
 		onPress={() => onReaction({ emoji: item })}
-		style={[styles.headerItem, { backgroundColor: themes[theme].auxiliaryBackground }]}>
+		style={[styles.headerItem, { backgroundColor: themes[theme].auxiliaryBackground }]}
+	>
 		{typeof item === 'string' ? (
 			<Text style={styles.headerIcon}>{shortnameToUnicode(`:${item}:`)}</Text>
 		) : (
@@ -78,7 +79,8 @@ const HeaderFooter = ({ onReaction, theme }: THeaderFooter) => (
 	<Touch
 		testID='add-reaction'
 		onPress={(param: any) => onReaction(param)}
-		style={[styles.headerItem, { backgroundColor: themes[theme].auxiliaryBackground }]}>
+		style={[styles.headerItem, { backgroundColor: themes[theme].auxiliaryBackground }]}
+	>
 		<CustomIcon name='reaction-add' size={24} color={themes[theme].bodyText} />
 	</Touch>
 );

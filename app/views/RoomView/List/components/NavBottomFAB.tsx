@@ -54,7 +54,8 @@ const NavBottomFAB = ({
 					})
 				}
 			]}
-			testID='nav-jump-to-bottom'>
+			testID='nav-jump-to-bottom'
+		>
 			<Touch onPress={() => onPress()} style={[styles.button, { backgroundColor: colors.backgroundColor }]}>
 				<View style={[styles.content, { borderColor: colors.borderColor }]}>
 					<CustomIcon name='chevron-down' color={colors.auxiliaryTintColor} size={36} />

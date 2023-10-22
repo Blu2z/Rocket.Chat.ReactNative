@@ -205,7 +205,8 @@ export default class Root extends React.Component<{}, IState> {
 		return (
 			<SafeAreaProvider
 				initialMetrics={initialWindowMetrics}
-				style={{ backgroundColor: themes[this.state.theme].backgroundColor }}>
+				style={{ backgroundColor: themes[this.state.theme].backgroundColor }}
+			>
 				<Provider store={store}>
 					<ThemeContext.Provider
 						value={{
@@ -213,7 +214,8 @@ export default class Root extends React.Component<{}, IState> {
 							themePreferences,
 							setTheme: this.setTheme,
 							colors: colors[theme]
-						}}>
+						}}
+					>
 						<DimensionsContext.Provider
 							value={{
 								width,
@@ -221,7 +223,8 @@ export default class Root extends React.Component<{}, IState> {
 								scale,
 								fontScale,
 								setDimensions: this.setDimensions
-							}}>
+							}}
+						>
 							<GestureHandlerRootView style={{ flex: 1 }}>
 								<ActionSheetProvider>
 									<AppContainer />
