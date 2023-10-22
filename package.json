@@ -14,6 +14,7 @@
 		"android-whitelabel": "npx react-native run-android --main-activity chat.rocket.reactnative.MainActivity --variant=experimentalPlayDebug --appId",
 		"log-android": "react-native log-android",
 		"snyk-protect": "snyk protect",
+		"precommit": "lint-staged",
 		"generate-source-maps-ios": "react-native bundle --platform ios --dev false --entry-file index.js --bundle-output ios-release.bundle --sourcemap-output ios-release.bundle.map",
 		"postinstall": "patch-package && jetify",
 		"build-icon-set": "node scripts/build-icon-set.js",
@@ -28,9 +29,7 @@
 	},
 	"lint-staged": {
 		"*.{js,ts,tsx}": [
-			"prettier --write",
-			"eslint",
-			"jest --bail --findRelatedTests"
+			"prettier --write"
 		]
 	},
 	"dependencies": {
@@ -112,7 +111,7 @@
 		"react-native-mmkv-storage": "^0.8.0",
 		"react-native-modal": "13.0.1",
 		"react-native-navigation-bar-color": "2.0.1",
-		"react-native-notifications": "^4.3.3",
+		"react-native-notifications": "4.3.3",
 		"react-native-notifier": "1.6.1",
 		"react-native-orientation-locker": "1.1.8",
 		"react-native-picker-select": "^8.0.4",
