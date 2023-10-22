@@ -128,7 +128,7 @@ commands:
             if [[ $CIRCLE_JOB == "android-build-official" ]]; then
               echo -e "APPLICATION_ID=chat.rocket.android" >> ./gradle.properties
               echo -e "BugsnagAPIKey=$BUGSNAG_KEY_OFFICIAL" >> ./gradle.properties
-              echo $KEYSTORE_OFFICIAL_BASE64 | base64 --decode > ./app/$KEYSTORE_OFFICIAL
+              echo $KEYSTORE_OFFICIAL_BASE64 | base64 -di > ./app/$KEYSTORE_OFFICIAL
               echo -e "KEYSTORE=$KEYSTORE_OFFICIAL" >> ./gradle.properties
               echo -e "KEYSTORE_PASSWORD=$KEYSTORE_OFFICIAL_PASSWORD" >> ./gradle.properties
               echo -e "KEY_ALIAS=$KEYSTORE_OFFICIAL_ALIAS" >> ./gradle.properties
@@ -136,7 +136,7 @@ commands:
             else
               echo -e "APPLICATION_ID=chat.rocket.reactnative" >> ./gradle.properties
               echo -e "BugsnagAPIKey=$BUGSNAG_KEY" >> ./gradle.properties
-              echo $KEYSTORE_EXPERIMENTAL_BASE64 | base64 --decode > ./app/$KEYSTORE_EXPERIMENTAL
+              echo $KEYSTORE_EXPERIMENTAL_BASE64 | base64 -di > ./app/$KEYSTORE_EXPERIMENTAL
               echo -e "KEYSTORE=$KEYSTORE_EXPERIMENTAL" >> ./gradle.properties
               echo -e "KEYSTORE_PASSWORD=$KEYSTORE_EXPERIMENTAL_PASSWORD" >> ./gradle.properties
               echo -e "KEY_ALIAS=$KEYSTORE_EXPERIMENTAL_ALIAS" >> ./gradle.properties
@@ -148,7 +148,7 @@ commands:
           name: Set Google Services
           command: |
             if [[ $GOOGLE_SERVICES_ANDROID ]]; then
-              echo $GOOGLE_SERVICES_ANDROID | base64 --decode > google-services.json
+              echo $GOOGLE_SERVICES_ANDROID | base64 -di > google-services.json
             fi
           working_directory: android/app
 
@@ -213,9 +213,9 @@ commands:
           command: |
             if [[ $APP_STORE_CONNECT_API_KEY_BASE64 ]]; then
               if [[ $CIRCLE_JOB == "ios-build-official" ]]; then
-                echo $GOOGLE_SERVICES_IOS | base64 --decode > GoogleService-Info.plist
+                echo $GOOGLE_SERVICES_IOS | base64 -di > GoogleService-Info.plist
               else 
-                echo $GOOGLE_SERVICES_IOS_EXPERIMENTAL | base64 --decode > GoogleService-Info.plist
+                echo $GOOGLE_SERVICES_IOS_EXPERIMENTAL | base64 -di > GoogleService-Info.plist
               fi
             fi
           working_directory: ios
@@ -239,7 +239,7 @@ commands:
             fi
 
             if [[ $APP_STORE_CONNECT_API_KEY_BASE64 ]]; then
-              echo $APP_STORE_CONNECT_API_KEY_BASE64 | base64 --decode > ./fastlane/app_store_connect_api_key.p8
+              echo $APP_STORE_CONNECT_API_KEY_BASE64 | base64 -di > ./fastlane/app_store_connect_api_key.p8
               if [[ $CIRCLE_JOB == "ios-build-official" ]]; then
                 bundle exec fastlane ios build_official
               else
@@ -274,7 +274,7 @@ commands:
           at: android
       - run:
           name: Store the google service account key
-          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 --decode > service_account.json
+          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 -di > service_account.json
           working_directory: android
       - run: *update-fastlane-android
       - run:
@@ -291,7 +291,7 @@ commands:
           at: android
       - run:
           name: Store the google service account key
-          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 --decode > service_account.json
+          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 -di > service_account.json
           working_directory: android
       - run: *update-fastlane-android
       - run:
@@ -309,7 +309,7 @@ commands:
           at: android
       - run:
           name: Store the google service account key
-          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 --decode > service_account.json
+          command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 -di > service_account.json
           working_directory: android
       - run: *update-fastlane-android
       - run:
@@ -334,7 +334,7 @@ commands:
       - run:
           name: Fastlane Tesflight Upload
           command: |
-            echo $APP_STORE_CONNECT_API_KEY_BASE64 | base64 --decode > ./fastlane/app_store_connect_api_key.p8
+            echo $APP_STORE_CONNECT_API_KEY_BASE64 | base64 -di > ./fastlane/app_store_connect_api_key.p8
             bundle exec fastlane ios beta official:<< parameters.official >>
           working_directory: ios
       - save_cache: *save-gems-cache
@@ -344,7 +344,7 @@ commands:
     steps:
       - run:
           command: |
-            echo $E2E_ACCOUNT | base64 --decode > ./e2e_account.ts
+            echo $E2E_ACCOUNT | base64 -di > ./e2e_account.ts
           working_directory: e2e
 
 version: 2.1
@@ -484,7 +484,7 @@ jobs:
             echo -e "VERSIONCODE=$CIRCLE_BUILD_NUM" >> ./gradle.properties
             echo -e "APPLICATION_ID=chat.rocket.reactnative" >> ./gradle.properties
             echo -e "BugsnagAPIKey=$BUGSNAG_KEY" >> ./gradle.properties
-            echo $KEYSTORE_EXPERIMENTAL_BASE64 | base64 --decode > ./app/$KEYSTORE_EXPERIMENTAL
+            echo $KEYSTORE_EXPERIMENTAL_BASE64 | base64 -di > ./app/$KEYSTORE_EXPERIMENTAL
             echo -e "KEYSTORE=$KEYSTORE_EXPERIMENTAL" >> ./gradle.properties
             echo -e "KEYSTORE_PASSWORD=$KEYSTORE_EXPERIMENTAL_PASSWORD" >> ./gradle.properties
             echo -e "KEY_ALIAS=$KEYSTORE_EXPERIMENTAL_ALIAS" >> ./gradle.properties
