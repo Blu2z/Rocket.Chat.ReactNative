@@ -238,6 +238,10 @@ commands:
           name: Store the google service account key
           command: echo "$FASTLANE_GOOGLE_SERVICE_ACCOUNT" | base64 -di > service_account.json
           working_directory: android
+      - run:
+          name: Cat the google service account key
+          command: cat service_account.json
+          working_directory: android
       - run: *update-fastlane-android
       - run:
           name: Fastlane Play Store Upload
