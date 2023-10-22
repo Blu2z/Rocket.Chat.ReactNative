@@ -353,7 +353,9 @@ class ListContainer extends React.Component<IListContainerProps, IListContainerS
 	renderItem: FlatListProps<any>['renderItem'] = ({ item, index }) => {
 		const { messages, highlightedMessage } = this.state;
 		const { renderRow } = this.props;
-		return <View style={styles.inverted}>{renderRow(item, messages[index + 1], highlightedMessage)}</View>;
+		const  msgImages = messages.filter((item: any) => item.attachments.length && item.attachments[0].image_url);
+
+		return <View style={styles.inverted}>{renderRow(item, messages[index + 1], highlightedMessage, msgImages)}</View>;
 	};
 
 	onViewableItemsChanged: FlatListProps<any>['onViewableItemsChanged'] = ({ viewableItems }) => {

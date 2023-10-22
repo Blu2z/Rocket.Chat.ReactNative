@@ -46,9 +46,11 @@ const Button = React.memo(({ children, onPress, disabled, theme }: IMessageButto
 
 export const MessageImage = React.memo(({ imgUri, theme }: { imgUri: string; theme: TSupportedThemes }) => (
 	<ImageProgress
-		style={[styles.image, { borderColor: themes[theme].borderColor }]}
+		style={[styles.image, { 
+			borderColor: themes[theme].borderColor,
+		}]}
 		source={{ uri: encodeURI(imgUri) }}
-		resizeMode={FastImage.resizeMode.cover}
+		resizeMode={FastImage.resizeMode.contain}
 		indicator={Progress.Pie}
 		indicatorProps={{
 			color: themes[theme].actionTintColor
@@ -57,7 +59,7 @@ export const MessageImage = React.memo(({ imgUri, theme }: { imgUri: string; the
 ));
 
 const ImageContainer = React.memo(
-	({ file, imageUrl, showAttachment, getCustomEmoji, style, isReply }: IMessageImage) => {
+	({ file, imageUrl, showAttachment, getCustomEmoji, style, isReply, msgImages }: IMessageImage) => {
 		const { theme } = useTheme();
 		const { baseUrl, user } = useContext(MessageContext);
 		const img = imageUrl || formatAttachmentUrl(file.image_url, user.id, user.token, baseUrl);
@@ -71,7 +73,7 @@ const ImageContainer = React.memo(
 				return;
 			}
 
-			return showAttachment(file);
+			return showAttachment(file, msgImages);
 		};
 
 		if (file.description) {

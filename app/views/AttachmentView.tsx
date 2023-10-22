@@ -57,7 +57,7 @@ class AttachmentView extends React.Component<IAttachmentViewProps, IAttachmentVi
 		super(props);
 		const attachment = props.route.params?.attachment;
 		this.state = { attachment, loading: true };
-		this.setHeader();
+		// this.setHeader();
 	}
 
 	componentDidMount() {
@@ -153,7 +153,8 @@ class AttachmentView extends React.Component<IAttachmentViewProps, IAttachmentVi
 	};
 
 	renderImage = (uri: string) => {
-		const { width, height, insets } = this.props;
+		const { width, height, insets, route, navigator } = this.props;
+		const attachments = route.params?.attachments;
 		return (
 			<HeaderHeightContext.Consumer>
 				{headerHeight => (
@@ -162,6 +163,8 @@ class AttachmentView extends React.Component<IAttachmentViewProps, IAttachmentVi
 						onLoadEnd={() => this.setState({ loading: false })}
 						width={width}
 						height={height - insets.top - insets.bottom - (headerHeight || 0)}
+						msgImages={attachments}
+						navigator={navigator}
 					/>
 				)}
 			</HeaderHeightContext.Consumer>

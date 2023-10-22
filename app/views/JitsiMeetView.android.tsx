@@ -1,13 +1,13 @@
+import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake';
 import React from 'react';
 import { BackHandler, NativeEventSubscription } from 'react-native';
-import BackgroundTimer from 'react-native-background-timer';
 import { isAppInstalled, openAppWithUri } from 'react-native-send-intent';
 import WebView from 'react-native-webview';
 import { WebViewMessage, WebViewNavigation } from 'react-native-webview/lib/WebViewTypes';
 
 import { IBaseScreen } from '../definitions';
 import { events, logEvent } from '../lib/methods/helpers/log';
-import { Services } from '../lib/services';
+import { endVideoConfTimer, initVideoConfTimer } from '../lib/methods/videoConfTimer';
 import { ChatsStackParamList } from '../stacks/types';
 import { withTheme } from '../theme';
 
@@ -19,7 +19,6 @@ class JitsiMeetView extends React.Component<TJitsiMeetViewProps> {
 	private rid: string;
 	private url: string;
 	private videoConf: boolean;
-	private jitsiTimeout: number | null;
 	private backHandler!: NativeEventSubscription;
 
 	constructor(props: TJitsiMeetViewProps) {
@@ -27,7 +26,6 @@ class JitsiMeetView extends React.Component<TJitsiMeetViewProps> {
 		this.rid = props.route.params?.rid;
 		this.url = props.route.params?.url;
 		this.videoConf = !!props.route.params?.videoConf;
-		this.jitsiTimeout = null;
 	}
 
 	componentDidMount() {
@@ -44,16 +42,16 @@ class JitsiMeetView extends React.Component<TJitsiMeetViewProps> {
 			.catch(() => {});
 		this.onConferenceJoined();
 		this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => true);
+		activateKeepAwake();
 	}
 
 	componentWillUnmount() {
 		logEvent(this.videoConf ? events.LIVECHAT_VIDEOCONF_TERMINATE : events.JM_CONFERENCE_TERMINATE);
-		if (this.jitsiTimeout && !this.videoConf) {
-			BackgroundTimer.clearInterval(this.jitsiTimeout);
-			this.jitsiTimeout = null;
-			BackgroundTimer.stopBackgroundTimer();
+		if (!this.videoConf) {
+			endVideoConfTimer();
 		}
 		this.backHandler.remove();
+		deactivateKeepAwake();
 	}
 
 	// Jitsi Update Timeout needs to be called every 10 seconds to make sure
@@ -61,15 +59,7 @@ class JitsiMeetView extends React.Component<TJitsiMeetViewProps> {
 	onConferenceJoined = () => {
 		logEvent(this.videoConf ? events.LIVECHAT_VIDEOCONF_JOIN : events.JM_CONFERENCE_JOIN);
 		if (this.rid && !this.videoConf) {
-			Services.updateJitsiTimeout(this.rid).catch((e: unknown) => console.log(e));
-			if (this.jitsiTimeout) {
-				BackgroundTimer.clearInterval(this.jitsiTimeout);
-				BackgroundTimer.stopBackgroundTimer();
-				this.jitsiTimeout = null;
-			}
-			this.jitsiTimeout = BackgroundTimer.setInterval(() => {
-				Services.updateJitsiTimeout(this.rid).catch((e: unknown) => console.log(e));
-			}, 10000);
+			initVideoConfTimer(this.rid);
 		}
 	};
 
@@ -87,7 +77,7 @@ class JitsiMeetView extends React.Component<TJitsiMeetViewProps> {
 	render() {
 		return (
 			<WebView
-				source={{ uri: `${this.url}&config.disableDeepLinking=true` }}
+				source={{ uri: `${this.url}${this.url.includes('#config') ? '&' : '#'}config.disableDeepLinking=true` }}
 				onMessage={({ nativeEvent }) => this.onNavigationStateChange(nativeEvent)}
 				onNavigationStateChange={this.onNavigationStateChange}
 				style={{ flex: 1 }}

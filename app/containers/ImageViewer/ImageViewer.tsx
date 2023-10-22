@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutChangeEvent, StyleSheet, StyleProp, ViewStyle, ImageStyle, View } from 'react-native';
+import { LayoutChangeEvent, StyleSheet, StyleProp, ViewStyle, ImageStyle, View, Text } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { withTiming, useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 
@@ -16,6 +16,8 @@ interface ImageViewerProps {
 	width: number;
 	height: number;
 	onLoadEnd?: () => void;
+
+	msgImages?: any[];
 }
 
 const styles = StyleSheet.create({
@@ -109,12 +111,12 @@ export const ImageViewer = ({ uri = '', imageComponentType, width, height, ...pr
 
 	const gesture = Gesture.Simultaneous(pinchGesture, panGesture, doubleTapGesture);
 
-	const Component = ImageComponent(imageComponentType);
+	const Component = ImageComponent(props.msgImages.length ? 'carousel' : imageComponentType);
 
 	const { colors } = useTheme();
 
 	return (
-		<View style={[styles.flex, { width, height, backgroundColor: colors.previewBackground }]}>
+		<View style={[styles.flex, { width, height, backgroundColor: 'gray'/* colors.previewBackground */ }]}>
 			<GestureDetector gesture={gesture}>
 				<Animated.View onLayout={onLayout} style={[styles.flex, style]}>
 					<Component
