@@ -132,7 +132,7 @@ commands:
               echo $KEYSTORE_BASE64 | base64 --decode > ./app/$KEYSTORE
               echo -e "KEYSTORE=$KEYSTORE" >> ./gradle.properties
               echo -e "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> ./gradle.properties
-              echo -e "KEY_ALIAS=$KEYSTORE_ALIAS" >> ./gradle.properties
+              echo -e "KEY_ALIAS=$KEY_ALIAS" >> ./gradle.properties
               echo -e "KEY_PASSWORD=$KEYSTORE_PASSWORD" >> ./gradle.properties
             fi
           working_directory: android
@@ -478,7 +478,7 @@ jobs:
             echo $KEYSTORE_BASE64 | base64 --decode > ./app/$KEYSTORE
             echo -e "KEYSTORE=$KEYSTORE" >> ./gradle.properties
             echo -e "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> ./gradle.properties
-            echo -e "KEY_ALIAS=$KEYSTORE_ALIAS" >> ./gradle.properties
+            echo -e "KEY_ALIAS=$KEY_ALIAS" >> ./gradle.properties
             echo -e "KEY_PASSWORD=$KEYSTORE_PASSWORD" >> ./gradle.properties
           working_directory: android
       - run:
