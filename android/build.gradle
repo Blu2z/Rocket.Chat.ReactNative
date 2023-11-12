@@ -7,9 +7,9 @@ buildscript {
 
     ext {
         buildToolsVersion = "31.0.0"
-        minSdkVersion = 23
-        compileSdkVersion = 31
-        targetSdkVersion = 31
+        minSdkVersion = 31
+        compileSdkVersion = 33
+        targetSdkVersion = 33
         if (System.properties['os.arch'] == "aarch64") {
             // For M1 Users we need to use the NDK 24 which added support for aarch64
             ndkVersion = "24.0.8215888"
@@ -96,10 +96,10 @@ subprojects { subproject ->
     afterEvaluate {	
         if (!project.name.equalsIgnoreCase("app") && project.hasProperty("android")) {	
             android {	
-                compileSdkVersion 31	
+                compileSdkVersion 33	
                 buildToolsVersion "31.0.0"
                 defaultConfig {	
-                    minSdkVersion 23	
+                    minSdkVersion 31	
                     targetSdkVersion 33
                 }	
             }	
