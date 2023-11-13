@@ -181,7 +181,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-native-svg", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:13.8.0"],\
             ["react-native-ui-lib", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#https://github.com/RocketChat/react-native-ui-lib.git#commit=ef50151b8d9c1627ef527c620a1472868f9f4df8"],\
             ["react-native-vector-icons", "npm:9.1.0"],\
-            ["react-native-webview", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:10.3.2"],\
+            ["react-native-webview", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:11.26.1"],\
             ["react-redux", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:8.0.5"],\
             ["react-test-renderer", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:17.0.2"],\
             ["reactotron-react-native", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:5.0.3"],\
@@ -28894,17 +28894,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["react-native-webview", [\
-        ["npm:10.3.2", {\
-          "packageLocation": "./.yarn/unplugged/react-native-webview-virtual-332a60dfbd/node_modules/react-native-webview/",\
+        ["npm:11.26.1", {\
+          "packageLocation": "./.yarn/unplugged/react-native-webview-virtual-0b45cb2f94/node_modules/react-native-webview/",\
           "packageDependencies": [\
-            ["react-native-webview", "npm:10.3.2"]\
+            ["react-native-webview", "npm:11.26.1"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:10.3.2", {\
-          "packageLocation": "./.yarn/unplugged/react-native-webview-virtual-332a60dfbd/node_modules/react-native-webview/",\
+        ["virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:11.26.1", {\
+          "packageLocation": "./.yarn/unplugged/react-native-webview-virtual-0b45cb2f94/node_modules/react-native-webview/",\
           "packageDependencies": [\
-            ["react-native-webview", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:10.3.2"],\
+            ["react-native-webview", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:11.26.1"],\
             ["@types/react", "npm:17.0.70"],\
             ["@types/react-native", "npm:0.68.1"],\
             ["escape-string-regexp", "npm:2.0.0"],\
@@ -30199,7 +30199,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-native-svg", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:13.8.0"],\
             ["react-native-ui-lib", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#https://github.com/RocketChat/react-native-ui-lib.git#commit=ef50151b8d9c1627ef527c620a1472868f9f4df8"],\
             ["react-native-vector-icons", "npm:9.1.0"],\
-            ["react-native-webview", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:10.3.2"],\
+            ["react-native-webview", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:11.26.1"],\
             ["react-redux", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:8.0.5"],\
             ["react-test-renderer", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:17.0.2"],\
             ["reactotron-react-native", "virtual:889bc617eee860ce450242e4a4f298d20f4e4773ea3670d9c2498f4d0c676d733f658e34940e1ed193437751f11a1b21b93c00e05e727d51366bb876455f641d#npm:5.0.3"],\
