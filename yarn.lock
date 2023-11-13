@@ -20104,16 +20104,16 @@ react-native-scrollable-tab-view@ptomasroos/react-native-scrollable-tab-view:
   languageName: node
   linkType: hard
 
-"react-native-webview@npm:13.6.2":
-  version: 13.6.2
-  resolution: "react-native-webview@npm:13.6.2"
+"react-native-webview@npm:10.3.2":
+  version: 10.3.2
+  resolution: "react-native-webview@npm:10.3.2"
   dependencies:
     escape-string-regexp: 2.0.0
     invariant: 2.2.4
   peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 20cbad5bf47410f8aabab3c12610770204edb26b9ad8690f2f868c6b784a84b05231718bae2ea72a2ac2ebcbc0af89fe05a37b56615c4e8363f9aafadbe64b5a
+    react: 16.11.0
+    react-native: ">=0.60 <0.63"
+  checksum: 9708615862ba1ad95afe5a98ad4bafb4f473a459000abeffcb05d2370510bde4f0c53eb2d916d70b2491c522762c9253e73da9f504404960f3be3b157cc251c6
   languageName: node
   linkType: hard
 
@@ -21233,7 +21233,7 @@ rn-root-view@RocketChat/rn-root-view:
     react-native-svg: 13.8.0
     react-native-ui-lib: "RocketChat/react-native-ui-lib#ef50151b8d9c1627ef527c620a1472868f9f4df8"
     react-native-vector-icons: 9.1.0
-    react-native-webview: 13.6.2
+    react-native-webview: 10.3.2
     react-redux: " 8.0.5"
     react-test-renderer: 17.0.2
     reactotron-react-native: 5.0.3
