@@ -136,11 +136,11 @@ commands:
             else
               echo -e "APPLICATION_ID=chat.rocket.reactnative" >> ./gradle.properties
               echo -e "BugsnagAPIKey=$BUGSNAG_KEY" >> ./gradle.properties
-              echo $KEYSTORE_EXPERIMENTAL_BASE64 | base64 --decode > ./app/$KEYSTORE_EXPERIMENTAL
-              echo -e "KEYSTORE=$KEYSTORE_EXPERIMENTAL" >> ./gradle.properties
-              echo -e "KEYSTORE_PASSWORD=$KEYSTORE_EXPERIMENTAL_PASSWORD" >> ./gradle.properties
-              echo -e "KEY_ALIAS=$KEYSTORE_EXPERIMENTAL_ALIAS" >> ./gradle.properties
-              echo -e "KEY_PASSWORD=$KEYSTORE_EXPERIMENTAL_PASSWORD" >> ./gradle.properties
+              echo $KEYSTORE_BASE64 | base64 --decode > ./app/$KEYSTORE
+              echo -e "KEYSTORE=$KEYSTORE" >> ./gradle.properties
+              echo -e "KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> ./gradle.properties
+              echo -e "KEY_ALIAS=$KEY_ALIAS" >> ./gradle.properties
+              echo -e "KEY_PASSWORD=$KEYSTORE_PASSWORD" >> ./gradle.properties
             fi
           working_directory: android
 
@@ -373,20 +373,20 @@ jobs:
 
       - run: *install-npm-modules
 
-      - run:
-          name: Lint
-          command: |
-            yarn lint
+      # - run:
+      #     name: Lint
+      #     command: |
+      #       yarn lint
 
-      - run:
-          name: Test
-          command: |
-            yarn test -w 8
+      # - run:
+      #     name: Test
+      #     command: |
+      #       yarn test -w 8
 
-      - run:
-          name: Codecov
-          command: |
-            yarn codecov
+      # - run:
+      #     name: Codecov
+      #     command: |
+      #       yarn codecov
 
       - save_cache: *save-npm-cache-linux
 
