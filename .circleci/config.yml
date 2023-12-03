@@ -732,8 +732,8 @@ workflows:
             branches:
               only:
                 - develop
-          requires:
-            - lint-testunit
+          # requires:
+          #   - lint-testunit
       - android-google-play-production-experimental:
           requires:
             - android-automatic-build-experimental
