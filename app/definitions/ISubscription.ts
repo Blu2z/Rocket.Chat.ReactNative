@@ -46,6 +46,7 @@ export interface ISubscription {
 	ls: Date;
 	name: string;
 	fname?: string;
+	sanitizedFname?: string;
 	rid: string; // the same as id
 	open: boolean;
 	alert: boolean;
@@ -71,6 +72,7 @@ export interface ISubscription {
 	archived: boolean;
 	joinCodeRequired?: boolean;
 	muted?: string[];
+	unmuted?: string[];
 	ignored?: string[];
 	broadcast?: boolean;
 	prid?: string;
@@ -91,6 +93,7 @@ export interface ISubscription {
 	livechatData?: any;
 	tags?: string[];
 	E2EKey?: string;
+	E2ESuggestedKey?: string;
 	encrypted?: boolean;
 	e2eKeyId?: string;
 	avatarETag?: string;
@@ -101,6 +104,7 @@ export interface ISubscription {
 	onHold?: boolean;
 	source?: IOmnichannelSource;
 	hideMentionStatus?: boolean;
+	usersCount?: number;
 	// https://nozbe.github.io/WatermelonDB/Relation.html#relation-api
 	messages: RelationModified<TMessageModel>;
 	threads: RelationModified<TThreadModel>;
@@ -108,7 +112,10 @@ export interface ISubscription {
 	uploads: RelationModified<TUploadModel>;
 }
 
-export type TSubscriptionModel = ISubscription & Model;
+export type TSubscriptionModel = ISubscription &
+	Model & {
+		asPlain: () => ISubscription;
+	};
 export type TSubscription = TSubscriptionModel | ISubscription;
 
 // https://github.com/RocketChat/Rocket.Chat/blob/a88a96fcadd925b678ff27ada37075e029f78b5e/definition/ISubscription.ts#L8
@@ -145,6 +152,7 @@ export interface IServerSubscription extends IRocketChatRecord {
 	onHold?: boolean;
 	encrypted?: boolean;
 	E2EKey?: string;
+	E2ESuggestedKey?: string;
 	unreadAlert?: 'default' | 'all' | 'mentions' | 'nothing';
 
 	fname?: unknown;

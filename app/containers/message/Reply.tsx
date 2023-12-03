@@ -91,7 +91,8 @@ interface IMessageReply {
 	timeFormat?: string;
 	index: number;
 	getCustomEmoji: TGetCustomEmoji;
-	messageId: string;
+	msg?: string;
+	showAttachment?: (file: IAttachment) => void;
 }
 
 const Title = React.memo(
@@ -198,10 +199,10 @@ const Fields = React.memo(
 );
 
 const Reply = React.memo(
-	({ attachment, timeFormat, index, getCustomEmoji, messageId }: IMessageReply) => {
+	({ attachment, timeFormat, index, getCustomEmoji, msg, showAttachment }: IMessageReply) => {
 		const [loading, setLoading] = useState(false);
 		const { theme } = useTheme();
-		const { baseUrl, user, jumpToMessage } = useContext(MessageContext);
+		const { baseUrl, user } = useContext(MessageContext);
 
 		if (!attachment) {
 			return null;
@@ -209,9 +210,6 @@ const Reply = React.memo(
 
 		const onPress = async () => {
 			let url = attachment.title_link || attachment.author_link;
-			if (attachment.message_link) {
-				return jumpToMessage(attachment.message_link);
-			}
 			if (!url) {
 				return;
 			}
@@ -232,31 +230,33 @@ const Reply = React.memo(
 
 		return (
 			<>
+				{/* The testID is to test properly quoted messages using it as ancestor  */}
 				<Touchable
+					testID={`reply-${attachment?.author_name}-${attachment?.text}`}
 					onPress={onPress}
 					style={[
 						styles.button,
 						index > 0 && styles.marginTop,
-						attachment.description && styles.marginBottom,
+						msg && styles.marginBottom,
 						{
 							borderColor
 						}
 					]}
 					background={Touchable.Ripple(themes[theme].bannerBackground)}
-					disabled={loading}
+					disabled={loading || attachment.message_link}
 				>
 					<View style={styles.attachmentContainer}>
 						<Title attachment={attachment} timeFormat={timeFormat} theme={theme} />
+						<Description attachment={attachment} getCustomEmoji={getCustomEmoji} theme={theme} />
+						<UrlImage image={attachment.thumb_url} />
 						<Attachments
 							attachments={attachment.attachments}
 							getCustomEmoji={getCustomEmoji}
 							timeFormat={timeFormat}
 							style={[{ color: themes[theme].auxiliaryTintColor, fontSize: 14, marginBottom: 8 }]}
 							isReply
-							id={messageId}
+							showAttachment={showAttachment}
 						/>
-						<UrlImage image={attachment.thumb_url} />
-						<Description attachment={attachment} getCustomEmoji={getCustomEmoji} theme={theme} />
 						<Fields attachment={attachment} getCustomEmoji={getCustomEmoji} theme={theme} />
 						{loading ? (
 							<View style={[styles.backdrop]}>
@@ -271,7 +271,7 @@ const Reply = React.memo(
 						) : null}
 					</View>
 				</Touchable>
-				<Markdown msg={attachment.description} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
+				<Markdown msg={msg} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
 			</>
 		);
 	},

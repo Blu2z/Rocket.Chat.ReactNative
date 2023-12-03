@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { DrawerNavigationState } from '@react-navigation/native';
-import { ScrollView, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, ScrollView, Text, TouchableWithoutFeedback, View, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import { dequal } from 'dequal';
+import { Dispatch } from 'redux';
 
 import Avatar from '../../containers/Avatar';
 import Status from '../../containers/Status/Status';
 import { events, logEvent } from '../../lib/methods/helpers/log';
 import I18n from '../../i18n';
 import scrollPersistTaps from '../../lib/methods/helpers/scrollPersistTaps';
+import userPreferences from '../../lib/methods/userPreferences';
 import { CustomIcon } from '../../containers/CustomIcon';
-import { themes } from '../../lib/constants';
+import { NOTIFICATION_PRESENCE_CAP, STATUS_COLORS, themes } from '../../lib/constants';
 import { TSupportedThemes, withTheme } from '../../theme';
 import { getUserSelector } from '../../selectors/login';
 import SafeAreaView from '../../containers/SafeAreaView';
@@ -19,8 +21,11 @@ import Navigation from '../../lib/navigation/appNavigation';
 import SidebarItem from './SidebarItem';
 import styles from './styles';
 import { DrawerParamList } from '../../stacks/types';
-import { IApplicationState, IUser } from '../../definitions';
+import { IApplicationState, IUser, TSVStatus } from '../../definitions';
 import * as List from '../../containers/List';
+import { IActionSheetProvider, showActionSheetRef, withActionSheet } from '../../containers/ActionSheet';
+import { setNotificationPresenceCap } from '../../actions/app';
+import { SupportedVersionsWarning } from '../../containers/SupportedVersions';
 
 interface ISidebarState {
 	showStatus: boolean;
@@ -29,6 +34,7 @@ interface ISidebarState {
 interface ISidebarProps {
 	baseUrl: string;
 	navigation?: DrawerNavigationProp<DrawerParamList>;
+	dispatch: Dispatch;
 	state?: DrawerNavigationState<DrawerParamList>;
 	Site_Name: string;
 	user: IUser;
@@ -36,11 +42,15 @@ interface ISidebarProps {
 	loadingServer: boolean;
 	useRealName: boolean;
 	allowStatusMessage: boolean;
+	notificationPresenceCap: boolean;
+	Presence_broadcast_disabled: boolean;
+	supportedVersionsStatus: TSVStatus;
 	isMasterDetail: boolean;
 	viewStatisticsPermission: string[];
 	viewRoomAdministrationPermission: string[];
 	viewUserAdministrationPermission: string[];
 	viewPrivilegedSettingPermission: string[];
+	showActionSheet: IActionSheetProvider['showActionSheet'];
 }
 
 class Sidebar extends Component<ISidebarProps, ISidebarState> {
@@ -59,8 +69,11 @@ class Sidebar extends Component<ISidebarProps, ISidebarState> {
 			baseUrl,
 			state,
 			isMasterDetail,
+			notificationPresenceCap,
 			useRealName,
 			theme,
+			Presence_broadcast_disabled,
+			supportedVersionsStatus,
 			viewStatisticsPermission,
 			viewRoomAdministrationPermission,
 			viewUserAdministrationPermission,
@@ -91,7 +104,16 @@ class Sidebar extends Component<ISidebarProps, ISidebarState> {
 		if (nextProps.isMasterDetail !== isMasterDetail) {
 			return true;
 		}
+		if (nextProps.notificationPresenceCap !== notificationPresenceCap) {
+			return true;
+		}
 		if (nextProps.useRealName !== useRealName) {
+			return true;
+		}
+		if (nextProps.Presence_broadcast_disabled !== Presence_broadcast_disabled) {
+			return true;
+		}
+		if (nextProps.supportedVersionsStatus !== supportedVersionsStatus) {
 			return true;
 		}
 		if (!dequal(nextProps.viewStatisticsPermission, viewStatisticsPermission)) {
@@ -154,6 +176,42 @@ class Sidebar extends Component<ISidebarProps, ISidebarState> {
 			return;
 		}
 		navigation?.closeDrawer();
+	};
+
+	onPressLearnMorePresenceCap = () => {
+		Linking.openURL('https://go.rocket.chat/i/presence-cap-learn-more');
+	};
+
+	onPressPresenceLearnMore = () => {
+		const { dispatch } = this.props;
+		dispatch(setNotificationPresenceCap(false));
+		userPreferences.setBool(NOTIFICATION_PRESENCE_CAP, false);
+
+		Alert.alert(
+			I18n.t('Presence_Cap_Warning_Title'),
+			I18n.t('Presence_Cap_Warning_Description'),
+			[
+				{
+					text: I18n.t('Learn_more'),
+					onPress: this.onPressLearnMorePresenceCap,
+					style: 'cancel'
+				},
+				{
+					text: I18n.t('Close'),
+					style: 'default'
+				}
+			],
+			{ cancelable: false }
+		);
+	};
+
+	onPressSupportedVersionsWarning = () => {
+		const { isMasterDetail } = this.props;
+		if (isMasterDetail) {
+			Navigation.navigate('ModalStackNavigator', { screen: 'SupportedVersionsWarning' });
+		} else {
+			showActionSheetRef({ children: <SupportedVersionsWarning /> });
+		}
 	};
 
 	renderAdmin = () => {
@@ -219,17 +277,47 @@ class Sidebar extends Component<ISidebarProps, ISidebarState> {
 	};
 
 	renderCustomStatus = () => {
-		const { user, theme } = this.props;
+		const { user, theme, Presence_broadcast_disabled, notificationPresenceCap } = this.props;
+
+		let status = user?.status;
+		if (Presence_broadcast_disabled) {
+			status = 'disabled';
+		}
+
+		let right: React.ReactElement | undefined = <CustomIcon name='edit' size={20} color={themes[theme!].titleText} />;
+		if (notificationPresenceCap) {
+			right = <View style={[styles.customStatusDisabled, { backgroundColor: STATUS_COLORS.disabled }]} />;
+		} else if (Presence_broadcast_disabled) {
+			right = undefined;
+		}
+
 		return (
 			<SidebarItem
 				text={user.statusText || I18n.t('Edit_Status')}
-				left={<Status size={24} status={user?.status} />}
+				left={<Status size={24} status={status} />}
 				theme={theme!}
-				right={<CustomIcon name='edit' size={20} color={themes[theme!].titleText} />}
-				onPress={() => this.sidebarNavigate('StatusView')}
+				right={right}
+				onPress={() => (Presence_broadcast_disabled ? this.onPressPresenceLearnMore() : this.sidebarNavigate('StatusView'))}
 				testID={`sidebar-custom-status-${user.status}`}
 			/>
 		);
+	};
+
+	renderSupportedVersionsWarn = () => {
+		const { theme, supportedVersionsStatus } = this.props;
+		if (supportedVersionsStatus === 'warn') {
+			return (
+				<SidebarItem
+					text={I18n.t('Supported_versions_warning_update_required')}
+					textColor={themes[theme!].dangerColor}
+					left={<CustomIcon name='warning' size={20} color={themes[theme!].dangerColor} />}
+					theme={theme!}
+					onPress={() => this.onPressSupportedVersionsWarning()}
+					testID={`sidebar-supported-versions-warn`}
+				/>
+			);
+		}
+		return null;
 	};
 
 	render() {
@@ -270,6 +358,9 @@ class Sidebar extends Component<ISidebarProps, ISidebarState> {
 					</TouchableWithoutFeedback>
 
 					<List.Separator />
+					{this.renderSupportedVersionsWarn()}
+
+					<List.Separator />
 
 					{allowStatusMessage ? this.renderCustomStatus() : null}
 					{!isMasterDetail ? (
@@ -294,6 +385,9 @@ const mapStateToProps = (state: IApplicationState) => ({
 	loadingServer: state.server.loading,
 	useRealName: state.settings.UI_Use_Real_Name as boolean,
 	allowStatusMessage: state.settings.Accounts_AllowUserStatusMessageChange as boolean,
+	Presence_broadcast_disabled: state.settings.Presence_broadcast_disabled as boolean,
+	notificationPresenceCap: state.app.notificationPresenceCap,
+	supportedVersionsStatus: state.supportedVersions.status,
 	isMasterDetail: state.app.isMasterDetail,
 	viewStatisticsPermission: state.permissions['view-statistics'] as string[],
 	viewRoomAdministrationPermission: state.permissions['view-room-administration'] as string[],
@@ -301,4 +395,4 @@ const mapStateToProps = (state: IApplicationState) => ({
 	viewPrivilegedSettingPermission: state.permissions['view-privileged-setting'] as string[]
 });
 
-export default connect(mapStateToProps)(withTheme(Sidebar));
+export default connect(mapStateToProps)(withActionSheet(withTheme(Sidebar)));

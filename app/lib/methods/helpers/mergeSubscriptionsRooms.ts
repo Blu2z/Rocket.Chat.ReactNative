@@ -1,5 +1,6 @@
 import EJSON from 'ejson';
 
+import { slugifyLikeString } from '../../database/utils';
 import { Encryption } from '../../encryption';
 import { store as reduxStore } from '../../store/auxStore';
 import findSubscriptionsRooms from './findSubscriptionsRooms';
@@ -66,6 +67,11 @@ export const merge = (
 		} else {
 			mergedSubscription.muted = [];
 		}
+		if (room?.unmuted?.length) {
+			mergedSubscription.unmuted = room.unmuted.filter(unmuted => !!unmuted);
+		} else {
+			mergedSubscription.unmuted = [];
+		}
 		if (room?.v) {
 			mergedSubscription.visitor = room.v;
 		}
@@ -85,6 +91,9 @@ export const merge = (
 		if (room && 'source' in room) {
 			mergedSubscription.source = room?.source;
 		}
+		if (room && 'usersCount' in room) {
+			mergedSubscription.usersCount = room.usersCount;
+		}
 	}
 
 	if (!mergedSubscription.name) {
@@ -98,7 +107,7 @@ export const merge = (
 	mergedSubscription.blocker = !!mergedSubscription.blocker;
 	mergedSubscription.blocked = !!mergedSubscription.blocked;
 	mergedSubscription.hideMentionStatus = !!mergedSubscription.hideMentionStatus;
-
+	mergedSubscription.sanitizedFname = slugifyLikeString(mergedSubscription.fname || mergedSubscription.name);
 	return mergedSubscription;
 };
 

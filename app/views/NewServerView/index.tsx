@@ -3,7 +3,6 @@ import { Base64 } from 'js-base64';
 import React from 'react';
 import { BackHandler, Image, Keyboard, StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import Orientation from 'react-native-orientation-locker';
 import { connect } from 'react-redux';
 import parse from 'url-parse';
 
@@ -22,7 +21,7 @@ import { sanitizeLikeString } from '../../lib/database/utils';
 import UserPreferences from '../../lib/methods/userPreferences';
 import { OutsideParamList } from '../../stacks/types';
 import { withTheme } from '../../theme';
-import { isTablet } from '../../lib/methods/helpers';
+import { isIOS, isTablet } from '../../lib/methods/helpers';
 import EventEmitter from '../../lib/methods/helpers/events';
 import { BASIC_AUTH_KEY, setBasicAuth } from '../../lib/methods/helpers/fetch';
 import { showConfirmationAlert } from '../../lib/methods/helpers/info';
@@ -88,9 +87,6 @@ interface ISubmitParams {
 class NewServerView extends React.Component<INewServerViewProps, INewServerViewState> {
 	constructor(props: INewServerViewProps) {
 		super(props);
-		if (!isTablet) {
-			Orientation.lockToPortrait();
-		}
 		this.setHeader();
 
 		this.state = {
@@ -392,28 +388,32 @@ class NewServerView extends React.Component<INewServerViewProps, INewServerViewS
 						style={[styles.connectButton, { marginTop: verticalScale({ size: 16, height }) }]}
 						testID='new-server-view-button'
 					/>
-					<OrSeparator theme={theme} />
-					<Text
-						style={[
-							styles.description,
-							{
-								color: themes[theme].auxiliaryText,
-								fontSize: moderateScale({ size: 14, width }),
-								marginBottom: verticalScale({ size: 16, height })
-							}
-						]}
-					>
-						{I18n.t('Onboarding_join_open_description')}
-					</Text>
-					<Button
-						title={I18n.t('Join_our_open_workspace')}
-						type='secondary'
-						backgroundColor={themes[theme].chatComponentBackground}
-						onPress={this.connectOpen}
-						disabled={connecting}
-						loading={connectingOpen && connecting}
-						testID='new-server-view-open'
-					/>
+					{isIOS ? (
+						<>
+							<OrSeparator theme={theme} />
+							<Text
+								style={[
+									styles.description,
+									{
+										color: themes[theme].auxiliaryText,
+										fontSize: moderateScale({ size: 14, width }),
+										marginBottom: verticalScale({ size: 16, height })
+									}
+								]}
+							>
+								{I18n.t('Onboarding_join_open_description')}
+							</Text>
+							<Button
+								title={I18n.t('Join_our_open_workspace')}
+								type='secondary'
+								backgroundColor={themes[theme].chatComponentBackground}
+								onPress={this.connectOpen}
+								disabled={connecting}
+								loading={connectingOpen && connecting}
+								testID='new-server-view-open'
+							/>
+						</>
+					) : null}
 				</FormContainerInner>
 				{this.renderCertificatePicker()}
 			</FormContainer>

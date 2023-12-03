@@ -1,31 +1,30 @@
+import { StackNavigationProp } from '@react-navigation/stack';
+import { dequal } from 'dequal';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { dequal } from 'dequal';
-import { Observable, Subscription } from 'rxjs';
 import { Dispatch } from 'redux';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { Observable, Subscription } from 'rxjs';
 
-import { ILivechatTag } from '../../definitions/ILivechatTag';
-import * as HeaderButton from '../../containers/HeaderButton';
-import database from '../../lib/database';
-import { getUserSelector } from '../../selectors/login';
-import { events, logEvent } from '../../lib/methods/helpers/log';
-import { isTeamRoom } from '../../lib/methods/helpers/room';
-import { IApplicationState, SubscriptionType, TMessageModel, TSubscriptionModel } from '../../definitions';
-import { ChatsStackParamList } from '../../stacks/types';
 import { TActionSheetOptionsItem } from '../../containers/ActionSheet';
-import i18n from '../../i18n';
-import { showConfirmationAlert, showErrorAlert } from '../../lib/methods/helpers';
-import { onHoldLivechat, returnLivechat } from '../../lib/services/restApi';
-import { closeLivechat as closeLivechatService } from '../../lib/methods/helpers/closeLivechat';
-import { Services } from '../../lib/services';
+import * as HeaderButton from '../../containers/HeaderButton';
+import { IApplicationState, ISubscription, SubscriptionType, TMessageModel, TSubscriptionModel } from '../../definitions';
 import { ILivechatDepartment } from '../../definitions/ILivechatDepartment';
+import { ILivechatTag } from '../../definitions/ILivechatTag';
+import i18n from '../../i18n';
+import database from '../../lib/database';
+import { showConfirmationAlert, showErrorAlert } from '../../lib/methods/helpers';
+import { closeLivechat as closeLivechatService } from '../../lib/methods/helpers/closeLivechat';
+import { events, logEvent } from '../../lib/methods/helpers/log';
+import { Services } from '../../lib/services';
+import { onHoldLivechat, returnLivechat } from '../../lib/services/restApi';
+import { getUserSelector } from '../../selectors/login';
+import { TNavigation } from '../../stacks/stackType';
+import { ChatsStackParamList } from '../../stacks/types';
+import HeaderCallButton from './components/HeaderCallButton';
 
-interface IRightButtonsProps {
+interface IRightButtonsProps extends Pick<ISubscription, 't'> {
 	userId?: string;
 	threadsEnabled: boolean;
-	rid?: string;
-	t: string;
 	tmid?: string;
 	teamId?: string;
 	isMasterDetail: boolean;
@@ -34,7 +33,7 @@ interface IRightButtonsProps {
 	status?: string;
 	dispatch: Dispatch;
 	encrypted?: boolean;
-	navigation: StackNavigationProp<ChatsStackParamList, 'RoomView'>;
+	navigation: StackNavigationProp<ChatsStackParamList & TNavigation, 'RoomView'>;
 	omnichannelPermissions: {
 		canForwardGuest: boolean;
 		canReturnQueue: boolean;
@@ -43,6 +42,7 @@ interface IRightButtonsProps {
 	livechatRequestComment: boolean;
 	showActionSheet: Function;
 	departmentId?: string;
+	rid?: string;
 }
 
 interface IRigthButtonsState {
@@ -152,23 +152,6 @@ class RightButtonsContainer extends Component<IRightButtonsProps, IRigthButtonsS
 			tunreadUser: sub?.tunreadUser ?? [],
 			tunreadGroup: sub?.tunreadGroup ?? []
 		});
-	};
-
-	goTeamChannels = () => {
-		logEvent(events.ROOM_GO_TEAM_CHANNELS);
-		const { navigation, isMasterDetail, teamId, joined } = this.props;
-		if (!teamId) {
-			return;
-		}
-		if (isMasterDetail) {
-			// @ts-ignore TODO: find a way to make this work
-			navigation.navigate('ModalStackNavigator', {
-				screen: 'TeamChannelsView',
-				params: { teamId, joined }
-			});
-		} else {
-			navigation.navigate('TeamChannelsView', { teamId, joined });
-		}
 	};
 
 	goThreadsView = () => {
@@ -338,7 +321,7 @@ class RightButtonsContainer extends Component<IRightButtonsProps, IRigthButtonsS
 
 	render() {
 		const { isFollowingThread, tunread, tunreadUser, tunreadGroup } = this.state;
-		const { t, tmid, threadsEnabled, teamId, joined } = this.props;
+		const { t, tmid, threadsEnabled, rid } = this.props;
 
 		if (t === 'l') {
 			if (!this.isOmnichannelPreview()) {
@@ -363,15 +346,13 @@ class RightButtonsContainer extends Component<IRightButtonsProps, IRigthButtonsS
 		}
 		return (
 			<HeaderButton.Container>
-				{isTeamRoom({ teamId, joined }) ? (
-					<HeaderButton.Item iconName='channel-public' onPress={this.goTeamChannels} testID='room-view-header-team-channels' />
-				) : null}
+				{rid ? <HeaderCallButton rid={rid} /> : null}
 				{threadsEnabled ? (
 					<HeaderButton.Item
 						iconName='threads'
 						onPress={this.goThreadsView}
 						testID='room-view-header-threads'
-						badge={() => <HeaderButton.Badge tunread={tunread} tunreadUser={tunreadUser} tunreadGroup={tunreadGroup} />}
+						badge={() => <HeaderButton.BadgeUnread tunread={tunread} tunreadUser={tunreadUser} tunreadGroup={tunreadGroup} />}
 					/>
 				) : null}
 				<HeaderButton.Item iconName='search' onPress={this.goSearchView} testID='room-view-search' />

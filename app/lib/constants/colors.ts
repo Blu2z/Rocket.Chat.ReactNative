@@ -1,9 +1,12 @@
+export const BACKGROUND_PUSH_COLOR = '#F5455C';
+
 export const STATUS_COLORS: any = {
 	online: '#2de0a5',
 	busy: '#f5455c',
 	away: '#ffd21f',
 	offline: '#cbced1',
-	loading: '#9ea2a8'
+	loading: '#9ea2a8',
+	disabled: '#F38C39'
 };
 
 export const SWITCH_TRACK_COLOR = {
@@ -17,6 +20,11 @@ const mentions = {
 	mentionMeColor: '#F5455C',
 	mentionGroupColor: '#F38C39',
 	mentionOtherColor: '#F3BE08'
+};
+
+const callButtons = {
+	cancelCallButton: '#F5455C',
+	acceptCallButton: '#158D65'
 };
 
 export const colors = {
@@ -58,6 +66,7 @@ export const colors = {
 		buttonText: '#ffffff',
 		passcodeBackground: '#EEEFF1',
 		passcodeButtonActive: '#E4E7EA',
+		editAndUploadButtonAvatar: '#E4E7EA',
 		passcodeLockIcon: '#6C727A',
 		passcodePrimary: '#2F343D',
 		passcodeSecondary: '#6C727A',
@@ -87,7 +96,24 @@ export const colors = {
 		conferenceCallEnabledIconBackground: '#156FF5',
 		conferenceCallPhotoBackground: '#E4E7EA',
 		textInputSecondaryBackground: '#E4E7EA',
-		...mentions
+		dotBg: '#a9cbff',
+		dotActiveBg: '#1d74f5',
+		gray300: '#5f656e',
+		gray100: '#CBCED1',
+		n900: '#1F2329',
+		statusBackgroundWarning: '#FFECAD',
+		statusFontOnWarning: '#B88D00',
+		overlayColor: '#1F2329B2',
+		buttonBackgroundPrimaryDefault: '#156FF5',
+		buttonBackgroundSecondaryDefault: '#E4E7EA',
+		buttonFontPrimary: '#FFFFFF',
+		buttonFontSecondary: '#1F2329',
+		fontDefault: '#2F343D',
+		strokeExtraLight: '#EBECEF',
+		strokeLight: '#CBCED1',
+		surfaceTint: '#F7F8FA',
+		...mentions,
+		...callButtons
 	},
 	dark: {
 		backgroundColor: '#030b1b',
@@ -117,7 +143,7 @@ export const colors = {
 		headerTintColor: '#f9f9f9',
 		headerTitleColor: '#f9f9f9',
 		headerSecondaryText: '#9297a2',
-		toastBackground: '#0C0D0F',
+		toastBackground: '#54585e',
 		videoBackground: '#1f2329',
 		favoriteBackground: '#ffbb00',
 		hideBackground: '#54585e',
@@ -127,6 +153,7 @@ export const colors = {
 		buttonText: '#ffffff',
 		passcodeBackground: '#030C1B',
 		passcodeButtonActive: '#0B182C',
+		editAndUploadButtonAvatar: '#0B182C',
 		passcodeLockIcon: '#6C727A',
 		passcodePrimary: '#FFFFFF',
 		passcodeSecondary: '#CBCED1',
@@ -155,8 +182,25 @@ export const colors = {
 		conferenceCallEnabledIcon: '#FFFFFF',
 		conferenceCallEnabledIconBackground: '#156FF5',
 		conferenceCallPhotoBackground: '#E4E7EA',
-		textInputSecondaryBackground: '#030b1b', // backgroundColor
-		...mentions
+		textInputSecondaryBackground: '#030b1b',
+		dotBg: '#a9cbff',
+		dotActiveBg: '#1d74f5',
+		gray300: '#5f656e',
+		gray100: '#CBCED1',
+		n900: '#FFFFFF',
+		statusBackgroundWarning: '#FFECAD',
+		statusFontOnWarning: '#B88D00',
+		overlayColor: '#1F2329B2',
+		buttonBackgroundPrimaryDefault: '#3976D1',
+		buttonBackgroundSecondaryDefault: '#2F343D',
+		buttonFontPrimary: '#FFFFFF',
+		buttonFontSecondary: '#E4E7EA',
+		fontDefault: '#E4E7EA',
+		strokeExtraLight: '#2F343D',
+		strokeLight: '#333842',
+		surfaceTint: '#1F2329',
+		...mentions,
+		...callButtons
 	},
 	black: {
 		backgroundColor: '#000000',
@@ -186,7 +230,7 @@ export const colors = {
 		headerTintColor: '#f9f9f9',
 		headerTitleColor: '#f9f9f9',
 		headerSecondaryText: '#b2b8c6',
-		toastBackground: '#0C0D0F',
+		toastBackground: '#54585e',
 		videoBackground: '#1f2329',
 		favoriteBackground: '#ffbb00',
 		hideBackground: '#54585e',
@@ -196,6 +240,7 @@ export const colors = {
 		buttonText: '#ffffff',
 		passcodeBackground: '#000000',
 		passcodeButtonActive: '#0E0D0D',
+		editAndUploadButtonAvatar: '#0E0D0D',
 		passcodeLockIcon: '#6C727A',
 		passcodePrimary: '#FFFFFF',
 		passcodeSecondary: '#CBCED1',
@@ -224,8 +269,25 @@ export const colors = {
 		conferenceCallEnabledIcon: '#FFFFFF',
 		conferenceCallEnabledIconBackground: '#156FF5',
 		conferenceCallPhotoBackground: '#E4E7EA',
-		textInputSecondaryBackground: '#000000', // backgroundColor
-		...mentions
+		textInputSecondaryBackground: '#000000',
+		dotBg: '#a9cbff',
+		dotActiveBg: '#1d74f5',
+		gray300: '#5f656e',
+		gray100: '#CBCED1',
+		n900: '#FFFFFF',
+		statusBackgroundWarning: '#FFECAD',
+		statusFontOnWarning: '#B88D00',
+		overlayColor: '#1F2329B2',
+		buttonBackgroundPrimaryDefault: '#3976D1',
+		buttonBackgroundSecondaryDefault: '#2F343D',
+		buttonFontPrimary: '#FFFFFF',
+		buttonFontSecondary: '#E4E7EA',
+		fontDefault: '#E4E7EA',
+		strokeExtraLight: '#2F343D',
+		strokeLight: '#333842',
+		surfaceTint: '#1F2329',
+		...mentions,
+		...callButtons
 	}
 };
 

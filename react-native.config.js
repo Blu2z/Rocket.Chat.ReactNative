@@ -15,9 +15,14 @@ module.exports = {
 				android: null
 			}
 		},
-		'react-native-jitsi-meet': {
+		'@react-native-firebase/messaging': {
 			platforms: {
-				android: null
+				ios: null
+			}
+		},
+		'@notifee/react-native': {
+			platforms: {
+				ios: null
 			}
 		}
 	}
