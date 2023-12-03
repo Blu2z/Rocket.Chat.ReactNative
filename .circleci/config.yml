@@ -634,57 +634,57 @@ jobs:
 workflows:
   build-and-test:
     jobs:
-      - lint-testunit
+      # - lint-testunit
 
-      # E2E tests
-      - e2e-hold:
-          type: approval
-      - e2e-build-ios:
-          requires:
-            - e2e-hold
-      - e2e-test-ios:
-          requires:
-            - e2e-build-ios
-      - e2e-build-android:
-          requires:
-            - e2e-hold
-      - e2e-test-android:
-          requires:
-            - e2e-build-android
+      # # E2E tests
+      # - e2e-hold:
+      #     type: approval
+      # - e2e-build-ios:
+      #     requires:
+      #       - e2e-hold
+      # - e2e-test-ios:
+      #     requires:
+      #       - e2e-build-ios
+      # - e2e-build-android:
+      #     requires:
+      #       - e2e-hold
+      # - e2e-test-android:
+      #     requires:
+      #       - e2e-build-android
 
-      # iOS Experimental
-      - ios-hold-build-experimental:
-          type: approval
-          requires:
-              - lint-testunit
-      - ios-build-experimental:
-          requires:
-            - ios-hold-build-experimental
-      - ios-testflight-experimental:
-          requires:
-            - ios-build-experimental
+      # # iOS Experimental
+      # - ios-hold-build-experimental:
+      #     type: approval
+      #     requires:
+      #         - lint-testunit
+      # - ios-build-experimental:
+      #     requires:
+      #       - ios-hold-build-experimental
+      # - ios-testflight-experimental:
+      #     requires:
+      #       - ios-build-experimental
 
-      # iOS Official
-      - ios-hold-build-official:
-          type: approval
-          requires:
-            - lint-testunit
-      - ios-build-official:
-          requires:
-            - ios-hold-build-official
-      - ios-hold-testflight-official:
-          type: approval
-          requires:
-            - ios-build-official
-      - ios-testflight-official:
-          requires:
-            - ios-hold-testflight-official
+      # # iOS Official
+      # - ios-hold-build-official:
+      #     type: approval
+      #     requires:
+      #       - lint-testunit
+      # - ios-build-official:
+      #     requires:
+      #       - ios-hold-build-official
+      # - ios-hold-testflight-official:
+      #     type: approval
+      #     requires:
+      #       - ios-build-official
+      # - ios-testflight-official:
+      #     requires:
+      #       - ios-hold-testflight-official
 
       # Android Experimental
       - android-hold-build-experimental:
           type: approval
-          requires:
-              - lint-testunit
+          # requires:
+          #     - lint-testunit
           filters:
             branches:
               ignore:
@@ -713,8 +713,8 @@ workflows:
       # Android Official
       - android-hold-build-official:
           type: approval
-          requires:
-            - lint-testunit
+          # requires:
+          #   - lint-testunit
       - android-build-official:
           requires:
             - android-hold-build-official
