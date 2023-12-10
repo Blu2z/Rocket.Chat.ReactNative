@@ -28,7 +28,7 @@ export const Thumb = ({ element, size = 88 }: IThumb) => (
 );
 
 export const Media = ({ element }: IImage) => {
-	const showAttachment = (attachment: IAttachment) => Navigation.navigate('AttachmentView', { attachment });
+	const showAttachment = (attachment: IAttachment, attachments: IAttachment[]) => Navigation.navigate('AttachmentView', { attachment, attachments });
 	const imageUrl = element?.imageUrl ?? '';
 
 	return <ImageContainer file={{ image_url: imageUrl }} imageUrl={imageUrl} showAttachment={showAttachment} />;

@@ -213,9 +213,9 @@ class SearchMessagesView extends React.Component<ISearchMessagesViewProps, ISear
 		return null;
 	};
 
-	showAttachment = (attachment: IAttachment) => {
+	showAttachment = (attachment: IAttachment, attachments: IAttachment[] ) => {
 		const { navigation } = this.props;
-		navigation.navigate('AttachmentView', { attachment });
+		navigation.navigate('AttachmentView', { attachment, attachments });
 	};
 
 	navToRoomInfo = (navParam: IRoomInfoParam) => {
