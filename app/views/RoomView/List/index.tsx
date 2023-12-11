@@ -54,7 +54,7 @@ const ListContainer = forwardRef<IListContainerRef, IListContainerProps>(
 			return null;
 		};
 
-		const msgImages = messages.filter((item: any) => item.attachments.length && item.attachments[0].image_url);
+		const msgImages = messages.filter((item: any) => item?.attachments?.length && item.attachments[0].image_url);
 
 		const renderItem: IListProps['renderItem'] = ({ item, index }) => (
 			<View style={styles.inverted}>

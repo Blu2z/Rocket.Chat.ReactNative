@@ -186,7 +186,7 @@ const ImageContainer = ({
 		if (!cached && !loading) {
 			const isImageCached = await handleGetMediaCache();
 			if (isImageCached && showAttachment) {
-				showAttachment(imageCached, msgImages);
+				showAttachment(file, msgImages); // remove cached image from carousel
 				return;
 			}
 			if (isDownloadActive(imgUrlToCache)) {
@@ -199,7 +199,7 @@ const ImageContainer = ({
 		if (!showAttachment) {
 			return;
 		}
-		showAttachment(imageCached, msgImages);
+		showAttachment(file, msgImages); // remove cached image from carousel
 	};
 
 	if (msg) {

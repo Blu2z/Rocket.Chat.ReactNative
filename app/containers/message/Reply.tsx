@@ -122,21 +122,36 @@ const Description = React.memo(
 		getCustomEmoji: TGetCustomEmoji;
 		theme: TSupportedThemes;
 	}) => {
+		const [showMore, setShowMore] = useState(false);
 		const { user } = useContext(MessageContext);
 		const text = attachment.text || attachment.title;
-
+		
+		const onPress = () => {
+			setShowMore(!showMore)
+		};
+		
 		if (!text) {
 			return null;
 		}
+		
+		const isDetails = text.length < 55;
 
 		return (
-			<Markdown
-				msg={text}
-				style={[{ color: themes[theme].auxiliaryTintColor, fontSize: 14 }]}
-				username={user.username}
-				getCustomEmoji={getCustomEmoji}
-				theme={theme}
-			/>
+			<View>
+				<Markdown
+					msg={(isDetails || showMore) ? text : `${text.slice(0, 55)}...`}
+					style={[{ color: themes[theme].auxiliaryTintColor, fontSize: 14 }]}
+					username={user.username}
+					getCustomEmoji={getCustomEmoji}
+					theme={theme}
+				/>
+				{!isDetails && (
+					<Text onPress={onPress}>
+						показать {!showMore ? 'больше' : 'меньше'}
+					</Text>
+				)}
+				
+			</View>
 		);
 	},
 	(prevProps, nextProps) => {
