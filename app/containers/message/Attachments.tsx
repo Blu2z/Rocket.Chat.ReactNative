@@ -54,7 +54,7 @@ const AttachedActions = ({ attachment, getCustomEmoji }: { attachment: IAttachme
 };
 
 const Attachments: React.FC<IMessageAttachments> = React.memo(
-	({ attachments, timeFormat, showAttachment, style, getCustomEmoji, isReply, author, msgImages }: IMessageAttachments) => {
+	({ attachments, timeFormat, showAttachment, style, getCustomEmoji, isReply, author, msgImages, id }: IMessageAttachments) => {
 		const { translateLanguage } = useContext(MessageContext);
 
 		if (!attachments || attachments.length === 0) {
@@ -66,6 +66,7 @@ const Attachments: React.FC<IMessageAttachments> = React.memo(
 			if (file && file.image_url) {
 				return (
 					<Image
+						id={id}
 						key={file.image_url}
 						file={file}
 						showAttachment={showAttachment}

@@ -28,7 +28,8 @@ import { LOCAL_DOCUMENT_DIRECTORY, getFilename } from '../lib/methods/handleMedi
 const RenderContent = ({
 	setLoading,
 	attachment,
-	attachments
+	attachments,
+	currentId
 }: {
 	setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 	attachment: IAttachment;
@@ -63,6 +64,7 @@ const RenderContent = ({
 		return (
 			<ImageViewer
 				msgImages={attachments}
+				currentId={currentId}
 				uri={uri}
 				onLoadEnd={() => setLoading(false)}
 				width={width}
@@ -96,7 +98,7 @@ const RenderContent = ({
 const AttachmentView = (): React.ReactElement => {
 	const navigation = useAppNavigation<TNavigation, 'AttachmentView'>();
 	const {
-		params: { attachment, attachments }
+		params: { attachment, attachments, currentId }
 	} = useAppRoute<TNavigation, 'AttachmentView'>();
 	const [loading, setLoading] = React.useState(true);
 	const { colors } = useTheme();
@@ -195,7 +197,7 @@ const AttachmentView = (): React.ReactElement => {
 	return (
 		<View style={{ backgroundColor: colors.backgroundColor, flex: 1 }}>
 			<StatusBar barStyle='light-content' backgroundColor={colors.previewBackground} />
-			<RenderContent attachment={attachment} attachments={attachments} setLoading={setLoading} />
+			<RenderContent attachment={attachment} attachments={attachments} currentId={currentId} setLoading={setLoading} />
 			{loading ? <RCActivityIndicator absolute size='large' /> : null}
 		</View>
 	);

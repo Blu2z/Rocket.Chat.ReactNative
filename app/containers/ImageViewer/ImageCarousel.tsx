@@ -5,7 +5,7 @@ import { StackActions, useNavigation } from '@react-navigation/native';
 import { useAppSelector } from '../../lib/hooks';
 
 
-export const ImageCarousel = ({ msgImages, source, onLoadEnd }) => {
+export const ImageCarousel = ({ msgImages, source, onLoadEnd, currentId }) => {
     const [visible, setVisible] = React.useState(false);
     const [activeIndex, setActiveIndex] = React.useState(-1);
     const [images, setImages] = React.useState([]);
@@ -13,8 +13,9 @@ export const ImageCarousel = ({ msgImages, source, onLoadEnd }) => {
     const baseUrl = useAppSelector(state => state.share.server.server || state.server.server);
 
     React.useLayoutEffect(() => {
-        const prepareImages = [...msgImages].reverse().map(({ attachments, u, ts }) => {
+        const prepareImages = [...msgImages].reverse().map(({ attachments, u, ts, id }) => {
             return {
+                id,
                 uri: `${baseUrl}${encodeURI(attachments[0].image_url)}`,
                 user: u.name,
                 time: ts,
@@ -23,7 +24,7 @@ export const ImageCarousel = ({ msgImages, source, onLoadEnd }) => {
 
         setImages(prepareImages);
         const searchUri = source.uri.slice(-16) // get last 16 characters of uri (image name)
-        setActiveIndex(prepareImages.findIndex(({ uri }) => uri.indexOf(searchUri) > -1));
+        setActiveIndex(prepareImages.findIndex(({ id }) => id === currentId));
         setVisible(true);
         onLoadEnd();
 

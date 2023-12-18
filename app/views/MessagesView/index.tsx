@@ -310,9 +310,9 @@ class MessagesView extends React.Component<IMessagesViewProps, IMessagesViewStat
 		return null;
 	};
 
-	showAttachment = (attachment: IAttachment, attachments: IAttachment[]) => {
+	showAttachment = (attachment: IAttachment, attachments: IAttachment[], currentId: string) => {
 		const { navigation } = this.props;
-		navigation.navigate('AttachmentView', { attachment, attachments });
+		navigation.navigate('AttachmentView', { attachment, attachments, currentId });
 	};
 
 	onLongPress = (message: IMessage) => {

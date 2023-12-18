@@ -69,6 +69,7 @@ export const MessageImage = React.memo(({ imgUri, cached, loading }: { imgUri: s
 });
 
 const ImageContainer = ({
+	id,
 	file,
 	imageUrl,
 	showAttachment,
@@ -186,7 +187,7 @@ const ImageContainer = ({
 		if (!cached && !loading) {
 			const isImageCached = await handleGetMediaCache();
 			if (isImageCached && showAttachment) {
-				showAttachment(file, msgImages); // remove cached image from carousel
+				showAttachment(file, msgImages, id); // remove cached image from carousel
 				return;
 			}
 			if (isDownloadActive(imgUrlToCache)) {
@@ -199,7 +200,7 @@ const ImageContainer = ({
 		if (!showAttachment) {
 			return;
 		}
-		showAttachment(file, msgImages); // remove cached image from carousel
+		showAttachment(file, msgImages, id); // remove cached image from carousel
 	};
 
 	if (msg) {

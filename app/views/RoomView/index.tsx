@@ -877,10 +877,10 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 		this.handleCloseEmoji(this.messageActions?.showMessageActions, message);
 	};
 
-	showAttachment = (attachment: IAttachment, attachments: IAttachment[]) => {
+	showAttachment = (attachment: IAttachment, attachments: IAttachment[], currentId: string) => {
 		const { navigation } = this.props;
 		// @ts-ignore
-		navigation.navigate('AttachmentView', { attachment, attachments }); // list preview
+		navigation.navigate('AttachmentView', { attachment, attachments, currentId }); // list preview
 	};
 
 	onReactionPress = async (emoji: IEmoji, messageId: string) => {
