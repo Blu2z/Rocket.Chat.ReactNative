@@ -73,6 +73,8 @@ export const List = ({ listRef, jumpToBottom, isThread, ...props }: IListProps) 
 					onScroll={scrollHandler}
 					{...props}
 					{...scrollPersistTaps}
+					// invertStickyHeaders
+					// stickyHeaderIndices={[20, 24]}
 				/>
 			</ImageBackground>
 			<NavBottomFAB visible={visible} onPress={jumpToBottom} isThread={isThread} />

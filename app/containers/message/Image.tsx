@@ -40,6 +40,8 @@ interface IMessageImage {
 	msg?: string;
 }
 
+const cachedRatio = {};
+
 const Button = React.memo(({ children, onPress, disabled }: IMessageButton) => {
 	const { colors } = useTheme();
 	return (
@@ -59,26 +61,37 @@ export const MessageImage = React.memo(({ imgUri, cached, loading }: { imgUri: s
 	const [imgWidth, setImgWidth] = useState<string | number>(200);
 	const [imgHeight, setImgHeight] = useState<string | number>(200);
 	const [aspectRatio, setAspectRatio] = useState<number | null>(null);
+	const deviceWidthContainer = Math.trunc(Dimensions.get('window').width - 95);
 
 	useEffect(() => {
-		
 		const handleResize = () => {
 			let ratio = 1;
+
+			if (cachedRatio[encodeURI(imgUri)]) {
+				const { ratio, w, h } = cachedRatio[encodeURI(imgUri)];
+				setImgWidth(w);
+				setImgHeight(h);
+				setAspectRatio(ratio);
+				return;
+			}
 
 			Image.getSize(encodeURI(imgUri), (width, height) => {
 				// console.log(`The image dimensions are W: ${width} H: ${height} Ratio: ${(width / height).toFixed(2) }`);
 				ratio = width / height;
-				const deviceWidth = Math.trunc(Dimensions.get('window').width - 65);
-				if (ratio === 1) {
-					setImgWidth(deviceWidth);
-					setImgHeight(deviceWidth);
-				} else if (ratio > 1) {
-					setImgWidth(deviceWidth);
-					setImgHeight(Math.trunc(deviceWidth / ratio));
+
+				let w = deviceWidthContainer;
+				let h = deviceWidthContainer;
+
+				 if (ratio > 1) {
+					h = Math.trunc(deviceWidthContainer / ratio);
 				} else {
-					setImgWidth(Math.trunc(deviceWidth * ratio));
-					setImgHeight(deviceWidth);
+					w = Math.trunc(deviceWidthContainer * ratio);
 				}
+
+				cachedRatio[encodeURI(imgUri)] = {ratio, w, h};
+
+				setImgWidth(w);
+				setImgHeight(h);
 				setAspectRatio(ratio);
 			}, (error) => {
 				setAspectRatio(-1);
@@ -117,7 +130,11 @@ export const MessageImage = React.memo(({ imgUri, cached, loading }: { imgUri: s
 				}}
 			>
 				{!aspectRatio ? (
-					<View style={{ width: 400, height: 400 }}>
+					<View 
+						style={{ 
+							width: cachedRatio[encodeURI(imgUri)] ? cachedRatio[encodeURI(imgUri)].w : deviceWidthContainer, 
+							height: cachedRatio[encodeURI(imgUri)] ? cachedRatio[encodeURI(imgUri)].h : deviceWidthContainer, 
+						}}>
 						<Text style={{ color: colors.bodyText }}>
 							{I18n.t('Loading')}
 						</Text>

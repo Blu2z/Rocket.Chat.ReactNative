@@ -11,9 +11,11 @@ import { TThreadModel } from '../definitions/IThread';
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
+		flex: 0,
+		display: 'flex',
 		flexDirection: 'row',
-		alignItems: 'center'
+		alignItems: 'center',
+		minWidth: 100,
 	},
 	detailsContainer: {
 		flex: 1,
@@ -106,7 +108,7 @@ const ThreadDetails = ({ item, user, badgeColor, toggleFollowThread, style }: IT
 						{replies}
 					</Text>
 				</View>
-				<Text style={{ fontSize: 16, color: themes[theme].bodyText }} numberOfLines={1}>
+				<Text style={{ fontSize: 16, color: themes[theme].bodyText, flex: 0 }} numberOfLines={1}>
 					{count} {commentPhrase}
 				</Text>
 				<CustomIcon name='chevron-right' size={24} color={themes[theme].bodyText} />

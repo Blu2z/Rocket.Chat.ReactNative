@@ -23,6 +23,7 @@ const Thread = React.memo(
 				style={[
 					styles.buttonContainer,
 					{
+						minWidth: 300,
 						borderTopWidth: 1,
 						borderTopColor: themes[theme].separatorColor,
 						marginLeft: -16,
