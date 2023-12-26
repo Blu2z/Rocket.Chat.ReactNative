@@ -62,7 +62,12 @@ const Reaction = React.memo(({ reaction, getCustomEmoji, theme }: IMessageReacti
 			background={Touchable.Ripple(themes[theme].bannerBackground)}
 			hitSlop={BUTTON_HIT_SLOP}
 		>
-			<View style={[styles.reactionContainer, { borderColor: reacted ? themes[theme].tintColor : themes[theme].borderColor }]}>
+			<View style={[
+					styles.reactionContainer,
+					{ 
+						borderColor: reacted ? themes[theme].tintColor : themes[theme].borderColor,
+					}
+				]}>
 				<Emoji
 					content={reaction.emoji}
 					standardEmojiStyle={styles.reactionEmoji}

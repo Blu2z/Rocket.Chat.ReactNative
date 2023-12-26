@@ -49,6 +49,7 @@ import ScreenLockConfigView from '../views/ScreenLockConfigView';
 import MediaAutoDownloadView from '../views/MediaAutoDownloadView';
 // Admin Stack
 import AdminPanelView from '../views/AdminPanelView';
+import ERPPanelView from '../views/ERPPanelView';
 // NewMessage Stack
 import NewMessageView from '../views/NewMessageView';
 import CreateChannelView from '../views/CreateChannelView';
@@ -193,6 +194,7 @@ const AdminPanelStackNavigator = () => {
 			screenOptions={{ ...defaultHeader, ...themedHeader(theme), ...StackAnimation } as StackNavigationOptions}
 		>
 			<AdminPanelStack.Screen name='AdminPanelView' component={AdminPanelView} />
+			<AdminPanelStack.Screen name='ERPPanelView' component={ERPPanelView} />
 		</AdminPanelStack.Navigator>
 	);
 };

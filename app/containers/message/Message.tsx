@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
-import { View } from 'react-native';
+import { View, Text, Dimensions } from 'react-native';
 import Touchable from 'react-native-platform-touchable';
-
 import MessageContext from './Context';
 import User from './User';
 import styles from './styles';
@@ -27,8 +26,8 @@ const MessageInner = React.memo((props: IMessageInner) => {
 			<>
 				<User {...props} />
 				<>
-					<Content {...props} />
 					<Attachments {...props} />
+					<Content {...props} />
 				</>
 				<Urls {...props} />
 			</>
@@ -69,8 +68,8 @@ const MessageInner = React.memo((props: IMessageInner) => {
 		<>
 			<User {...props} />
 			<>
-				<Content {...props} />
 				<Attachments {...props} />
+				<Content {...props} />
 			</>
 			<Urls {...props} />
 			<Thread {...props} />
@@ -82,6 +81,7 @@ const MessageInner = React.memo((props: IMessageInner) => {
 MessageInner.displayName = 'MessageInner';
 
 const Message = React.memo((props: IMessage) => {
+	const { colors, theme } = useTheme();
 	if (props.isThreadReply || props.isThreadSequential || props.isInfo || props.isIgnored) {
 		const thread = props.isThreadReply ? <RepliedThread {...props} /> : null;
 		return (
@@ -89,7 +89,12 @@ const Message = React.memo((props: IMessage) => {
 				{thread}
 				<View style={styles.flex}>
 					<MessageAvatar small {...props} />
-					<View style={[styles.messageContent, props.isHeader && styles.messageContentWithHeader]}>
+					<View 
+						style={[
+							styles.messageContent, 
+							props.isHeader && styles.messageContentWithHeader,
+							{ backgroundColor: themes[theme].chatComponentBackground }
+						]}>
 						<Content {...props} />
 						{props.isInfo && props.type === 'message_pinned' ? (
 							<View pointerEvents='none'>
@@ -104,9 +109,24 @@ const Message = React.memo((props: IMessage) => {
 
 	return (
 		<View style={[styles.container, props.style]}>
-			<View style={styles.flex}>
+			<View style={{
+				// flex: 1,
+				position: 'relative',
+				flexDirection: 'row',
+				alignItems: 'flex-start',
+				justifyContent: 'flex-start',
+			}}>
 				<MessageAvatar {...props} />
-				<View style={[styles.messageContent, props.isHeader && styles.messageContentWithHeader]}>
+				<View 
+					style={[
+						styles.messageContent,
+						props.isHeader && styles.messageContentWithHeader,
+						{
+							backgroundColor: themes[theme].backgroundColor,
+							maxWidth: Dimensions.get('window').width - 64,
+							overflow: 'hidden',
+						}
+					]}>
 					<MessageInner {...props} />
 				</View>
 				{!props.isHeader ? (

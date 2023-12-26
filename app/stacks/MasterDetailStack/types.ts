@@ -169,6 +169,7 @@ export type ModalStackParamList = {
 	ProfileView: undefined;
 	DisplayPrefsView: undefined;
 	AdminPanelView: undefined;
+	ERPPanelView: undefined;
 	NewMessageView: undefined;
 	SelectedUsersViewCreateChannel: {
 		maxUsers: number;

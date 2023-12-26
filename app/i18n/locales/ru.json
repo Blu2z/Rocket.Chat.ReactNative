@@ -668,5 +668,6 @@
   "Call": "Звонок",
   "Reply_in_direct_message": "Ответить в личном сообщении",
   "and_N_more": "и еще {{count}}",
-  "Audio": "Аудио"
+  "Audio": "Аудио",
+  "ERP_Panel": "Панель ERP"
 }

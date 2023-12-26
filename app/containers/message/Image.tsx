@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { StyleProp, TextStyle, View } from 'react-native';
+import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
+import { StyleProp, TextStyle, View, Image, Text, Dimensions } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { IAttachment, IUserMessage } from '../../definitions';
@@ -54,13 +54,39 @@ const Button = React.memo(({ children, onPress, disabled }: IMessageButton) => {
 
 export const MessageImage = React.memo(({ imgUri, cached, loading }: { imgUri: string; cached: boolean; loading: boolean }) => {
 	const { colors } = useTheme();
+	const  w = useRef(200);
+	const h = useRef(200);
+	const  aspectRatio = useRef(1);
+	const test = Image.getSize(encodeURI(imgUri), (width, height) => {
+		// console.log(`The image dimensions are W: ${width} H: ${height} Ratio: ${(width / height).toFixed(2) }`);
+		w.current = width;
+		h. current = height;
+		aspectRatio.current = width / height;
+		return { width, height }
+		}, (error) => {
+			// console.error(`Couldn't get the image size because: ${error}`);
+		});
+
 	return (
 		<>
-			<FastImage
-				style={[styles.image, { borderColor: colors.borderColor }]}
-				source={{ uri: encodeURI(imgUri) }}
-				resizeMode={FastImage.resizeMode.contain}
-			/>
+			<View
+				style={{
+					display: 'flex',
+					justifyContent: 'flex-start',
+				}}
+			>
+				<Image
+					style={[{
+						resizeMode: 'cover',
+						aspectRatio: w.current / h.current,
+						width: aspectRatio.current < 1 ? 200 : Dimensions.get('window').width - 65,
+						height: aspectRatio.current > 1 ? 'auto' : 400,
+						
+					}]}
+					source={{ uri: encodeURI(imgUri) }}
+					// resizeMode={FastImage.resizeMode.center}
+				/>
+			</View>	
 			{!cached ? (
 				<BlurComponent loading={loading} style={[styles.image, styles.imageBlurContainer]} iconName='arrow-down-circle' />
 			) : null}

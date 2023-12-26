@@ -9,16 +9,19 @@ export default StyleSheet.create({
 	},
 	container: {
 		paddingVertical: 4,
-		width: '100%',
-		paddingHorizontal: 14,
+		width: 'auto',
+		paddingHorizontal: 7,
 		flexDirection: 'column'
 	},
 	contentContainer: {
 		flex: 1
 	},
 	messageContent: {
-		flex: 1,
-		marginLeft: 46
+		marginLeft: 46,
+		paddingHorizontal: 16,
+		paddingTop: 4,
+		paddingBottom: 4,
+		borderRadius: 8,
 	},
 	messageContentWithHeader: {
 		marginLeft: 10
@@ -39,8 +42,7 @@ export default StyleSheet.create({
 		marginTop: 8
 	},
 	reactionButton: {
-		marginRight: 8,
-		marginBottom: 8,
+		marginBottom: 4,
 		borderRadius: 4
 	},
 	reactionContainer: {
@@ -48,9 +50,8 @@ export default StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderRadius: 4,
-		borderWidth: 1,
 		height: 28,
-		minWidth: 46.3
+		minWidth: 30
 	},
 	reactionCount: {
 		fontSize: 14,
@@ -95,15 +96,20 @@ export default StyleSheet.create({
 		...sharedStyles.textSemibold
 	},
 	imageContainer: {
+		minWidth: 50,
+		minHeight: 50,
+		borderRadius: 4,
+		display: 'flex',
 		flexDirection: 'column',
-		borderRadius: 4
+		justifyContent: 'flex-start',
+		alignItems: 'flex-start',
+		height: 'auto',
+		width: 'auto',
 	},
 	image: {
-		width: '100%',
+		height: 'auto',
+		resizeMode: 'contain',
 		minHeight: isTablet ? 300 : 200,
-		borderRadius: 4,
-		borderWidth: 1,
-		overflow: 'hidden'
 	},
 	imageBlurContainer: {
 		height: '100%'
@@ -139,7 +145,9 @@ export default StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		marginTop: 6,
-		marginBottom: 12
+		marginBottom: 6,
+		borderRadius: 8,
+		paddingVertical: 8,
 	},
 	repliedThreadIcon: {
 		marginRight: 10,

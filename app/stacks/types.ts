@@ -203,6 +203,10 @@ export type AdminPanelStackParamList = {
 	AdminPanelView: undefined;
 };
 
+export type ERPPanelStackParamList = {
+	ERPPanelView: undefined;
+};
+
 export type DisplayPrefStackParamList = {
 	DisplayPrefsView: undefined;
 };

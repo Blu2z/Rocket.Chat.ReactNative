@@ -16,6 +16,7 @@ import RCActivityIndicator from '../ActivityIndicator';
 import Attachments from './Attachments';
 import { TSupportedThemes, useTheme } from '../../theme';
 import { formatAttachmentUrl } from '../../lib/methods/helpers/formatAttachmentUrl';
+import { CustomIcon } from '../CustomIcon';
 import messageStyles from './styles';
 
 const styles = StyleSheet.create({
@@ -25,14 +26,16 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		marginVertical: 4,
 		alignSelf: 'flex-start',
-		borderLeftWidth: 2
+		borderLeftWidth: 2,
 	},
 	attachmentContainer: {
-		flex: 1,
-		borderRadius: 4,
+		borderRadius: 8,
+		borderBottomLeftRadius: 0,
+		borderTopLeftRadius: 0,
 		flexDirection: 'column',
 		paddingVertical: 4,
-		paddingLeft: 8
+		paddingLeft: 8,
+		paddingRight: 8,
 	},
 	backdrop: {
 		...StyleSheet.absoluteFillObject
@@ -101,7 +104,7 @@ const Title = React.memo(
 		return (
 			<View style={styles.authorContainer}>
 				{attachment.author_name ? (
-					<Text numberOfLines={1} style={[styles.author, { color: themes[theme].auxiliaryTintColor }]}>
+					<Text numberOfLines={1} style={[styles.author, { color: themes[theme].auxiliaryTintColor, fontSize: 13 }]}>
 						{attachment.author_name}
 					</Text>
 				) : null}
@@ -137,18 +140,33 @@ const Description = React.memo(
 		const isDetails = text.length < 55;
 
 		return (
-			<View>
+			<View style={{
+				position: 'relative',
+			}}>
 				<Markdown
-					msg={(isDetails || showMore) ? text : `${text.slice(0, 55)}...`}
-					style={[{ color: themes[theme].auxiliaryTintColor, fontSize: 14 }]}
+					msg={text}
+					style={[{ 
+						color: themes[theme].auxiliaryTintColor, 
+						fontSize: 14,
+						height: !(isDetails || showMore) ? 20 : 'auto',
+						overflow: 'hidden',
+					}]}
 					username={user.username}
 					getCustomEmoji={getCustomEmoji}
 					theme={theme}
 				/>
 				{!isDetails && (
-					<Text onPress={onPress}>
-						показать {!showMore ? 'больше' : 'меньше'}
-					</Text>
+					<CustomIcon 
+						onPress={onPress}
+						name={!(isDetails || showMore) ? 'chevron-down' : 'chevron-up'}
+						size={20} 
+						style={{
+							position: 'absolute',
+							right: 0,
+							bottom: 0,
+							backgroundColor: themes[theme].bannerBackground,
+						}} 
+						color={themes[theme].bodyText} />
 				)}
 				
 			</View>
@@ -202,8 +220,8 @@ const Fields = React.memo(
 			<View style={styles.fieldsContainer}>
 				{attachment.fields.map(field => (
 					<View key={field.title} style={[styles.fieldContainer, { width: field.short ? '50%' : '100%' }]}>
-						<Text style={[styles.fieldTitle, { color: themes[theme].bodyText }]}>{field.title}</Text>
 						<Markdown msg={field?.value || ''} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
+						<Text style={[styles.fieldTitle, { color: themes[theme].bodyText }]}>{field.title}</Text>
 					</View>
 				))}
 			</View>
@@ -254,13 +272,20 @@ const Reply = React.memo(
 						index > 0 && styles.marginTop,
 						msg && styles.marginBottom,
 						{
-							borderColor
+							borderColor: themes[theme].tintColor
 						}
 					]}
 					background={Touchable.Ripple(themes[theme].bannerBackground)}
 					disabled={loading || attachment.message_link}
 				>
-					<View style={styles.attachmentContainer}>
+					<View 
+						style={[
+							styles.attachmentContainer,
+							{
+								backgroundColor: themes[theme].bannerBackground,
+							}
+						]}
+					>
 						<Title attachment={attachment} timeFormat={timeFormat} theme={theme} />
 						<Description attachment={attachment} getCustomEmoji={getCustomEmoji} theme={theme} />
 						<UrlImage image={attachment.thumb_url} />
