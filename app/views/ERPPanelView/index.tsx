@@ -15,7 +15,7 @@ import { IApplicationState } from '../../definitions';
 const ERPPanelView = () => {
 	const navigation = useNavigation<StackNavigationProp<ERPPanelStackParamList, 'ERPPanelView'>>();
 	const baseUrl = useSelector((state: IApplicationState) => state.server.server);
-	const token = useSelector((state: IApplicationState) => getUserSelector(state).token);
+	const erp = useSelector((state: IApplicationState) => getUserSelector(state).erp);
 	const isMasterDetail = useSelector((state: IApplicationState) => state.app.isMasterDetail);
 
 	useEffect(() => {
@@ -29,7 +29,9 @@ const ERPPanelView = () => {
 		return null;
 	}
 
-	const str = `Meteor.loginWithToken('${token}', function() { })`;
+	const str = erp?.apiKey 
+		?  `localStorage.setItem(USER_KEY, ${erp.apiKey});localStorage.setItem(USER_NAME, ${erp.username});localStorage.setItem(USER_ID, ${erp.userId});` 
+		: '';
 
 	return (
 		<SafeAreaView>
@@ -37,8 +39,7 @@ const ERPPanelView = () => {
 			<WebView
 				// https://github.com/react-native-community/react-native-webview/issues/1311
 				onMessage={() => {}}
-				// source={{ uri: `${baseUrl}/admin/info?layout=embedded` }}
-				source={{ uri: `https://clt.gepur.org` }}
+				source={{ uri: erp?.apiKey ? `https://clt.gepur.org` : `https://clt.gepur.org/login` }}
 				injectedJavaScript={str}
 			/>
 		</SafeAreaView>

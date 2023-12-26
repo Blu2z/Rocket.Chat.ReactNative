@@ -235,7 +235,7 @@ class Sidebar extends Component<ISidebarProps, ISidebarState> {
 				<SidebarItem
 					text={I18n.t('ERP_Panel')}
 					left={<CustomIcon name='settings' size={20} color={themes[theme!].titleText} />}
-					onPress={() => this.sidebarNavigate('ERPPanelView')}
+					onPress={() => this.sidebarNavigate('ERPPanelStackNavigator')}
 					testID='erp-admin'
 					theme={theme!}
 					current={this.currentItemKey === routeName}

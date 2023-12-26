@@ -358,8 +358,9 @@ function loginTOTP(params: ICredentials, loginEmailPassword?: boolean, isFromWeb
 	});
 }
 
-function loginWithPassword({ user, password }: { user: string; password: string }): Promise<ILoggedUser> {
+async function loginWithPassword({ user, password }: { user: string; password: string }): Promise<ILoggedUser> {
 	let params: ICredentials = { user, password };
+	let data = {};
 	const state = store.getState();
 
 	if (state.settings.LDAP_Enable) {
@@ -377,7 +378,26 @@ function loginWithPassword({ user, password }: { user: string; password: string 
 		};
 	}
 
-	return loginTOTP(params, true);
+	const res = await loginTOTP(params, true);
+	if (res.roles?.includes('admin')) {
+		try {
+			data = await fetch('https://api-erp.gepur.org/login', {
+				method: "POST",
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					_password: password,
+					_username: user
+				})
+				
+			}).then(response => response.json());
+		} catch (error) {
+			console.log(error);			
+		}
+	}
+
+	return {...res, erp: { ...data }};
 }
 
 async function loginOAuthOrSso(params: ICredentials, isFromWebView = true) {

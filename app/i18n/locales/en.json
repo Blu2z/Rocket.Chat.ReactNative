@@ -763,5 +763,10 @@
   "Pinned_a_message": "Pinned a message:",
   "Jump_to_message": "Jump to message",
   "Missed_call": "Missed call",
-  "ERP_Panel": "ERP Panel"
+  "ERP_Panel": "ERP Panel",
+  "comment": "comment",
+  "comments": "comments",
+  "comment_min5": "comments",
+  "Image_error_preview": "Image preview error",
+  "Loading": "Loading..."
 }

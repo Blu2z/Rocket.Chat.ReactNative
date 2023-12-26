@@ -669,5 +669,10 @@
   "Reply_in_direct_message": "Ответить в личном сообщении",
   "and_N_more": "и еще {{count}}",
   "Audio": "Аудио",
-  "ERP_Panel": "Панель ERP"
+  "ERP_Panel": "Панель ERP",
+  "comment": "комментарий",
+  "comments": "комментарии",
+  "comment_min5": "комментария",
+  "Image_error_preview": "Ошибка загрузки изображения",
+  "Loading": "Загрузка..."
 }

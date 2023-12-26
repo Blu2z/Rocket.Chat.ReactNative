@@ -79,6 +79,7 @@ import {
 	DrawerParamList,
 	E2EEnterYourPasswordStackParamList,
 	E2ESaveYourPasswordStackParamList,
+	ERPPanelStackParamList,
 	InsideStackParamList,
 	NewMessageStackParamList,
 	ProfileStackParamList,
@@ -194,8 +195,21 @@ const AdminPanelStackNavigator = () => {
 			screenOptions={{ ...defaultHeader, ...themedHeader(theme), ...StackAnimation } as StackNavigationOptions}
 		>
 			<AdminPanelStack.Screen name='AdminPanelView' component={AdminPanelView} />
-			<AdminPanelStack.Screen name='ERPPanelView' component={ERPPanelView} />
+			{/* <AdminPanelStack.Screen name='ERPPanelView' component={ERPPanelView} /> */}
 		</AdminPanelStack.Navigator>
+	);
+};
+
+const ERPPanelStack = createStackNavigator<ERPPanelStackParamList>();
+const ERPPanelStackNavigator = () => {
+	const { theme } = React.useContext(ThemeContext);
+
+	return (
+		<ERPPanelStack.Navigator
+			screenOptions={{ ...defaultHeader, ...themedHeader(theme), ...StackAnimation } as StackNavigationOptions}
+		>
+			<ERPPanelStack.Screen name='ERPPanelView' component={ERPPanelView} />
+		</ERPPanelStack.Navigator>
 	);
 };
 
@@ -235,6 +249,7 @@ const DrawerNavigator = () => {
 			<Drawer.Screen name='ProfileStackNavigator' component={ProfileStackNavigator} />
 			<Drawer.Screen name='SettingsStackNavigator' component={SettingsStackNavigator} />
 			<Drawer.Screen name='AdminPanelStackNavigator' component={AdminPanelStackNavigator} />
+			<Drawer.Screen name='ERPPanelStackNavigator' component={ERPPanelStackNavigator} />
 			<Drawer.Screen name='DisplayPrefStackNavigator' component={DisplayPrefStackNavigator} />
 		</Drawer.Navigator>
 	);

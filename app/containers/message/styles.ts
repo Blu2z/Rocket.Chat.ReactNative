@@ -21,7 +21,7 @@ export default StyleSheet.create({
 		paddingHorizontal: 16,
 		paddingTop: 4,
 		paddingBottom: 4,
-		borderRadius: 8,
+		borderRadius: 10,
 	},
 	messageContentWithHeader: {
 		marginLeft: 10
@@ -191,7 +191,9 @@ export default StyleSheet.create({
 	blurIndicator: {
 		position: 'absolute',
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
+		width: '100%',
+		height: '100%',
 	},
 	mustWrapBlur: {
 		// https://github.com/Kureev/react-native-blur/issues/520#issuecomment-1378339192 Fix BlurView

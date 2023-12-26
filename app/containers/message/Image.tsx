@@ -20,6 +20,8 @@ import MessageContext from './Context';
 import Touchable from './Touchable';
 import styles from './styles';
 import { isImageBase64 } from '../../lib/methods';
+import { CustomIcon } from '../CustomIcon';
+import I18n from 'i18n-js';
 
 interface IMessageButton {
 	children: React.ReactElement;
@@ -54,18 +56,56 @@ const Button = React.memo(({ children, onPress, disabled }: IMessageButton) => {
 
 export const MessageImage = React.memo(({ imgUri, cached, loading }: { imgUri: string; cached: boolean; loading: boolean }) => {
 	const { colors } = useTheme();
-	const  w = useRef(200);
-	const h = useRef(200);
-	const  aspectRatio = useRef(1);
-	const test = Image.getSize(encodeURI(imgUri), (width, height) => {
-		// console.log(`The image dimensions are W: ${width} H: ${height} Ratio: ${(width / height).toFixed(2) }`);
-		w.current = width;
-		h. current = height;
-		aspectRatio.current = width / height;
-		return { width, height }
-		}, (error) => {
-			// console.error(`Couldn't get the image size because: ${error}`);
-		});
+	const [imgWidth, setImgWidth] = useState<string | number>(200);
+	const [imgHeight, setImgHeight] = useState<string | number>(200);
+	const [aspectRatio, setAspectRatio] = useState<number | null>(null);
+
+	useEffect(() => {
+		
+		const handleResize = () => {
+			let ratio = 1;
+
+			Image.getSize(encodeURI(imgUri), (width, height) => {
+				// console.log(`The image dimensions are W: ${width} H: ${height} Ratio: ${(width / height).toFixed(2) }`);
+				ratio = width / height;
+				const deviceWidth = Math.trunc(Dimensions.get('window').width - 65);
+				if (ratio === 1) {
+					setImgWidth(deviceWidth);
+					setImgHeight(deviceWidth);
+				} else if (ratio > 1) {
+					setImgWidth(deviceWidth);
+					setImgHeight(Math.trunc(deviceWidth / ratio));
+				} else {
+					setImgWidth(Math.trunc(deviceWidth * ratio));
+					setImgHeight(deviceWidth);
+				}
+				setAspectRatio(ratio);
+			}, (error) => {
+				setAspectRatio(-1);
+				console.error(`Couldn't get the image size because: ${error}`);
+			});
+		};
+		handleResize();
+	}, [imgUri]);
+
+	if (aspectRatio === -1) {
+		return (
+			<View 
+				style={{ 
+					width: '100%', 
+					height: 300, 
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'center',
+					backgroundColor: '#ff000012',
+				}}>
+				<CustomIcon name='directory-error' size={100} color={colors.bodyText} />
+				<Text style={{ color: colors.bodyText }}>
+					{I18n.t('Image_error_preview')}
+				</Text>
+			</View>
+		);
+	}
 
 	return (
 		<>
@@ -73,22 +113,36 @@ export const MessageImage = React.memo(({ imgUri, cached, loading }: { imgUri: s
 				style={{
 					display: 'flex',
 					justifyContent: 'flex-start',
+					marginTop: 8
 				}}
 			>
-				<Image
-					style={[{
-						resizeMode: 'cover',
-						aspectRatio: w.current / h.current,
-						width: aspectRatio.current < 1 ? 200 : Dimensions.get('window').width - 65,
-						height: aspectRatio.current > 1 ? 'auto' : 400,
-						
-					}]}
-					source={{ uri: encodeURI(imgUri) }}
-					// resizeMode={FastImage.resizeMode.center}
-				/>
+				{!aspectRatio ? (
+					<View style={{ width: 400, height: 400 }}>
+						<Text style={{ color: colors.bodyText }}>
+							{I18n.t('Loading')}
+						</Text>
+					</View>
+				) : (
+					<FastImage
+						style={[{
+							textAlign: 'left',
+							aspectRatio,
+							width: imgWidth,
+							height: imgHeight,
+						}]}
+						source={{ uri: encodeURI(imgUri) }}
+						resizeMode={FastImage.resizeMode.contain}
+					/>
+				)}
 			</View>	
 			{!cached ? (
-				<BlurComponent loading={loading} style={[styles.image, styles.imageBlurContainer]} iconName='arrow-down-circle' />
+				<BlurComponent 
+					loading={loading} 
+					style={[
+						styles.image, 
+						styles.imageBlurContainer,
+					]} 
+					iconName='arrow-down-circle' />
 			) : null}
 		</>
 	);

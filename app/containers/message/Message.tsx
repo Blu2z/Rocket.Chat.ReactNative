@@ -72,9 +72,9 @@ const MessageInner = React.memo((props: IMessageInner) => {
 				<Content {...props} />
 			</>
 			<Urls {...props} />
-			<Thread {...props} />
 			<Reactions {...props} />
 			<Broadcast {...props} />
+			<Thread {...props} />
 		</>
 	);
 });

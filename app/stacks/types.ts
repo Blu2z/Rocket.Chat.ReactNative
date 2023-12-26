@@ -201,6 +201,7 @@ export type SettingsStackParamList = {
 
 export type AdminPanelStackParamList = {
 	AdminPanelView: undefined;
+	ERPPanelView: undefined;
 };
 
 export type ERPPanelStackParamList = {

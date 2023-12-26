@@ -63,8 +63,8 @@ export const List = ({ listRef, jumpToBottom, isThread, ...props }: IListProps) 
 					contentContainerStyle={styles.contentContainer}
 					style={styles.list}
 					inverted={isIOS}
-					// removeClippedSubviews={isIOS}
-					removeClippedSubviews
+					removeClippedSubviews={isIOS}
+					// removeClippedSubviews
 					initialNumToRender={7}
 					onEndReachedThreshold={0.5}
 					maxToRenderPerBatch={5}
