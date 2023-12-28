@@ -1,5 +1,5 @@
 import React from 'react';
-import { InteractionManager, Text, View } from 'react-native';
+import { InteractionManager, Text, View, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 import parse from 'url-parse';
 import moment from 'moment';
@@ -1529,9 +1529,22 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 		}
 
 		return (
-			<SafeAreaView style={{ backgroundColor: themes[theme].backgroundColor }} testID='room-view'>
+			<ImageBackground
+				source={theme === 'light' 
+					? require('../../static/images/chat-bg-pattern-light_rocket.png')
+					: require('../../static/images/chat-bg-pattern-rocket.png')
+				}
+				resizeMode="cover"
+				style={{
+					flex: 1,
+					// backgroundColor: colors.backgroundColor,
+				}}
+				
+			>
+			<SafeAreaView style={{ backgroundColor: 'transparent' }} testID='room-view'>
 				<StatusBar />
 				<Banner title={I18n.t('Announcement')} text={announcement} bannerClosed={bannerClosed} closeBanner={this.closeBanner} />
+				
 				<List
 					ref={this.list}
 					listRef={this.flatList}
@@ -1543,11 +1556,13 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 					showMessageInMainThread={user.showMessageInMainThread ?? false}
 					serverVersion={serverVersion}
 				/>
+				
 				{this.renderFooter()}
 				{this.renderActions()}
 				<UploadProgress rid={rid} user={user} baseUrl={baseUrl} width={width} />
 				<JoinCode ref={this.joinCode} onJoin={this.onJoin} rid={rid} t={t} theme={theme} />
 			</SafeAreaView>
+			</ImageBackground>
 		);
 	}
 }
