@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { SyntheticEvent } from 'react';
 import { InteractionManager, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import parse from 'url-parse';
@@ -276,7 +276,8 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 			canForwardGuest: false,
 			canReturnQueue: false,
 			canPlaceLivechatOnHold: false,
-			isOnHold: false
+			isOnHold: false,
+			measureView: null
 		};
 
 		this.setHeader();
@@ -342,9 +343,12 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 
 	shouldComponentUpdate(nextProps: IRoomViewProps, nextState: IRoomViewState) {
 		const { state } = this;
-		const { roomUpdate, member, isOnHold } = state;
+		const { roomUpdate, member, isOnHold, measureView } = state;
 		const { theme, insets, route } = this.props;
 		if (theme !== nextProps.theme) {
+			return true;
+		}
+		if (measureView !== nextState.measureView) {
 			return true;
 		}
 		if (member.statusText !== nextState.member.statusText) {
@@ -1315,7 +1319,7 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 	};
 
 	renderItem = (item: TAnyMessageModel, previousItem: TAnyMessageModel, highlightedMessage?: string, msgImages?: string[]) => {
-		const { room, lastOpen, canAutoTranslate } = this.state;
+		const { room, lastOpen, canAutoTranslate, measureView } = this.state;
 		const { user, Message_GroupingPeriod, Message_TimeFormat, useRealName, baseUrl, Message_Read_Receipt_Enabled, theme } =
 			this.props;
 		let dateSeparator = null;
@@ -1384,6 +1388,7 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 					theme={theme}
 					closeEmojiAndAction={this.handleCloseEmoji}
 					msgImages={msgImages}
+					measureView={measureView}
 				/>
 			);
 		}
@@ -1518,8 +1523,18 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 		);
 	};
 
+	onMeasureView = (event) => {
+		console.log('onMeasureView', event.nativeEvent.layout);
+		this.setState({
+			measureView: {
+				width: event.nativeEvent.layout.width,
+				height: event.nativeEvent.layout.height
+			}
+		});
+	}
+
 	render() {
-		const { room, loading } = this.state;
+		const { room, loading, measureView } = this.state;
 		const { user, baseUrl, theme, width, serverVersion } = this.props;
 		const { rid, t } = room;
 		let bannerClosed;
@@ -1529,20 +1544,27 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 		}
 
 		return (
-			<SafeAreaView style={{ backgroundColor: themes[theme].backgroundColor }} testID='room-view'>
+			<SafeAreaView
+				onLayout={this.onMeasureView}
+				style={{ backgroundColor: themes[theme].backgroundColor }} 
+				testID='room-view'
+			>
 				<StatusBar />
 				<Banner title={I18n.t('Announcement')} text={announcement} bannerClosed={bannerClosed} closeBanner={this.closeBanner} />
-				<List
-					ref={this.list}
-					listRef={this.flatList}
-					rid={rid}
-					tmid={this.tmid}
-					renderRow={this.renderItem}
-					loading={loading}
-					hideSystemMessages={this.hideSystemMessages}
-					showMessageInMainThread={user.showMessageInMainThread ?? false}
-					serverVersion={serverVersion}
-				/>
+				{console.log('render', measureView)}
+				{measureView && (
+					<List
+						ref={this.list}
+						listRef={this.flatList}
+						rid={rid}
+						tmid={this.tmid}
+						renderRow={this.renderItem}
+						loading={loading}
+						hideSystemMessages={this.hideSystemMessages}
+						showMessageInMainThread={user.showMessageInMainThread ?? false}
+						serverVersion={serverVersion}
+					/>
+				)}
 				{this.renderFooter()}
 				{this.renderActions()}
 				<UploadProgress rid={rid} user={user} baseUrl={baseUrl} width={width} />

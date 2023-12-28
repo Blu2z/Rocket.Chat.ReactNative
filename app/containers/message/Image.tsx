@@ -56,7 +56,7 @@ const Button = React.memo(({ children, onPress, disabled }: IMessageButton) => {
 	);
 });
 
-export const MessageImage = React.memo(({ imgUri, cached, loading }: { imgUri: string; cached: boolean; loading: boolean }) => {
+export const MessageImage = React.memo(({ imgUri, cached, loading, measureView }: { imgUri: string; cached: boolean; loading: boolean, containerWH: {} }) => {
 	const { colors } = useTheme();
 	const [imgWidth, setImgWidth] = useState<string | number>(200);
 	const [imgHeight, setImgHeight] = useState<string | number>(200);
@@ -175,7 +175,8 @@ const ImageContainer = ({
 	isReply,
 	author,
 	msg,
-	msgImages
+	msgImages,
+	measureView
 }: IMessageImage): React.ReactElement | null => {
 	const [imageCached, setImageCached] = useState(file);
 	const [cached, setCached] = useState(false);
@@ -300,22 +301,25 @@ const ImageContainer = ({
 		showAttachment(file, msgImages, id); // remove cached image from carousel
 	};
 
-	if (msg) {
+
+	// if (msg) {
 		return (
-			<View>
-				<Markdown msg={msg} style={[isReply && style]} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
+			<View style={{ backgroundColor: 'red'}}>
+				{msg && (
+					<Markdown msg={msg} style={[isReply && style]} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
+				)}
 				<Button onPress={onPress}>
-					<MessageImage imgUri={img} cached={cached} loading={loading} />
+					<MessageImage imgUri={img} cached={cached} loading={loading} measureView={measureView} />
 				</Button>
 			</View>
 		);
-	}
+	// }
 
-	return (
-		<Button onPress={onPress}>
-			<MessageImage imgUri={img} cached={cached} loading={loading} />
-		</Button>
-	);
+	// return (
+	// 	<Button onPress={onPress}>
+	// 		<MessageImage imgUri={img} cached={cached} loading={loading} />
+	// 	</Button>
+	// );
 };
 
 ImageContainer.displayName = 'MessageImageContainer';

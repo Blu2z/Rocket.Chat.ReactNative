@@ -355,7 +355,8 @@ class MessageContainer extends React.Component<IMessageContainerProps, IMessageC
 			jumpToMessage,
 			highlighted,
 			isPreview,
-			msgImages
+			msgImages,
+			measureView
 		} = this.props;
 		const {
 			id,
@@ -481,6 +482,7 @@ class MessageContainer extends React.Component<IMessageContainerProps, IMessageC
 					isTranslated={isTranslated}
 					isPreview={isPreview}
 					msgImages={msgImages}
+					measureView={measureView}
 				/>
 			</MessageContext.Provider>
 		);
