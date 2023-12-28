@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FlatListProps, StyleSheet, ImageBackground } from 'react-native';
+import { FlatListProps, StyleSheet, ImageBackground, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Animated, { runOnJS, useAnimatedScrollHandler } from 'react-native-reanimated';
 
@@ -19,8 +19,8 @@ const styles = StyleSheet.create({
 	  backgroundColor: 'black',
 	},
 	list: {
-		flex: 1,
-		padding: 0
+		// flex: 1,
+		// padding: 0
 	},
 	contentContainer: {
 		paddingTop: 10,
@@ -43,18 +43,7 @@ export const List = ({ listRef, jumpToBottom, isThread, ...props }: IListProps) 
 
 	return (
 		<>
-			<ImageBackground
-				source={theme === 'light' 
-					? require('../../../../static/images/chat-bg-pattern-light_rocket.png')
-					: require('../../../../static/images/chat-bg-pattern-rocket.png')
-				}
-				resizeMode="cover"
-				style={{
-					flex: 1,
-					backgroundColor: colors.backgroundColor,
-				}}
-				
-			>
+			
 				<AnimatedFlatList
 					testID='room-view-messages'
 					// @ts-ignore createAnimatedComponent is making this fail
@@ -76,7 +65,7 @@ export const List = ({ listRef, jumpToBottom, isThread, ...props }: IListProps) 
 					// invertStickyHeaders
 					// stickyHeaderIndices={[20, 24]}
 				/>
-			</ImageBackground>
+			
 			<NavBottomFAB visible={visible} onPress={jumpToBottom} isThread={isThread} />
 		</>
 	);

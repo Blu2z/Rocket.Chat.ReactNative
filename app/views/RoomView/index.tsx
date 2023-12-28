@@ -1,5 +1,5 @@
-import React, { SyntheticEvent } from 'react';
-import { InteractionManager, Text, View } from 'react-native';
+import React from 'react';
+import { InteractionManager, Text, View, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 import parse from 'url-parse';
 import moment from 'moment';
@@ -1535,7 +1535,7 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 
 	render() {
 		const { room, loading, measureView } = this.state;
-		const { user, baseUrl, theme, width, serverVersion } = this.props;
+		const { user, baseUrl, theme, width, serverVersion, sortPreferences } = this.props;
 		const { rid, t } = room;
 		let bannerClosed;
 		let announcement;
@@ -1544,14 +1544,25 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 		}
 
 		return (
-			<SafeAreaView
+			<ImageBackground
+				source={theme === 'light' 
+					? require('../../static/images/chat-bg-pattern-light_rocket.png')
+					: require('../../static/images/chat-bg-pattern-rocket.png')
+				}
+				resizeMode="cover"
+				style={{
+					flex: 1,
+					backgroundColor: sortPreferences?.background === 3 ? '#eee' : 'transparent',
+				}}
+				
+			>
+			<SafeAreaView 
 				onLayout={this.onMeasureView}
-				style={{ backgroundColor: themes[theme].backgroundColor }} 
+				style={{ backgroundColor: 'transparent' }} 
 				testID='room-view'
 			>
 				<StatusBar />
 				<Banner title={I18n.t('Announcement')} text={announcement} bannerClosed={bannerClosed} closeBanner={this.closeBanner} />
-				{console.log('render', measureView)}
 				{measureView && (
 					<List
 						ref={this.list}
@@ -1570,12 +1581,14 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 				<UploadProgress rid={rid} user={user} baseUrl={baseUrl} width={width} />
 				<JoinCode ref={this.joinCode} onJoin={this.onJoin} rid={rid} t={t} theme={theme} />
 			</SafeAreaView>
+			</ImageBackground>
 		);
 	}
 }
 
 const mapStateToProps = (state: IApplicationState) => ({
 	user: getUserSelector(state),
+	sortPreferences: state.sortPreferences,
 	isMasterDetail: state.app.isMasterDetail,
 	useRealName: state.settings.UI_Use_Real_Name as boolean,
 	isAuthenticated: state.login.isAuthenticated,
