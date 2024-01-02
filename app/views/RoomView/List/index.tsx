@@ -74,7 +74,7 @@ const ListContainer = forwardRef<IListContainerRef, IListContainerProps>(
 			<View style={styles.inverted}>
 				{renderRow(item, messages[index + 1], highlightedMessageId, msgImages)}
 			</View>
-		), [msgImages]);
+		), [msgImages, messages, highlightedMessageId]);
 
 		
 		// const date = new Date();
@@ -115,7 +115,7 @@ const ListContainer = forwardRef<IListContainerRef, IListContainerProps>(
 		// 	return acc;
 		// }, {data: [], separators: []});
 
-		return (
+		return !!msgImages ? (
 			<>
 				<EmptyRoom rid={rid} length={messages.length} />
 				<Container>
@@ -138,7 +138,7 @@ const ListContainer = forwardRef<IListContainerRef, IListContainerProps>(
 					/>
 				</Container>
 			</>
-		);
+		) : null;
 	}
 );
 
