@@ -123,7 +123,7 @@ const Message = React.memo((props: IMessage) => {
 						props.isHeader && styles.messageContentWithHeader,
 						{
 							backgroundColor: themes[theme].backgroundColor,
-							maxWidth: Dimensions.get('window').width - 64,
+							maxWidth: props?.measureView?.width ? props.measureView.width - 64 : 300,
 							overflow: 'hidden',
 						}
 					]}>

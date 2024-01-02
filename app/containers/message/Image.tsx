@@ -61,7 +61,7 @@ export const MessageImage = React.memo(({ imgUri, cached, loading, measureView }
 	const [imgWidth, setImgWidth] = useState<string | number>(200);
 	const [imgHeight, setImgHeight] = useState<string | number>(200);
 	const [aspectRatio, setAspectRatio] = useState<number | null>(null);
-	const deviceWidthContainer = Math.trunc(Dimensions.get('window').width - 95);
+	const deviceWidthContainer = Math.min(measureView?.width || 395, measureView?.height || 395) - 95;
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -309,7 +309,7 @@ const ImageContainer = ({
 					<Markdown msg={msg} style={[isReply && style]} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
 				)}
 				<Button onPress={onPress}>
-					<MessageImage imgUri={img} cached={cached} loading={loading} measureView={measureView} />
+					<MessageImage imgUri={img} cached={cached} loading={loading} measureView={measureView} file={file} />
 				</Button>
 			</View>
 		);

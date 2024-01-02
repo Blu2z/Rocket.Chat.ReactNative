@@ -113,7 +113,7 @@ export const ImageViewer = ({ uri = '', imageComponentType, width, height, ...pr
 
 	const Component = ImageComponent(
 		props?.msgImages?.length
-		? {type: 'carousel', uri}
+		? {type: 'carousel', uri, file: props?.file}
 		: { type: imageComponentType, uri }
 	);
 

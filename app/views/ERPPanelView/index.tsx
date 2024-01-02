@@ -30,7 +30,13 @@ const ERPPanelView = () => {
 	}
 
 	const str = erp?.apiKey 
-		?  `localStorage.setItem(USER_KEY, ${erp.apiKey});localStorage.setItem(USER_NAME, ${erp.username});localStorage.setItem(USER_ID, ${erp.userId});` 
+		?  `
+			if (!localStorage.getItem('USER_KEY')) { 
+				localStorage.setItem('USER_KEY', '${erp.apiKey}');
+				localStorage.setItem('USER_NAME', '${erp.username}');
+				localStorage.setItem('USER_ID', '${erp.userId}');
+				window.location.href = '/';
+			};` 
 		: '';
 
 	return (

@@ -1284,7 +1284,7 @@ class MessageBox extends Component<IMessageBoxProps, IMessageBoxState> {
 						{textInputAndButtons}
 						{recordAudio}
 					</View>
-					{this.renderSendToChannel()}
+					{/* {this.renderSendToChannel()} */}
 					{this.renderEmojiSearchbar()}
 				</View>
 				{children}

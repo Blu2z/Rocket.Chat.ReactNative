@@ -66,6 +66,7 @@ const RenderContent = ({
 				msgImages={attachments}
 				currentId={currentId}
 				uri={uri}
+				file={attachment}
 				onLoadEnd={() => setLoading(false)}
 				width={width}
 				height={height - insets.top - insets.bottom - (headerHeight || 0)}

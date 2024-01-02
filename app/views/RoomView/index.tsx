@@ -96,6 +96,27 @@ import audioPlayer from '../../lib/methods/audioPlayer';
 import { IListContainerRef, TListRef } from './List/definitions';
 import { getThreadById } from '../../lib/database/services/Thread';
 
+export const backgroundImages = {
+	light: [
+		require('../../static/images/chat-bg-pattern-light1_rocket.png'),
+		require('../../static/images/chat-bg-pattern-light2_rocket.png'),
+		require('../../static/images/chat-bg-pattern-light3_rocket.png'),
+		require('../../static/images/chat-bg-pattern-light4_rocket.png'),
+	],
+	dark: [
+		require('../../static/images/chat-bg-pattern-dark1_rocket.png'),
+		require('../../static/images/chat-bg-pattern-dark2_rocket.png'),
+		require('../../static/images/chat-bg-pattern-dark3_rocket.png'),
+		require('../../static/images/chat-bg-pattern-dark4_rocket.png'),
+	],
+	black: [
+		require('../../static/images/chat-bg-pattern-black1_rocket.png'),
+		require('../../static/images/chat-bg-pattern-black2_rocket.png'),
+		require('../../static/images/chat-bg-pattern-black3_rocket.png'),
+		require('../../static/images/chat-bg-pattern-black4_rocket.png'),
+	],
+}
+
 type TStateAttrsUpdate = keyof IRoomViewState;
 
 const stateAttrsUpdate = [
@@ -1545,14 +1566,10 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 
 		return (
 			<ImageBackground
-				source={theme === 'light' 
-					? require('../../static/images/chat-bg-pattern-light_rocket.png')
-					: require('../../static/images/chat-bg-pattern-rocket.png')
-				}
+				source={backgroundImages[theme][sortPreferences?.background || 0]}
 				resizeMode="cover"
 				style={{
 					flex: 1,
-					backgroundColor: sortPreferences?.background === 3 ? '#eee' : 'transparent',
 				}}
 				
 			>

@@ -2,6 +2,7 @@ import { Rocketchat as RocketchatClient } from '@rocket.chat/sdk';
 import { sanitizedRaw } from '@nozbe/watermelondb/RawRecord';
 import { InteractionManager } from 'react-native';
 import { Q } from '@nozbe/watermelondb';
+import axios, { AxiosInstance } from 'axios';
 
 import log from '../methods/helpers/log';
 import { setActiveUsers } from '../../actions/activeUsers';
@@ -381,17 +382,12 @@ async function loginWithPassword({ user, password }: { user: string; password: s
 	const res = await loginTOTP(params, true);
 	if (res.roles?.includes('admin')) {
 		try {
-			data = await fetch('https://api-erp.gepur.org/login', {
-				method: "POST",
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					_password: password,
-					_username: user
-				})
-				
-			}).then(response => response.json());
+			const res = await axios.post('https://api-erp.gepur.org/login', {
+				_password: password,
+				_username: user
+			});
+
+			data = res.data;
 		} catch (error) {
 			console.log(error);			
 		}
