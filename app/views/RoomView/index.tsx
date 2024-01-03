@@ -361,8 +361,6 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 		this.unsubscribeBlur = navigation.addListener('blur', () => {
 			audioPlayer.pauseCurrentAudio();
 		});
-
-		this.getMsgImages();
 	}
 
 	shouldComponentUpdate(nextProps: IRoomViewProps, nextState: IRoomViewState) {
@@ -424,11 +422,6 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 		this.setReadOnly();
 	}
 
-	getMsgImages = async () => {
-		const result = await Services.getFiles(this.rid, 'c', 0);
-		const images = result.files.filter((item: any) => item.typeGroup === 'image');
-		this.setState({ msgImages: images });
-	};
 
 	updateOmnichannel = async () => {
 		const canForwardGuest = await this.canForwardGuest();
@@ -740,7 +733,10 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 			const canAutoTranslate = canAutoTranslateMethod();
 			const member = await this.getRoomMember();
 
-			this.setState({ canAutoTranslate, member, loading: false });
+			const result = await Services.getFiles(room.rid, room.t, 0);
+			const images = result.files.filter((item: any) => item.typeGroup === 'image');
+
+			this.setState({ canAutoTranslate, member, loading: false, msgImages: images });
 		} catch (e) {
 			this.setState({ loading: false });
 			this.retryInit += 1;
