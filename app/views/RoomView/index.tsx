@@ -298,7 +298,8 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 			canReturnQueue: false,
 			canPlaceLivechatOnHold: false,
 			isOnHold: false,
-			measureView: null
+			measureView: null,
+			msgImages: null
 		};
 
 		this.setHeader();
@@ -360,6 +361,8 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 		this.unsubscribeBlur = navigation.addListener('blur', () => {
 			audioPlayer.pauseCurrentAudio();
 		});
+
+		this.getMsgImages();
 	}
 
 	shouldComponentUpdate(nextProps: IRoomViewProps, nextState: IRoomViewState) {
@@ -420,6 +423,12 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 		}
 		this.setReadOnly();
 	}
+
+	getMsgImages = async () => {
+		const result = await Services.getFiles(this.rid, 'c', 0);
+		const images = result.files.filter((item: any) => item.typeGroup === 'image');
+		this.setState({ msgImages: images });
+	};
 
 	updateOmnichannel = async () => {
 		const canForwardGuest = await this.canForwardGuest();
@@ -1339,8 +1348,8 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 		Navigation.navigate('CannedResponsesListView', { rid: room.rid });
 	};
 
-	renderItem = (item: TAnyMessageModel, previousItem: TAnyMessageModel, highlightedMessage?: string, msgImages?: string[]) => {
-		const { room, lastOpen, canAutoTranslate, measureView } = this.state;
+	renderItem = (item: TAnyMessageModel, previousItem: TAnyMessageModel, highlightedMessage?: string) => {
+		const { room, lastOpen, canAutoTranslate, measureView, msgImages } = this.state;
 		const { user, Message_GroupingPeriod, Message_TimeFormat, useRealName, baseUrl, Message_Read_Receipt_Enabled, theme } =
 			this.props;
 		let dateSeparator = null;
@@ -1555,7 +1564,7 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 	}
 
 	render() {
-		const { room, loading, measureView } = this.state;
+		const { room, loading, measureView, msgImages } = this.state;
 		const { user, baseUrl, theme, width, serverVersion, sortPreferences } = this.props;
 		const { rid, t } = room;
 		let bannerClosed;
@@ -1573,34 +1582,33 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 				}}
 				
 			>
-			<SafeAreaView 
-				onLayout={this.onMeasureView}
-				style={{ backgroundColor: 'transparent' }} 
-				testID='room-view'
-			>
-				<StatusBar />
-				<Banner title={I18n.t('Announcement')} text={announcement} bannerClosed={bannerClosed} closeBanner={this.closeBanner} />
-				{measureView && (
-					<>
-						<List
-							ref={this.list}
-							listRef={this.flatList}
-							rid={rid}
-							tmid={this.tmid}
-							renderRow={this.renderItem}
-							loading={loading}
-							hideSystemMessages={this.hideSystemMessages}
-							showMessageInMainThread={user.showMessageInMainThread ?? false}
-							serverVersion={serverVersion}
-						/>
-						{this.renderFooter()}
-						{this.renderActions()}
-						<UploadProgress rid={rid} user={user} baseUrl={baseUrl} width={width} />
-						<JoinCode ref={this.joinCode} onJoin={this.onJoin} rid={rid} t={t} theme={theme} />
-					</>
-				)}
-				
-			</SafeAreaView>
+				<SafeAreaView 
+					onLayout={this.onMeasureView}
+					style={{ backgroundColor: 'transparent' }} 
+					testID='room-view'
+				>
+					<StatusBar />
+					<Banner title={I18n.t('Announcement')} text={announcement} bannerClosed={bannerClosed} closeBanner={this.closeBanner} />
+					{measureView &&  !!msgImages && (
+						<>
+							<List
+								ref={this.list}
+								listRef={this.flatList}
+								rid={rid}
+								tmid={this.tmid}
+								renderRow={this.renderItem}
+								loading={loading}
+								hideSystemMessages={this.hideSystemMessages}
+								showMessageInMainThread={user.showMessageInMainThread ?? false}
+								serverVersion={serverVersion}
+							/>
+							{this.renderFooter()}
+							{this.renderActions()}
+							<UploadProgress rid={rid} user={user} baseUrl={baseUrl} width={width} />
+							<JoinCode ref={this.joinCode} onJoin={this.onJoin} rid={rid} t={t} theme={theme} />
+						</>
+					)}
+				</SafeAreaView>
 			</ImageBackground>
 		);
 	}

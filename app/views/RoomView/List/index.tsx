@@ -23,7 +23,7 @@ const Container = ({ children }: { children: React.ReactElement }) =>
 	isAndroid ? <View style={{ flex: 1, scaleY: -1 }}>{children}</View> : <>{children}</>;
 
 const ListContainer = forwardRef<IListContainerRef, IListContainerProps>(
-	({ rid, tmid, renderRow, showMessageInMainThread, serverVersion, hideSystemMessages, listRef, loading }, ref) => {
+	({ rid, tmid, renderRow, showMessageInMainThread, serverVersion, hideSystemMessages, listRef, loading, msgImages }, ref) => {
 		const [messages, messagesIds, fetchMessages] = useMessages({
 			rid,
 			tmid,
@@ -39,23 +39,23 @@ const ListContainer = forwardRef<IListContainerRef, IListContainerProps>(
 			handleScrollToIndexFailed,
 			highlightedMessageId
 		} = useScroll({ listRef, messagesIds });
-		const [msgImages, setMsgImages] = React.useState<null | any[]>(null);
+		// const [msgImages, setMsgImages] = React.useState<null | any[]>(null);
 
 		const onEndReached = useDebounce(() => {
 			listRef.current?.scrollToIndex({ index: messages.length -1, animated: false });
 			fetchMessages();
 		}, 300);
 
-		useEffect(() => {
-			const getMsgImages = async () => {
-				const result = await Services.getFiles(rid, 'c', 0);
-				const images = result.files.filter((item: any) => item.typeGroup === 'image');
-				setMsgImages(images);
-			};
-			if(messages.length > 0 && !msgImages) {
-				getMsgImages();
-			}
-		}, [messages]);
+		// useEffect(() => {
+		// 	const getMsgImages = async () => {
+		// 		const result = await Services.getFiles(rid, 'c', 0);
+		// 		const images = result.files.filter((item: any) => item.typeGroup === 'image');
+		// 		setMsgImages(images);
+		// 	};
+		// 	if(messages.length > 0 && !msgImages) {
+		// 		getMsgImages();
+		// 	}
+		// }, [messages]);
 
 		useImperativeHandle(ref, () => ({
 			jumpToMessage,
@@ -70,11 +70,11 @@ const ListContainer = forwardRef<IListContainerRef, IListContainerProps>(
 		};
 
 		// const msgImages2 = messages.filter((item: any) => item?.attachments?.length && item.attachments[0].image_url);
-		const renderItem: IListProps['renderItem'] = useCallback(({ item, index }) => (
+		const renderItem: IListProps['renderItem'] = ({ item, index }) => (
 			<View style={styles.inverted}>
-				{renderRow(item, messages[index + 1], highlightedMessageId, msgImages)}
+				{renderRow(item, messages[index + 1], highlightedMessageId)}
 			</View>
-		), [msgImages, messages, highlightedMessageId]);
+		);
 
 		
 		// const date = new Date();
@@ -115,7 +115,7 @@ const ListContainer = forwardRef<IListContainerRef, IListContainerProps>(
 		// 	return acc;
 		// }, {data: [], separators: []});
 
-		return !!msgImages ? (
+		return (
 			<>
 				<EmptyRoom rid={rid} length={messages.length} />
 				<Container>
@@ -138,7 +138,7 @@ const ListContainer = forwardRef<IListContainerRef, IListContainerProps>(
 					/>
 				</Container>
 			</>
-		) : null;
+		);
 	}
 );
 
