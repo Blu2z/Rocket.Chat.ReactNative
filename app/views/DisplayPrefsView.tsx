@@ -169,7 +169,7 @@ const DisplayPrefsView = (): React.ReactElement => {
 							<View style={{ paddingRight: 12 }}>
 								<List.Icon name='avatar' />
 							</View>
-							<Text style={{ fontSize: 16, marginVertical: 10, color: colors.bodyText }}>Test</Text>
+							<Text style={{ fontSize: 16, marginVertical: 10, color: colors.bodyText }}>Обои</Text>
 						</View>
 						<View 
 							style={{
