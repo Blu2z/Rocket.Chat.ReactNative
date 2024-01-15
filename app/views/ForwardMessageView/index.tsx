@@ -60,7 +60,7 @@ const ForwardMessageView = () => {
 	const handlePostMessage = async () => {
 		setSending(true);
 		const permalink = await getPermalinkMessage(message);
-		const msg = `[ ](${permalink})\n`;
+		const msg = `[Forward_message](${permalink})\n`;
 		try {
 			await Promise.all(rooms.map(roomId => postMessage(roomId, msg)));
 			EventEmitter.emit(LISTENER, { message: I18n.t('Message_has_been_shared') });

@@ -102,15 +102,22 @@ const Title = React.memo(
 	({ attachment, timeFormat, theme }: { attachment: IAttachment; timeFormat?: string; theme: TSupportedThemes }) => {
 		const time = attachment.message_link && attachment.ts ? moment(attachment.ts).format(timeFormat) : null;
 		return (
-			<View style={styles.authorContainer}>
-				{attachment.author_name ? (
-					<Text numberOfLines={1} style={[styles.author, { color: themes[theme].auxiliaryTintColor, fontSize: 13 }]}>
-						{attachment.author_name}
-					</Text>
-				) : null}
-				{time ? <Text style={[messageStyles.time, { color: themes[theme].auxiliaryText }]}>{time}</Text> : null}
-				{attachment.title ? <Text style={[styles.title, { color: themes[theme].bodyText }]}>{attachment.title}</Text> : null}
-			</View>
+			<>
+				{attachment.extraTitle && (
+				<Text style={[styles.author, { color: themes[theme].auxiliaryTintColor, fontSize: 13 }]}>
+					{attachment.extraTitle}
+				</Text>)}
+				<View style={styles.authorContainer}>
+					<View>
+						{attachment.author_name ? (
+							<Text numberOfLines={1} style={[styles.author, { color: themes[theme].auxiliaryTintColor, fontSize: 13 }]}>
+								{attachment.author_name}
+							</Text>
+						) : null}
+					</View>
+					{time ? <Text style={[messageStyles.time, { color: themes[theme].auxiliaryText }]}>{time}</Text> : null}
+				</View>
+			</>
 		);
 	}
 );
@@ -311,7 +318,6 @@ const Reply = React.memo(
 						) : null}
 					</View>
 				</Touchable>
-				<Markdown msg={msg} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
 			</>
 		);
 	},

@@ -16,6 +16,7 @@ export interface IMessageAttachments {
 	getCustomEmoji: TGetCustomEmoji;
 	author?: IUserMessage;
 	msgImages?: string[];
+	noReplyComponent?: boolean;
 }
 
 export interface IMessageAvatar {

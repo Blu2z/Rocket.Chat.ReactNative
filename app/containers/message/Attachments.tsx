@@ -54,7 +54,7 @@ const AttachedActions = ({ attachment, getCustomEmoji }: { attachment: IAttachme
 };
 
 const Attachments: React.FC<IMessageAttachments> = React.memo(
-	({ attachments, timeFormat, showAttachment, style, getCustomEmoji, isReply, author, msgImages, id, measureView }: IMessageAttachments) => {
+	({ attachments, timeFormat, showAttachment, style, getCustomEmoji, isReply, author, msgImages, id, measureView, msg, noReplyComponent }: IMessageAttachments) => {
 		const { translateLanguage } = useContext(MessageContext);
 
 		if (!attachments || attachments.length === 0) {
@@ -62,7 +62,8 @@ const Attachments: React.FC<IMessageAttachments> = React.memo(
 		}
 
 		const attachmentsElements = attachments.map((file: IAttachment, index: number) => {
-			const msg = getMessageFromAttachment(file, translateLanguage);
+			const msg2 = getMessageFromAttachment(file, translateLanguage);
+			
 			if (file && file.image_url) {
 				return (
 					<Image
@@ -74,7 +75,7 @@ const Attachments: React.FC<IMessageAttachments> = React.memo(
 						style={style}
 						isReply={isReply}
 						author={author}
-						msg={msg}
+						msg={msg2}
 						msgImages={msgImages}
 						measureView={measureView}
 					/>
@@ -90,7 +91,7 @@ const Attachments: React.FC<IMessageAttachments> = React.memo(
 						isReply={isReply}
 						style={style}
 						author={author}
-						msg={msg}
+						msg={msg2}
 					/>
 				);
 			}
@@ -104,7 +105,7 @@ const Attachments: React.FC<IMessageAttachments> = React.memo(
 						getCustomEmoji={getCustomEmoji}
 						style={style}
 						isReply={isReply}
-						msg={msg}
+						msg={msg2}
 					/>
 				);
 			}
@@ -118,6 +119,10 @@ const Attachments: React.FC<IMessageAttachments> = React.memo(
 				);
 			}
 
+			if (noReplyComponent) {
+				return null;
+			}
+
 			return (
 				<Reply
 					key={index}
@@ -125,14 +130,14 @@ const Attachments: React.FC<IMessageAttachments> = React.memo(
 					attachment={file}
 					timeFormat={timeFormat}
 					getCustomEmoji={getCustomEmoji}
-					msg={msg}
+					msg={msg2 || msg}
 					showAttachment={showAttachment}
 				/>
 			);
 		});
 		return <>{attachmentsElements}</>;
 	},
-	(prevProps, nextProps) => dequal(prevProps.attachments, nextProps.attachments)
+	(prevProps, nextProps) => dequal(prevProps.attachments, nextProps.attachments) || dequal(prevProps.noReplyComponent, nextProps.noReplyComponent)
 );
 
 Attachments.displayName = 'MessageAttachments';

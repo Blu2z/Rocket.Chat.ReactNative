@@ -206,6 +206,10 @@ class Markdown extends PureComponent<IMarkdownProps, any> {
 
 	renderLink = ({ children, href }: any) => {
 		const { theme, onLinkPress } = this.props;
+		if (children === 'Forward_message') {
+			return null;
+		}
+
 		return (
 			<MarkdownLink link={href} theme={theme!} onLinkPress={onLinkPress}>
 				{children}
