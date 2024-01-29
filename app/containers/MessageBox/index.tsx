@@ -60,8 +60,33 @@ import { ChatsStackParamList } from '../../stacks/types';
 import { EventTypes } from '../EmojiPicker/interfaces';
 import EmojiSearchbar from './EmojiSearchbar';
 import shortnameToUnicode from '../../lib/methods/helpers/shortnameToUnicode';
+// import { store as reduxStore } from '../../lib/store/auxStore';
 
 require('./EmojiKeyboard');
+
+const isForwardMessage = (msg: string | undefined) => {
+	if (!msg) {
+		return false;
+	}
+
+	return msg.includes('[Forward_message]');
+}
+
+const isHasTextInForwardMessage = (msg: string | undefined): null | string => {
+	if (!msg) {
+		return null;
+	}
+
+	const regex = /\) (.+)/;
+	const match = msg.match(regex);
+
+
+	if (match && match[1]) {
+		return match[1];
+	} 
+
+	return null;
+}
 
 const imagePickerConfig = {
 	cropping: true,
@@ -1072,7 +1097,19 @@ class MessageBox extends Component<IMessageBoxProps, IMessageBoxState> {
 	formatReplyMessage = async (replyingMessage: IMessage, message = '') => {
 		const { user, roomType, replyWithMention, serverVersion } = this.props;
 		const permalink = await this.getPermalink(replyingMessage);
-		let msg = `[ ](${permalink}) `;
+
+		
+		let msg = ''
+		
+		if (isForwardMessage(replyingMessage.msg)) {
+			msg = !isHasTextInForwardMessage(replyingMessage.msg) 
+				? `[ ](${permalink}) `
+				: replyingMessage.msg;
+		} else {
+			msg = `[ ](${permalink}) `;
+		}
+		
+		// console.log('===> formatReplyMessage', msg, replyingMessage);
 
 		// if original message wasn't sent by current user and neither from a direct room
 		if (user.username !== replyingMessage?.u?.username && roomType !== 'd' && replyWithMention) {

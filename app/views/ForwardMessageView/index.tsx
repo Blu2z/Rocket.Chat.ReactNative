@@ -21,6 +21,15 @@ import MessagePreview from '../../containers/message/Preview';
 import EventEmitter from '../../lib/methods/helpers/events';
 import { LISTENER } from '../../containers/Toast';
 
+const isForwardMessage = (msg: string | undefined) => {
+	if (!msg) {
+		return false;
+	}
+
+	return msg.includes('[Forward_message]');
+}
+
+
 const ForwardMessageView = () => {
 	const [rooms, setRooms] = useState<string[]>([]);
 	const [sending, setSending] = useState(false);
@@ -60,7 +69,13 @@ const ForwardMessageView = () => {
 	const handlePostMessage = async () => {
 		setSending(true);
 		const permalink = await getPermalinkMessage(message);
-		const msg = `[Forward_message](${permalink})\n`;
+		// console.log('Message', message);
+		let msg;
+		if (isForwardMessage(message.msg)) {
+			msg = message.msg
+		} else {
+			msg = `[Forward_message](${permalink})\n`;
+		}
 		try {
 			await Promise.all(rooms.map(roomId => postMessage(roomId, msg)));
 			EventEmitter.emit(LISTENER, { message: I18n.t('Message_has_been_shared') });

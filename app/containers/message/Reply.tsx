@@ -3,7 +3,11 @@ import { StyleSheet, Text, View } from 'react-native';
 import moment from 'moment';
 import { dequal } from 'dequal';
 import FastImage from 'react-native-fast-image';
+import Clipboard from '@react-native-clipboard/clipboard';
 
+import I18n from '../../i18n';
+import EventEmitter from '../../lib/methods/helpers/events';
+import { LISTENER } from '../Toast';
 import Touchable from './Touchable';
 import Markdown from '../markdown';
 import openLink from '../../lib/methods/helpers/openLink';
@@ -101,12 +105,31 @@ interface IMessageReply {
 const Title = React.memo(
 	({ attachment, timeFormat, theme }: { attachment: IAttachment; timeFormat?: string; theme: TSupportedThemes }) => {
 		const time = attachment.message_link && attachment.ts ? moment(attachment.ts).format(timeFormat) : null;
+		const handlePress = () => {
+			if (!attachment.forwardLink) {
+				return;
+			}
+			if (attachment.onLinkPress) {
+				return attachment.onLinkPress(attachment.forwardLink);
+			}
+			openLink(attachment.forwardLink, theme);
+		};
+
+		const onLongPress = () => {
+			Clipboard.setString(attachment.forwardLink);
+			EventEmitter.emit(LISTENER, { message: I18n.t('Copied_to_clipboard') });
+		};
 		return (
 			<>
-				{attachment.extraTitle && (
-				<Text style={[styles.author, { color: themes[theme].auxiliaryTintColor, fontSize: 13 }]}>
-					{attachment.extraTitle}
-				</Text>)}
+				{attachment.extraTitle && 
+					(
+						<Text
+							onPress={handlePress} onLongPress={onLongPress} 
+							style={[styles.author, { color: themes[theme].actionTintColor, fontSize: 13 }]}>
+							{attachment.extraTitle}
+						</Text>
+					)
+				}
 				<View style={styles.authorContainer}>
 					<View>
 						{attachment.author_name ? (
@@ -303,6 +326,7 @@ const Reply = React.memo(
 							style={[{ color: themes[theme].auxiliaryTintColor, fontSize: 14, marginBottom: 8 }]}
 							isReply
 							showAttachment={showAttachment}
+							noReplyComponent={attachment.noReplyComponent}
 						/>
 						<Fields attachment={attachment} getCustomEmoji={getCustomEmoji} theme={theme} />
 						{loading ? (
