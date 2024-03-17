@@ -2,6 +2,7 @@ import { Rocketchat as RocketchatClient } from '@rocket.chat/sdk';
 import { sanitizedRaw } from '@nozbe/watermelondb/RawRecord';
 import { InteractionManager } from 'react-native';
 import { Q } from '@nozbe/watermelondb';
+import axios, { AxiosInstance } from 'axios';
 
 import log from '../methods/helpers/log';
 import { setActiveUsers } from '../../actions/activeUsers';
@@ -364,8 +365,9 @@ function loginTOTP(params: ICredentials, loginEmailPassword?: boolean, isFromWeb
 	});
 }
 
-function loginWithPassword({ user, password }: { user: string; password: string }): Promise<ILoggedUser> {
+async function loginWithPassword({ user, password }: { user: string; password: string }): Promise<ILoggedUser> {
 	let params: ICredentials = { user, password };
+	let data = {};
 	const state = store.getState();
 
 	if (state.settings.LDAP_Enable) {
@@ -383,7 +385,21 @@ function loginWithPassword({ user, password }: { user: string; password: string 
 		};
 	}
 
-	return loginTOTP(params, true);
+	const res = await loginTOTP(params, true);
+	if (res.roles?.includes('admin')) {
+		try {
+			const res = await axios.post('https://api-erp.gepur.org/login', {
+				_password: password,
+				_username: user
+			});
+
+			data = res.data;
+		} catch (error) {
+			console.log(error);			
+		}
+	}
+
+	return {...res, erp: { ...data }};
 }
 
 async function loginOAuthOrSso(params: ICredentials, isFromWebView = true) {

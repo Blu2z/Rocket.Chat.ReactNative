@@ -27,7 +27,9 @@ import { LOCAL_DOCUMENT_DIRECTORY, getFilename } from '../lib/methods/handleMedi
 
 const RenderContent = ({
 	setLoading,
-	attachment
+	attachment,
+	attachments,
+	currentId
 }: {
 	setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 	attachment: IAttachment;
@@ -61,7 +63,10 @@ const RenderContent = ({
 		const uri = encodeURI(url);
 		return (
 			<ImageViewer
+				msgImages={attachments}
+				currentId={currentId}
 				uri={uri}
+				file={attachment}
 				onLoadEnd={() => setLoading(false)}
 				width={width}
 				height={height - insets.top - insets.bottom - (headerHeight || 0)}
@@ -94,7 +99,7 @@ const RenderContent = ({
 const AttachmentView = (): React.ReactElement => {
 	const navigation = useAppNavigation<TNavigation, 'AttachmentView'>();
 	const {
-		params: { attachment }
+		params: { attachment, attachments, currentId }
 	} = useAppRoute<TNavigation, 'AttachmentView'>();
 	const [loading, setLoading] = React.useState(true);
 	const { colors } = useTheme();
@@ -141,7 +146,7 @@ const AttachmentView = (): React.ReactElement => {
 	};
 
 	React.useLayoutEffect(() => {
-		setHeader();
+		// setHeader();
 	}, [navigation]);
 
 	const handleSave = async () => {
@@ -193,7 +198,7 @@ const AttachmentView = (): React.ReactElement => {
 	return (
 		<View style={{ backgroundColor: colors.backgroundColor, flex: 1 }}>
 			<StatusBar barStyle='light-content' backgroundColor={colors.previewBackground} />
-			<RenderContent attachment={attachment} setLoading={setLoading} />
+			<RenderContent attachment={attachment} attachments={attachments} currentId={currentId} setLoading={setLoading} />
 			{loading ? <RCActivityIndicator absolute size='large' /> : null}
 		</View>
 	);

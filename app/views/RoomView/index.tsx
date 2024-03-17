@@ -1,5 +1,5 @@
 import React from 'react';
-import { InteractionManager, Text, View } from 'react-native';
+import { InteractionManager, Text, View, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 import parse from 'url-parse';
 import moment from 'moment';
@@ -102,6 +102,27 @@ import { clearInAppFeedback, removeInAppFeedback } from '../../actions/inAppFeed
 import UserPreferences from '../../lib/methods/userPreferences';
 import { IRoomViewProps, IRoomViewState } from './definitions';
 import { roomAttrsUpdate, stateAttrsUpdate } from './constants';
+
+export const backgroundImages = {
+	light: [
+		require('../../static/images/chat-bg-pattern-light1_rocket.png'),
+		require('../../static/images/chat-bg-pattern-light2_rocket.png'),
+		require('../../static/images/chat-bg-pattern-light3_rocket.png'),
+		require('../../static/images/chat-bg-pattern-light4_rocket.png'),
+	],
+	dark: [
+		require('../../static/images/chat-bg-pattern-dark1_rocket.png'),
+		require('../../static/images/chat-bg-pattern-dark2_rocket.png'),
+		require('../../static/images/chat-bg-pattern-dark3_rocket.png'),
+		require('../../static/images/chat-bg-pattern-dark4_rocket.png'),
+	],
+	black: [
+		require('../../static/images/chat-bg-pattern-black1_rocket.png'),
+		require('../../static/images/chat-bg-pattern-black2_rocket.png'),
+		require('../../static/images/chat-bg-pattern-black3_rocket.png'),
+		require('../../static/images/chat-bg-pattern-black4_rocket.png'),
+	],
+}
 
 class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 	private rid?: string;
@@ -243,9 +264,12 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 
 	shouldComponentUpdate(nextProps: IRoomViewProps, nextState: IRoomViewState) {
 		const { state } = this;
-		const { roomUpdate, member, isOnHold } = state;
+		const { roomUpdate, member, isOnHold, measureView } = state;
 		const { theme, insets, route } = this.props;
 		if (theme !== nextProps.theme) {
+			return true;
+		}
+		if (measureView !== nextState.measureView) {
 			return true;
 		}
 		if (member.statusText !== nextState.member.statusText) {
@@ -587,7 +611,10 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 			const canAutoTranslate = canAutoTranslateMethod();
 			const member = await this.getRoomMember();
 
-			this.setState({ canAutoTranslate, member, loading: false });
+			const result = await Services.getFiles(room.rid, room.t, 0);
+			const images = result.files.filter((item: any) => item.typeGroup === 'image');
+
+			this.setState({ canAutoTranslate, member, loading: false, msgImages: images });
 		} catch (e) {
 			this.setState({ loading: false });
 			this.retryInit += 1;
@@ -796,10 +823,10 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 		this.handleCloseEmoji(this.messageActions?.showMessageActions, message);
 	};
 
-	showAttachment = (attachment: IAttachment) => {
+	showAttachment = (attachment: IAttachment, attachments: IAttachment[], currentId: string) => {
 		const { navigation } = this.props;
 		// @ts-ignore
-		navigation.navigate('AttachmentView', { attachment });
+		navigation.navigate('AttachmentView', { attachment, attachments, currentId }); // list preview
 	};
 
 	onReactionPress = async (emoji: IEmoji, messageId: string) => {
@@ -1259,7 +1286,7 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 	getText = () => this.messageComposerRef.current?.getText();
 
 	renderItem = (item: TAnyMessageModel, previousItem: TAnyMessageModel, highlightedMessage?: string) => {
-		const { room, lastOpen, canAutoTranslate } = this.state;
+		const { room, lastOpen, canAutoTranslate, measureView, msgImages } = this.state;
 		const {
 			user,
 			Message_GroupingPeriod,
@@ -1341,6 +1368,8 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 					theme={theme}
 					closeEmojiAndAction={this.handleCloseEmoji}
 					isBeingEdited={isBeingEdited}
+					msgImages={msgImages}
+					measureView={measureView}
 				/>
 			);
 		}
@@ -1439,10 +1468,20 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 		);
 	};
 
+	onMeasureView = (event) => {
+		console.log('onMeasureView', event.nativeEvent.layout);
+		this.setState({
+			measureView: {
+				width: event.nativeEvent.layout.width,
+				height: event.nativeEvent.layout.height
+			}
+		});
+	}
+
 	render() {
 		console.count(`${this.constructor.name}.render calls`);
-		const { room, loading, action, selectedMessages } = this.state;
-		const { user, baseUrl, theme, width, serverVersion } = this.props;
+		const { room, loading, action, selectedMessages, measureView, msgImages } = this.state;
+		const { user, baseUrl, theme, width, serverVersion, sortPreferences } = this.props;
 		const { rid, t } = room;
 		let bannerClosed;
 		let announcement;
@@ -1467,7 +1506,7 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 					getText: this.getText
 				}}
 			>
-				<SafeAreaView style={{ backgroundColor: themes[theme].backgroundColor }} testID='room-view'>
+				{/* <SafeAreaView style={{ backgroundColor: themes[theme].backgroundColor }} testID='room-view'>
 					<StatusBar />
 					<Banner title={I18n.t('Announcement')} text={announcement} bannerClosed={bannerClosed} closeBanner={this.closeBanner} />
 					<List
@@ -1485,7 +1524,40 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 					{this.renderActions()}
 					<UploadProgress rid={rid} user={user} baseUrl={baseUrl} width={width} />
 					<JoinCode ref={this.joinCode} onJoin={this.onJoin} rid={rid} t={t} theme={theme} />
-				</SafeAreaView>
+				</SafeAreaView> */}
+				<ImageBackground
+					source={backgroundImages[theme][sortPreferences?.background || 0]}
+					resizeMode={'cover'}
+					style={{ flex: 1 }}
+				>
+					<SafeAreaView
+						onLayout={this.onMeasureView}
+						style={{ backgroundColor: 'transparent' }}
+						testID='room-view'
+					>
+						<StatusBar />
+						<Banner title={I18n.t('Announcement')} text={announcement} bannerClosed={bannerClosed} closeBanner={this.closeBanner} />
+						{measureView && !!msgImages && (
+							<>
+								<List
+									ref={this.list}
+									listRef={this.flatList}
+									rid={rid}
+									tmid={this.tmid}
+									renderRow={this.renderItem}
+									loading={loading}
+									hideSystemMessages={this.hideSystemMessages}
+									showMessageInMainThread={user.showMessageInMainThread ?? false}
+									serverVersion={serverVersion}
+								/>
+								{this.renderFooter()}
+								{this.renderActions()}
+								<UploadProgress rid={rid} user={user} baseUrl={baseUrl} width={width} />
+								<JoinCode ref={this.joinCode} onJoin={this.onJoin} rid={rid} t={t} theme={theme} />
+							</>
+						)}
+					</SafeAreaView>
+				</ImageBackground>
 			</RoomContext.Provider>
 		);
 	}
@@ -1493,6 +1565,7 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 
 const mapStateToProps = (state: IApplicationState) => ({
 	user: getUserSelector(state),
+	sortPreferences: state.sortPreferences,
 	isMasterDetail: state.app.isMasterDetail,
 	useRealName: state.settings.UI_Use_Real_Name as boolean,
 	isAuthenticated: state.login.isAuthenticated,

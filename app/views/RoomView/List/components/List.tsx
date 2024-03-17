@@ -9,12 +9,17 @@ import NavBottomFAB from './NavBottomFAB';
 import { IListProps } from '../definitions';
 import { SCROLL_LIMIT } from '../constants';
 import { TAnyMessageModel } from '../../../../definitions';
+import { useTheme } from '../../../../theme';
 
 const AnimatedFlatList = Animated.createAnimatedComponent<FlatListProps<TAnyMessageModel>>(FlatList);
 
 const styles = StyleSheet.create({
+	image: {
+		flex: 1,
+		backgroundColor: 'black',
+	},
 	list: {
-		flex: 1
+		// flex: 1
 	},
 	contentContainer: {
 		paddingTop: 10
@@ -22,6 +27,7 @@ const styles = StyleSheet.create({
 });
 
 export const List = ({ listRef, jumpToBottom, isThread, ...props }: IListProps) => {
+	const { theme, colors } = useTheme();
 	const [visible, setVisible] = useState(false);
 
 	const scrollHandler = useAnimatedScrollHandler({
@@ -45,6 +51,7 @@ export const List = ({ listRef, jumpToBottom, isThread, ...props }: IListProps) 
 				style={styles.list}
 				inverted={isIOS}
 				removeClippedSubviews={isIOS}
+				// removeClippedSubviews
 				initialNumToRender={7}
 				onEndReachedThreshold={0.5}
 				maxToRenderPerBatch={5}
@@ -53,6 +60,8 @@ export const List = ({ listRef, jumpToBottom, isThread, ...props }: IListProps) 
 				onScroll={scrollHandler}
 				{...props}
 				{...scrollPersistTaps}
+				// invertStickyHeaders
+				// stickyHeaderIndices={[20, 24]}
 			/>
 			<NavBottomFAB visible={visible} onPress={jumpToBottom} isThread={isThread} />
 		</>

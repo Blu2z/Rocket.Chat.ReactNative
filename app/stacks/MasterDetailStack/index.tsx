@@ -47,6 +47,7 @@ import ThemeView from '../../views/ThemeView';
 import DefaultBrowserView from '../../views/DefaultBrowserView';
 import ScreenLockConfigView from '../../views/ScreenLockConfigView';
 import AdminPanelView from '../../views/AdminPanelView';
+import ERPPanelView from '../../views/ERPPanelView';
 import NewMessageView from '../../views/NewMessageView';
 import CreateChannelView from '../../views/CreateChannelView';
 import UserPreferencesView from '../../views/UserPreferencesView';
@@ -176,6 +177,7 @@ const ModalStackNavigator = React.memo(({ navigation }: INavigation) => {
 				<ModalStack.Screen name='ProfileView' component={ProfileView} />
 				<ModalStack.Screen name='DisplayPrefsView' component={DisplayPrefsView} />
 				<ModalStack.Screen name='AdminPanelView' component={AdminPanelView} />
+				<ModalStack.Screen name='ERPPanelView' component={ERPPanelView} />
 				<ModalStack.Screen name='NewMessageView' component={NewMessageView} />
 				<ModalStack.Screen name='SelectedUsersViewCreateChannel' component={SelectedUsersView} />
 				<ModalStack.Screen name='CreateChannelView' component={CreateChannelView} />

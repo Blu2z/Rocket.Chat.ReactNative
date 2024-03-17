@@ -45,6 +45,30 @@ const styles = StyleSheet.create({
 
 require('./components/EmojiKeyboard');
 
+const isForwardMessage = (msg: string | undefined) => {
+	if (!msg) {
+		return false;
+	}
+
+	return msg.includes('[Forward_message]');
+}
+
+const isHasTextInForwardMessage = (msg: string | undefined): null | string => {
+	if (!msg) {
+		return null;
+	}
+
+	const regex = /\) (.+)/;
+	const match = msg.match(regex);
+
+
+	if (match && match[1]) {
+		return match[1];
+	} 
+
+	return null;
+}
+
 export const MessageComposer = ({
 	forwardedRef,
 	children

@@ -7,4 +7,5 @@ export interface IPreferences {
 	showUnread: boolean;
 	showAvatar: boolean;
 	displayMode: DisplayMode;
+	background: number;
 }

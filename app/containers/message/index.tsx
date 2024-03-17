@@ -360,7 +360,9 @@ class MessageContainer extends React.Component<IMessageContainerProps, IMessageC
 			jumpToMessage,
 			highlighted,
 			isBeingEdited,
-			isPreview
+			isPreview,
+			msgImages,
+			measureView
 		} = this.props;
 		const {
 			id,
@@ -428,6 +430,7 @@ class MessageContainer extends React.Component<IMessageContainerProps, IMessageC
 					threadBadgeColor,
 					toggleFollowThread,
 					replies,
+					msgImages,
 					translateLanguage: canTranslateMessage ? autoTranslateLanguage : undefined
 				}}
 			>
@@ -485,6 +488,8 @@ class MessageContainer extends React.Component<IMessageContainerProps, IMessageC
 					isTranslated={isTranslated}
 					isBeingEdited={isBeingEdited}
 					isPreview={isPreview}
+					msgImages={msgImages}
+					measureView={measureView}
 				/>
 			</MessageContext.Provider>
 		);

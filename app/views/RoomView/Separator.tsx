@@ -47,12 +47,30 @@ const DateSeparator = ({ ts, unread }: { ts: Date | string | null; unread: boole
 	}
 	if (ts) {
 		return (
-			<View style={styles.container}>
+			<View style={[styles.container]}>
 				<View style={[styles.line, { backgroundColor: themes[theme].borderColor }]} />
-				<Text style={[styles.text, { color: themes[theme].auxiliaryText }, styles.marginHorizontal]}>{date}</Text>
+				<Text style={[
+					styles.text,
+					{ 
+						color: themes[theme].auxiliaryText,
+						backgroundColor: themes[theme].backgroundColor,
+						paddingHorizontal: 10,
+						borderRadius: 10, 
+						borderColor: themes[theme].previewTintColor,
+						borderStyle: 'solid',
+						borderWidth: 1,
+					}, 
+					styles.marginHorizontal]}>{date}</Text>
 				<View style={[styles.line, { backgroundColor: themes[theme].borderColor }]} />
 			</View>
 		);
+		// return (
+		// 	<View style={styles.container}>
+		// 		<View style={[styles.line, { backgroundColor: themes[theme].borderColor }]} />
+		// 		<Text style={[styles.text, { color: themes[theme].auxiliaryText }, styles.marginHorizontal]}>{date}</Text>
+		// 		<View style={[styles.line, { backgroundColor: themes[theme].borderColor }]} />
+		// 	</View>
+		// );
 	}
 	return (
 		<View style={styles.container}>

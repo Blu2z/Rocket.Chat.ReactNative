@@ -51,6 +51,7 @@ import ScreenLockConfigView from '../views/ScreenLockConfigView';
 import MediaAutoDownloadView from '../views/MediaAutoDownloadView';
 // Admin Stack
 import AdminPanelView from '../views/AdminPanelView';
+import ERPPanelView from '../views/ERPPanelView';
 // NewMessage Stack
 import NewMessageView from '../views/NewMessageView';
 import CreateChannelView from '../views/CreateChannelView';
@@ -80,6 +81,7 @@ import {
 	DrawerParamList,
 	E2EEnterYourPasswordStackParamList,
 	E2ESaveYourPasswordStackParamList,
+	ERPPanelStackParamList,
 	InsideStackParamList,
 	NewMessageStackParamList,
 	ProfileStackParamList,
@@ -199,7 +201,21 @@ const AdminPanelStackNavigator = () => {
 			screenOptions={{ ...defaultHeader, ...themedHeader(theme), ...StackAnimation } as StackNavigationOptions}
 		>
 			<AdminPanelStack.Screen name='AdminPanelView' component={AdminPanelView} />
+			{/* <AdminPanelStack.Screen name='ERPPanelView' component={ERPPanelView} /> */}
 		</AdminPanelStack.Navigator>
+	);
+};
+
+const ERPPanelStack = createStackNavigator<ERPPanelStackParamList>();
+const ERPPanelStackNavigator = () => {
+	const { theme } = React.useContext(ThemeContext);
+
+	return (
+		<ERPPanelStack.Navigator
+			screenOptions={{ ...defaultHeader, ...themedHeader(theme), ...StackAnimation } as StackNavigationOptions}
+		>
+			<ERPPanelStack.Screen name='ERPPanelView' component={ERPPanelView} />
+		</ERPPanelStack.Navigator>
 	);
 };
 
@@ -239,6 +255,7 @@ const DrawerNavigator = () => {
 			<Drawer.Screen name='ProfileStackNavigator' component={ProfileStackNavigator} />
 			<Drawer.Screen name='SettingsStackNavigator' component={SettingsStackNavigator} />
 			<Drawer.Screen name='AdminPanelStackNavigator' component={AdminPanelStackNavigator} />
+			<Drawer.Screen name='ERPPanelStackNavigator' component={ERPPanelStackNavigator} />
 			<Drawer.Screen name='DisplayPrefStackNavigator' component={DisplayPrefStackNavigator} />
 		</Drawer.Navigator>
 	);

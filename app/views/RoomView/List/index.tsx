@@ -1,11 +1,13 @@
-import React, { forwardRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
+import moment from 'moment';
 
 import ActivityIndicator from '../../../containers/ActivityIndicator';
 import { isAndroid, useDebounce } from '../../../lib/methods/helpers';
 import { EmptyRoom, List } from './components';
 import { IListContainerProps, IListContainerRef, IListProps } from './definitions';
 import { useMessages, useScroll } from './hooks';
+import { Services } from '../../../lib/services';
 
 const styles = StyleSheet.create({
 	inverted: {
@@ -21,7 +23,7 @@ const Container = ({ children }: { children: React.ReactElement }) =>
 	isAndroid ? <View style={{ flex: 1, scaleY: -1 }}>{children}</View> : <>{children}</>;
 
 const ListContainer = forwardRef<IListContainerRef, IListContainerProps>(
-	({ rid, tmid, renderRow, showMessageInMainThread, serverVersion, hideSystemMessages, listRef, loading }, ref) => {
+	({ rid, tmid, renderRow, showMessageInMainThread, serverVersion, hideSystemMessages, listRef, loading, msgImages }, ref) => {
 		const [messages, messagesIds, fetchMessages] = useMessages({
 			rid,
 			tmid,
@@ -39,6 +41,7 @@ const ListContainer = forwardRef<IListContainerRef, IListContainerProps>(
 		} = useScroll({ listRef, messagesIds });
 
 		const onEndReached = useDebounce(() => {
+			listRef.current?.scrollToIndex({ index: messages.length -1, animated: false });
 			fetchMessages();
 		}, 300);
 
@@ -55,7 +58,10 @@ const ListContainer = forwardRef<IListContainerRef, IListContainerProps>(
 		};
 
 		const renderItem: IListProps['renderItem'] = ({ item, index }) => (
-			<View style={styles.inverted}>{renderRow(item, messages[index + 1], highlightedMessageId)}</View>
+			<View style={styles.inverted}>
+				{renderRow(item, messages[index + 1], highlightedMessageId)}
+			</View>
+			// <View style={styles.inverted}>{renderRow(item, messages[index + 1], highlightedMessageId)}</View>
 		);
 
 		return (

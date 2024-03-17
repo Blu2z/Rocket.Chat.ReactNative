@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import { Switch } from 'react-native';
+import Touchable from 'react-native-platform-touchable';
+import { Switch, View, Text, Image } from 'react-native';
+// import { Switch } from 'react-native';
 import { RadioButton } from 'react-native-ui-lib';
 import { useDispatch } from 'react-redux';
 
@@ -20,11 +22,32 @@ import { events, logEvent } from '../lib/methods/helpers/log';
 import { saveSortPreference } from '../lib/methods';
 import { useAppSelector } from '../lib/hooks';
 
+export const backgroundImages = {
+	light: [
+		require('../static/images/chat-bg-pattern-light1_rocket.png'),
+		require('../static/images/chat-bg-pattern-light2_rocket.png'),
+		require('../static/images/chat-bg-pattern-light3_rocket.png'),
+		require('../static/images/chat-bg-pattern-light4_rocket.png'),
+	],
+	dark: [
+		require('../static/images/chat-bg-pattern-dark1_rocket.png'),
+		require('../static/images/chat-bg-pattern-dark2_rocket.png'),
+		require('../static/images/chat-bg-pattern-dark3_rocket.png'),
+		require('../static/images/chat-bg-pattern-dark4_rocket.png')
+	],
+	black: [
+		require('../static/images/chat-bg-pattern-black1_rocket.png'),
+		require('../static/images/chat-bg-pattern-black2_rocket.png'),
+		require('../static/images/chat-bg-pattern-black3_rocket.png'),
+		require('../static/images/chat-bg-pattern-black4_rocket.png')
+	]
+}
+
 const DisplayPrefsView = (): React.ReactElement => {
 	const navigation = useNavigation<StackNavigationProp<SettingsStackParamList, 'DisplayPrefsView'>>();
-	const { colors } = useTheme();
+	const { colors, theme } = useTheme();
 
-	const { sortBy, groupByType, showFavorites, showUnread, showAvatar, displayMode } = useAppSelector(
+	const { sortBy, groupByType, showFavorites, showUnread, showAvatar, displayMode, background = 0 } = useAppSelector(
 		state => state.sortPreferences
 	);
 	const { isMasterDetail } = useAppSelector(state => state.app);
@@ -86,6 +109,11 @@ const DisplayPrefsView = (): React.ReactElement => {
 		setSortPreference({ displayMode: DisplayMode.Condensed });
 	};
 
+	const toggleBackground = (type: number) => () => {
+		logEvent(events.DP_TOGGLE_AVATAR);
+		setSortPreference({ background: type });
+	};
+
 	const renderCheckBox = (value: boolean) => (
 		<List.Icon name={value ? 'checkbox-checked' : 'checkbox-unchecked'} color={value ? colors.actionTintColor : null} />
 	);
@@ -127,6 +155,59 @@ const DisplayPrefsView = (): React.ReactElement => {
 						right={() => renderAvatarSwitch(showAvatar)}
 					/>
 					<List.Separator />
+					<View
+						style={{
+							backgroundColor: colors.backgroundColor
+						}}
+					>	
+						<View style={{
+							flex: 1,
+							flexDirection: 'row',
+							alignItems: 'center',
+							justifyContent: 'flex-start', 
+							paddingHorizontal: 14 
+						}}>
+							<View style={{ paddingRight: 12 }}>
+								<List.Icon name='avatar' />
+							</View>
+							<Text style={{ fontSize: 16, marginVertical: 10, color: colors.bodyText }}>Обои</Text>
+						</View>
+						<View 
+							style={{
+								display: 'flex',
+								flexDirection: 'row', 
+								gap: 10,
+								justifyContent: 'space-around',
+								// alignItems: 'center',
+								paddingHorizontal: 10,
+								paddingBottom: 8,
+								borderRadius: 10
+								// overflow: 'hidden'
+							}}
+						>
+							{backgroundImages[theme].map((item, index) => (
+								<Touchable 
+
+									key={index}
+									onPress={toggleBackground(index)}
+									style={{ 
+										flex: 1, 
+										// width: '30%', 
+										height: 100, 
+										overflow: 'hidden',
+										borderRadius: 10,
+										borderColor: background === index ? 'red' : 'transparent',
+										borderWidth: 4
+									}}
+								>
+									<Image 
+										style={{ height: '100%', width: '100%', resizeMode: 'stretch' }}
+										source={backgroundImages[theme][index]}/>
+								</Touchable>
+								)
+							)}
+						</View>
+					</View>
 				</List.Section>
 
 				<List.Section title='Sort_by'>

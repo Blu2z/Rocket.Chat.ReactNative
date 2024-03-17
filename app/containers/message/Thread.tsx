@@ -19,10 +19,22 @@ const Thread = React.memo(
 		}
 
 		return (
-			<View style={styles.buttonContainer}>
-				<View style={[styles.button, { backgroundColor: themes[theme].tintColor }]} testID={`message-thread-button-${msg}`}>
+			<View style={[
+				styles.buttonContainer,
+				{
+					minWidth: 300,
+					borderTopWidth: 1,
+					borderTopColor: themes[theme].separatorColor,
+					marginLeft: -16,
+					marginRight: -16,
+					paddingRight: 16,
+					paddingLeft: 9,
+					paddingVertical: 8
+				}
+			]}>
+				{/* <View style={[styles.button, { backgroundColor: themes[theme].tintColor }]} testID={`message-thread-button-${msg}`}>
 					<Text style={[styles.buttonText, { color: themes[theme].buttonText }]}>{I18n.t('Reply')}</Text>
-				</View>
+				</View> */}
 				<ThreadDetails
 					item={{
 						tcount,

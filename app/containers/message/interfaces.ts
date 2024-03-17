@@ -15,6 +15,8 @@ export interface IMessageAttachments {
 	showAttachment?: (file: IAttachment) => void;
 	getCustomEmoji: TGetCustomEmoji;
 	author?: IUserMessage;
+	msgImages?: string[];
+	noReplyComponent?: boolean;
 }
 
 export interface IMessageAvatar {

@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { StyleProp, TextStyle, View } from 'react-native';
+import React, { useContext, useEffect, useMemo, useState, useRef } from 'react';
+import { StyleProp, TextStyle, View, Image, Text, Dimensions } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { IAttachment, IUserMessage } from '../../definitions';
@@ -15,11 +15,13 @@ import {
 import { formatAttachmentUrl } from '../../lib/methods/helpers/formatAttachmentUrl';
 import { useTheme } from '../../theme';
 import Markdown from '../markdown';
-import BlurComponent from './Components/OverlayComponent';
+import BlurComponent from './Components/BlurComponent';
 import MessageContext from './Context';
 import Touchable from './Touchable';
 import styles from './styles';
 import { isImageBase64 } from '../../lib/methods';
+import { CustomIcon } from '../CustomIcon';
+import I18n from 'i18n-js';
 
 interface IMessageButton {
 	children: React.ReactElement;
@@ -30,7 +32,7 @@ interface IMessageButton {
 interface IMessageImage {
 	file: IAttachment;
 	imageUrl?: string;
-	showAttachment?: (file: IAttachment) => void;
+	showAttachment?: (file: IAttachment, msgImages: string[]) => void;
 	style?: StyleProp<TextStyle>[];
 	isReply?: boolean;
 	getCustomEmoji?: TGetCustomEmoji;
@@ -38,13 +40,15 @@ interface IMessageImage {
 	msg?: string;
 }
 
+const cachedRatio = {};
+
 const Button = React.memo(({ children, onPress, disabled }: IMessageButton) => {
 	const { colors } = useTheme();
 	return (
 		<Touchable
 			disabled={disabled}
 			onPress={onPress}
-			style={styles.imageContainer}
+			style={[styles.imageContainer, styles.mustWrapBlur]}
 			background={Touchable.Ripple(colors.bannerBackground)}
 		>
 			{children}
@@ -52,23 +56,117 @@ const Button = React.memo(({ children, onPress, disabled }: IMessageButton) => {
 	);
 });
 
-export const MessageImage = React.memo(({ imgUri, cached, loading }: { imgUri: string; cached: boolean; loading: boolean }) => {
+export const MessageImage = React.memo(({ imgUri, cached, loading, measureView }: { imgUri: string; cached: boolean; loading: boolean, containerWH: {} }) => {
 	const { colors } = useTheme();
+	const [imgWidth, setImgWidth] = useState<string | number>(200);
+	const [imgHeight, setImgHeight] = useState<string | number>(200);
+	const [aspectRatio, setAspectRatio] = useState<number | null>(null);
+	const deviceWidthContainer = Math.min(measureView?.width || 395, measureView?.height || 395) - 95;
+
+	useEffect(() => {
+		const handleResize = () => {
+			let ratio = 1;
+
+			if (cachedRatio[encodeURI(imgUri)]) {
+				const { ratio, w, h } = cachedRatio[encodeURI(imgUri)];
+				setImgWidth(w);
+				setImgHeight(h);
+				setAspectRatio(ratio);
+				return;
+			}
+
+			Image.getSize(encodeURI(imgUri), (width, height) => {
+				// console.log(`The image dimensions are W: ${width} H: ${height} Ratio: ${(width / height).toFixed(2) }`);
+				ratio = width / height;
+
+				let w = deviceWidthContainer;
+				let h = deviceWidthContainer;
+
+				if (ratio > 1) {
+					h = Math.trunc(deviceWidthContainer / ratio);
+				} else {
+					w = Math.trunc(deviceWidthContainer * ratio);
+				}
+
+				cachedRatio[encodeURI(imgUri)] = { ratio, w, h };
+
+				setImgWidth(w);
+				setImgHeight(h);
+				setAspectRatio(ratio);
+			}, (error) => {
+				setAspectRatio(-1);
+				console.error(`Couldn't get the image size because: ${error}`);
+			});
+		};
+		handleResize();
+	}, [imgUri]);
+
+	if (aspectRatio === -1) {
+		return (
+			<View
+				style={{
+					width: '100%',
+					height: 300,
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'center',
+					backgroundColor: '#ff000012',
+				}}>
+				<CustomIcon name='directory-error' size={100} color={colors.bodyText} />
+				<Text style={{ color: colors.bodyText }}>
+					{I18n.t('Image_error_preview')}
+				</Text>
+			</View>
+		);
+	}
+
 	return (
 		<>
-			<FastImage
-				style={[styles.image, { borderColor: colors.borderColor }]}
-				source={{ uri: encodeURI(imgUri) }}
-				resizeMode={FastImage.resizeMode.cover}
-			/>
-			{!cached ? (
-				<BlurComponent loading={loading} style={[styles.image, styles.imageBlurContainer]} iconName='arrow-down-circle' />
-			) : null}
+			<View
+				style={{
+					display: 'flex',
+					justifyContent: 'flex-start',
+					marginTop: 8
+				}}
+			>
+				{!aspectRatio ? (
+					<View
+						style={{
+							width: cachedRatio[encodeURI(imgUri)] ? cachedRatio[encodeURI(imgUri)].w : deviceWidthContainer,
+							height: cachedRatio[encodeURI(imgUri)] ? cachedRatio[encodeURI(imgUri)].h : deviceWidthContainer,
+						}}>
+						<Text style={{ color: colors.bodyText }}>
+							{I18n.t('Loading')}
+						</Text>
+					</View>
+				) : (
+					<FastImage
+						style={[{
+							textAlign: 'left',
+							aspectRatio,
+							width: imgWidth,
+							height: imgHeight,
+						}]}
+						source={{ uri: encodeURI(imgUri) }}
+						resizeMode={FastImage.resizeMode.contain}
+					/>
+				)}
+			</View>
+			{/* {!cached ? (
+				<BlurComponent 
+					loading={loading} 
+					style={[
+						styles.image, 
+						styles.imageBlurContainer,
+					]} 
+					iconName='arrow-down-circle' />
+			) : null} */}
 		</>
 	);
 });
 
 const ImageContainer = ({
+	id,
 	file,
 	imageUrl,
 	showAttachment,
@@ -76,7 +174,9 @@ const ImageContainer = ({
 	style,
 	isReply,
 	author,
-	msg
+	msg,
+	msgImages,
+	measureView
 }: IMessageImage): React.ReactElement | null => {
 	const [imageCached, setImageCached] = useState(file);
 	const [cached, setCached] = useState(false);
@@ -185,7 +285,7 @@ const ImageContainer = ({
 		if (!cached && !loading) {
 			const isImageCached = await handleGetMediaCache();
 			if (isImageCached && showAttachment) {
-				showAttachment(imageCached);
+				showAttachment(file, msgImages, id); // remove cached image from carousel
 				return;
 			}
 			if (isDownloadActive(imgUrlToCache)) {
@@ -198,25 +298,28 @@ const ImageContainer = ({
 		if (!showAttachment) {
 			return;
 		}
-		showAttachment(imageCached);
+		showAttachment(file, msgImages, id); // remove cached image from carousel
 	};
 
-	if (msg) {
-		return (
-			<View>
-				<Markdown msg={msg} style={[isReply && style]} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
-				<Button onPress={onPress}>
-					<MessageImage imgUri={img} cached={cached} loading={loading} />
-				</Button>
-			</View>
-		);
-	}
 
+	// if (msg) {
 	return (
-		<Button onPress={onPress}>
-			<MessageImage imgUri={img} cached={cached} loading={loading} />
-		</Button>
+		<View>
+			{msg && (
+				<Markdown msg={msg} style={[isReply && style]} username={user.username} getCustomEmoji={getCustomEmoji} theme={theme} />
+			)}
+			<Button onPress={onPress}>
+				<MessageImage imgUri={img} cached={cached} loading={loading} measureView={measureView} file={file} />
+			</Button>
+		</View>
 	);
+	// }
+
+	// return (
+	// 	<Button onPress={onPress}>
+	// 		<MessageImage imgUri={img} cached={cached} loading={loading} />
+	// 	</Button>
+	// );
 };
 
 ImageContainer.displayName = 'MessageImageContainer';

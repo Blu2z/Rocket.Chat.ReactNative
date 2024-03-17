@@ -433,11 +433,11 @@ const MessageActions = React.memo(
 				}
 
 				// Permalink
-				options.push({
-					title: I18n.t('Get_link'),
-					icon: 'link',
-					onPress: () => handlePermalink(message)
-				});
+				// options.push({
+				// 	title: I18n.t('Get_link'),
+				// 	icon: 'link',
+				// 	onPress: () => handlePermalink(message)
+				// });
 
 				// Copy
 				if (!videoConfBlock) {
@@ -513,12 +513,12 @@ const MessageActions = React.memo(
 				}
 
 				// Report
-				options.push({
-					title: I18n.t('Report'),
-					icon: 'warning',
-					danger: true,
-					onPress: () => handleReport(message)
-				});
+				// options.push({
+				// 	title: I18n.t('Report'),
+				// 	icon: 'warning',
+				// 	danger: true,
+				// 	onPress: () => handleReport(message)
+				// });
 
 				// Delete
 				const isDeleteAllowed = allowDelete(message);
