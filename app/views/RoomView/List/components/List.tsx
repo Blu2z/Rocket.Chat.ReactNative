@@ -44,12 +44,12 @@ export const List = ({ listRef, jumpToBottom, isThread, ...props }: IListProps) 
 		<>
 			<AnimatedFlatList
 				testID='room-view-messages'
-				// @ts-ignore createAnimatedComponent is making this fail
 				ref={listRef}
+				// @ts-ignore createAnimatedComponent is making this fail
 				keyExtractor={item => item.id}
 				contentContainerStyle={styles.contentContainer}
 				style={styles.list}
-				inverted={isIOS}
+				inverted
 				removeClippedSubviews={isIOS}
 				// removeClippedSubviews
 				initialNumToRender={7}

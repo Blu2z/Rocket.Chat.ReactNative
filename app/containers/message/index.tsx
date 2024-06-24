@@ -392,7 +392,8 @@ class MessageContainer extends React.Component<IMessageContainerProps, IMessageC
 			autoTranslate: autoTranslateMessage,
 			replies,
 			md,
-			comment
+			comment,
+			pinned
 		} = item;
 
 		let message = msg;
@@ -488,6 +489,7 @@ class MessageContainer extends React.Component<IMessageContainerProps, IMessageC
 					isTranslated={isTranslated}
 					isBeingEdited={isBeingEdited}
 					isPreview={isPreview}
+					pinned={pinned}
 					msgImages={msgImages}
 					measureView={measureView}
 				/>

@@ -66,7 +66,7 @@ const ListContainer = forwardRef<IListContainerRef, IListContainerProps>(
 
 		return (
 			<>
-				<EmptyRoom rid={rid} length={messages.length} />
+				{/* <EmptyRoom rid={rid} length={messages.length} /> */}
 				<Container>
 					<List
 						listRef={listRef}

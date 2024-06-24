@@ -54,7 +54,7 @@ const ForwardMessageView = () => {
 				<HeaderButton.Container>
 					<HeaderButton.Item
 						title={I18n.t('Send')}
-						color={isSendButtonEnabled ? colors.actionTintColor : colors.headerTintColor}
+						color={isSendButtonEnabled ? colors.fontHint : colors.fontSecondaryInfo}
 						disabled={!isSendButtonEnabled}
 						onPress={handlePostMessage}
 						testID='forward-message-view-send'
@@ -93,10 +93,9 @@ const ForwardMessageView = () => {
 
 	return (
 		<KeyboardView
-			style={{ backgroundColor: colors.auxiliaryBackground }}
+			style={{ backgroundColor: colors.surfaceHover }}
 			contentContainerStyle={styles.container}
-			keyboardVerticalOffset={128}
-		>
+			keyboardVerticalOffset={128}>
 			<StatusBar />
 			<SafeAreaView testID='forward-message-view' style={styles.container}>
 				<ScrollView {...scrollPersistTaps}>
@@ -108,7 +107,7 @@ const ForwardMessageView = () => {
 						blockUnauthenticatedAccess={blockUnauthenticatedAccess}
 						serverVersion={serverVersion}
 					/>
-					<View pointerEvents='none' style={[styles.messageContainer, { backgroundColor: colors.backgroundColor }]}>
+					<View pointerEvents='none' style={[styles.messageContainer, { backgroundColor: colors.surfaceRoom }]}>
 						<MessagePreview message={message} />
 					</View>
 				</ScrollView>

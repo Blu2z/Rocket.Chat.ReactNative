@@ -10,7 +10,7 @@ import protectedFunction from '../methods/helpers/protectedFunction';
 import database from '../database';
 import { twoFactor } from './twoFactor';
 import { store } from '../store/auxStore';
-import { loginRequest, setLoginServices, setUser } from '../../actions/login';
+import { loginRequest, logout, setLoginServices, setUser } from '../../actions/login';
 import sdk from './sdk';
 import I18n from '../../i18n';
 import { ICredentials, ILoggedUser, STATUSES } from '../../definitions';
@@ -47,6 +47,7 @@ let usersListener: any;
 let notifyAllListener: any;
 let rolesListener: any;
 let notifyLoggedListener: any;
+let logoutListener: any;
 
 function connect({ server, logoutOnError = false }: { server: string; logoutOnError?: boolean }): Promise<void> {
 	return new Promise<void>(resolve => {
@@ -88,6 +89,10 @@ function connect({ server, logoutOnError = false }: { server: string; logoutOnEr
 
 		if (notifyLoggedListener) {
 			notifyLoggedListener.then(stopListener);
+		}
+
+		if (logoutListener) {
+			logoutListener.then(stopListener);
 		}
 
 		unsubscribeRooms();
@@ -271,6 +276,8 @@ function connect({ server, logoutOnError = false }: { server: string; logoutOnEr
 			})
 		);
 
+		logoutListener = sdk.current.onStreamData('stream-force_logout', () => store.dispatch(logout(true)));
+
 		resolve();
 	});
 }
@@ -311,7 +318,8 @@ async function login(credentials: ICredentials, isFromWebView = false): Promise<
 			enableMessageParserEarlyAdoption,
 			alsoSendThreadToChannel: result.me.settings?.preferences?.alsoSendThreadToChannel,
 			bio: result.me.bio,
-			nickname: result.me.nickname
+			nickname: result.me.nickname,
+			requirePasswordChange: result.me.requirePasswordChange
 		};
 		return user;
 	}
