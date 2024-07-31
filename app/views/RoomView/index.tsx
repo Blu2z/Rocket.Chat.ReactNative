@@ -485,6 +485,9 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 		const teamMain = 'teamMain' in room ? room?.teamMain : false;
 		const omnichannelPermissions = { canForwardGuest, canReturnQueue, canPlaceLivechatOnHold };
 		const iSubRoom = room as ISubscription;
+		const e2eeWarning = !!(
+			'encrypted' in room && hasE2EEWarning({ encryptionEnabled, E2EKey: room.E2EKey, roomEncrypted: room.encrypted })
+		);
 		navigation.setOptions({
 			headerShown: true,
 			headerTitleAlign: 'left',
@@ -525,7 +528,7 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 					onPress={this.goRoomActionsView}
 					testID={`room-view-title-${title}`}
 					sourceType={sourceType}
-					disabled={!!tmid}
+					disabled={e2eeWarning}
 				/>
 			),
 			headerRight: () => (
@@ -543,9 +546,7 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 					showActionSheet={this.showActionSheet}
 					departmentId={departmentId}
 					notificationsDisabled={iSubRoom?.disableNotifications}
-					hasE2EEWarning={
-						'encrypted' in room && hasE2EEWarning({ encryptionEnabled, E2EKey: room.E2EKey, roomEncrypted: room.encrypted })
-					}
+					hasE2EEWarning={e2eeWarning}
 				/>
 			)
 		});
@@ -1410,8 +1411,7 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 					<Touch
 						onPress={this.resumeRoom}
 						style={[styles.joinRoomButton, { backgroundColor: themes[theme].fontHint }]}
-						enabled={!loading}
-					>
+						enabled={!loading}>
 						<Text style={[styles.joinRoomText, { color: themes[theme].fontWhite }]} testID='room-view-chat-on-hold-button'>
 							{I18n.t('Resume')}
 						</Text>
@@ -1426,8 +1426,7 @@ class RoomView extends React.Component<IRoomViewProps, IRoomViewState> {
 					<Touch
 						onPress={this.joinRoom}
 						style={[styles.joinRoomButton, { backgroundColor: themes[theme].fontHint }]}
-						enabled={!loading}
-					>
+						enabled={!loading}>
 						<Text style={[styles.joinRoomText, { color: themes[theme].fontWhite }]} testID='room-view-join-button'>
 							{I18n.t(this.isOmnichannel ? 'Take_it' : 'Join')}
 						</Text>
