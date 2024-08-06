@@ -1,7 +1,7 @@
+
 import React from 'react';
 import { Image } from 'react-native';
 import { FastImageProps } from 'react-native-fast-image';
-
 import { ImageCarousel } from './ImageCarousel';
 
 import { types } from './types';

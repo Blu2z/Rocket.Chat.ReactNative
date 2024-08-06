@@ -2,14 +2,14 @@ import React, { useContext } from 'react';
 import { dequal } from 'dequal';
 
 import { IMessageAttachments } from './interfaces';
-import Image from './Image';
-import Audio from './Audio';
-import Video from './Video';
+import Image from './Components/Attachments/Image';
+import Audio from './Components/Attachments/Audio';
+import Video from './Components/Attachments/Video';
 import Reply from './Reply';
 import Button from '../Button';
 import MessageContext from './Context';
 import { IAttachment, TGetCustomEmoji } from '../../definitions';
-import CollapsibleQuote from './Components/CollapsibleQuote';
+import CollapsibleQuote from './Components/Attachments/CollapsibleQuote';
 import openLink from '../../lib/methods/helpers/openLink';
 import Markdown from '../markdown';
 import { getMessageFromAttachment } from './utils';

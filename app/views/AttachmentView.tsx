@@ -3,7 +3,7 @@ import { HeaderBackground, useHeaderHeight } from '@react-navigation/elements';
 import { StackNavigationOptions } from '@react-navigation/stack';
 import { ResizeMode, Video } from 'expo-av';
 import React from 'react';
-import { PermissionsAndroid, useWindowDimensions, View } from 'react-native';
+import { PermissionsAndroid, useWindowDimensions, View, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { shallowEqual } from 'react-redux';
 import * as FileSystem from 'expo-file-system';
@@ -29,7 +29,8 @@ const RenderContent = ({
 	setLoading,
 	attachment,
 	attachments,
-	currentId
+	currentId,
+	handleSave
 }: {
 	setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 	attachment: IAttachment;
@@ -61,6 +62,7 @@ const RenderContent = ({
 	if (attachment.image_url) {
 		const url = formatAttachmentUrl(attachment.title_link || attachment.image_url, user.id, user.token, baseUrl);
 		const uri = encodeURI(url);
+		// return <Text>== test</ Text>
 		return (
 			<ImageViewer
 				msgImages={attachments}
@@ -70,6 +72,7 @@ const RenderContent = ({
 				onLoadEnd={() => setLoading(false)}
 				width={width}
 				height={height - insets.top - insets.bottom - (headerHeight || 0)}
+				handleSave={handleSave}
 			/>
 		);
 	}
@@ -149,13 +152,13 @@ const AttachmentView = (): React.ReactElement => {
 	};
 
 	React.useLayoutEffect(() => {
-		// setHeader();
+		setHeader();
 	}, [navigation]);
 
-	const handleSave = async () => {
+	const handleSave = async (attach) => {
 		const { title_link, image_url, image_type, video_url, video_type } = attachment;
 		// When the attachment is a video, the video_url refers to local file and the title_link to the link
-		const url = video_url || title_link || image_url;
+		const url = video_url || title_link || image_url || attach.url;
 
 		if (!url) {
 			return;
@@ -180,8 +183,8 @@ const AttachmentView = (): React.ReactElement => {
 			} else {
 				const mediaAttachment = formatAttachmentUrl(url, user.id, user.token, baseUrl);
 				let filename = '';
-				if (image_url) {
-					filename = getFilename({ title: attachment.title, type: 'image', mimeType: image_type, url });
+				if (image_url || url) {
+					filename = getFilename({ title: attachment.title, type: 'image', mimeType: image_type || url });
 				} else {
 					filename = getFilename({ title: attachment.title, type: 'video', mimeType: video_type, url });
 				}
@@ -198,8 +201,15 @@ const AttachmentView = (): React.ReactElement => {
 
 	return (
 		<View style={{ backgroundColor: colors.backgroundColor, flex: 1 }}>
+			<Text>test</Text>
 			<StatusBar barStyle='light-content' backgroundColor={colors.previewBackground} />
-			<RenderContent attachment={attachment} attachments={attachments} currentId={currentId} setLoading={setLoading} />
+			<RenderContent
+				attachment={attachment}
+				attachments={attachments}
+				currentId={currentId} 
+				setLoading={setLoading} 
+				handleSave={handleSave}
+			/>
 			{loading ? <RCActivityIndicator absolute size='large' /> : null}
 		</View>
 	);

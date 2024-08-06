@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import ImageView from "react-native-image-viewing";
 import { StackActions, useNavigation } from '@react-navigation/native';
 
@@ -27,16 +27,18 @@ type ImageObj = {
 };
 
 
-export const ImageCarousel = ({ msgImages, source, onLoadEnd, currentId, file }: ImageCarouselProps) => {
+export const ImageCarousel = ({ msgImages, source, onLoadEnd, currentId, file, handleSave }: ImageCarouselProps) => {
 	const [visible, setVisible] = React.useState(false);
 	const [activeIndex, setActiveIndex] = React.useState(-1);
 	const [images, setImages] = React.useState([]);
+	const [attachments, setAttachments] = React.useState([]);
 	const { dispatch } = useNavigation();
 	const imagesObj = React.useRef<ImageObj | {}>({});
 	// const baseUrl = useAppSelector(state => state.share.server.server || state.server.server);
 
 	React.useLayoutEffect(() => {
-		const prepareImages = [...msgImages].reverse().map(({ user, uploadedAt, _id, url }, index) => {
+		const prepareAttachments = [...msgImages].reverse();
+		const prepareImages = prepareAttachments.map(({ user, uploadedAt, _id, url }, index) => {
 			imagesObj.current[_id] = index;
 			return {
 				id: _id,
@@ -47,6 +49,7 @@ export const ImageCarousel = ({ msgImages, source, onLoadEnd, currentId, file }:
 		});
 
 		setImages(prepareImages);
+		setAttachments(prepareAttachments);
 		// const searchUri = source.uri.slice(-16) // get last 16 characters of uri (image name)
 
 		const currentCount = imagesObj.current[getIdByUrl(file.image_url)] || 0;
@@ -61,6 +64,10 @@ export const ImageCarousel = ({ msgImages, source, onLoadEnd, currentId, file }:
 		dispatch(StackActions.pop());
 		setVisible(false);
 	}
+
+	const handleSaveImage = useCallback(() => {
+		handleSave(attachments[activeIndex]);
+	}, [activeIndex, attachments, handleSave]);
 
 	if (!images.length) {
 		return null;
@@ -79,6 +86,7 @@ export const ImageCarousel = ({ msgImages, source, onLoadEnd, currentId, file }:
 					title={images[imageIndex]?.user}
 					time={images[imageIndex]?.time}
 					onRequestClose={handleClose}
+					handleSave={handleSaveImage}
 				/>)}
 		/>
 	);

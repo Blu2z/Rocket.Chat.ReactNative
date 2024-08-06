@@ -11,6 +11,7 @@ import * as HeaderButton from '../HeaderButton';
 import { useTheme } from '../../theme';
 import { themes } from '../../lib/constants';
 
+
 type Props = {
 	title?: string;
 	time?: string;
@@ -31,7 +32,7 @@ const ImageHeader = ({ title, onRequestClose, time, count, handleSave }: Props) 
 					{title && <Text style={styles.text}>{title}</Text>}
 					{time && <Text style={styles.textTime}>{moment(time).format('MMMM Do YYYY, h:mm:ss')}</Text>}
 				</View>
-				{/* <HeaderButton.Download testID='save-image' onPress={handleSave} color={themes[theme].previewTintColor} /> */}
+				<HeaderButton.Download testID='save-image' onPress={handleSave} color={themes[theme].previewTintColor} />
 			</View>
 			{count && (
 				<View style={styles.count}>

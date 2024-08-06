@@ -1,6 +1,8 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { StyleProp, TextStyle, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
+
+import { StyleProp, TextStyle, View, Text, Image, Dimensions } from 'react-native';
+import I18n from 'i18n-js';
 
 import { emitter } from '../../../../lib/methods/helpers';
 import { IAttachment, IUserMessage } from '../../../../definitions';
@@ -17,6 +19,7 @@ import styles from '../../styles';
 import { isImageBase64 } from '../../../../lib/methods';
 import { isValidUrl } from '../../../../lib/methods/helpers/isValidUrl';
 import { useFile } from '../../hooks/useFile';
+import { CustomIcon } from '../../../CustomIcon';
 
 interface IMessageButton {
 	children: React.ReactElement;
@@ -27,12 +30,13 @@ interface IMessageButton {
 interface IMessageImage {
 	file: IAttachment;
 	imageUrl?: string;
-	showAttachment?: (file: IAttachment) => void;
+	showAttachment?: (file: IAttachment, msgImages: string[], id: number) => void;
 	style?: StyleProp<TextStyle>[];
 	isReply?: boolean;
 	getCustomEmoji?: TGetCustomEmoji;
 	author?: IUserMessage;
 	msg?: string;
+	msgImages?: string[];
 }
 
 const Button = React.memo(({ children, onPress, disabled }: IMessageButton) => {
@@ -51,7 +55,55 @@ const Button = React.memo(({ children, onPress, disabled }: IMessageButton) => {
 export const MessageImage = React.memo(
 	({ imgUri, cached, loading, encrypted = false }: { imgUri: string; cached: boolean; loading: boolean; encrypted: boolean }) => {
 		const { colors } = useTheme();
+		const [imgWidth, setImgWidth] = useState<string | number>(200);
+		const [imgHeight, setImgHeight] = useState<string | number>(200);
+		const [aspectRatio, setAspectRatio] = useState<number | null>(null);
 		const valid = isValidUrl(imgUri);
+
+		useEffect(() => {
+			const handleResize = () => {
+				let ratio = 1;
+				Image.getSize(encodeURI(imgUri), (width, height) => {
+					// console.log(`The image dimensions are W: ${width} H: ${height} Ratio: ${(width / height).toFixed(2) }`);
+					ratio = width / height;
+					const deviceWidth = Math.trunc(Dimensions.get('window').width - 100);
+					if (ratio === 1) {
+						setImgWidth(deviceWidth);
+						setImgHeight(deviceWidth);
+					} else if (ratio > 1) {
+						setImgWidth(deviceWidth);
+						setImgHeight(Math.trunc(deviceWidth / ratio));
+					} else {
+						setImgWidth(Math.trunc(deviceWidth * ratio));
+						setImgHeight(deviceWidth);
+					}
+					setAspectRatio(ratio);
+				}, (error) => {
+					setAspectRatio(-1);
+					console.error(`Couldn't get the image size because: ${error}`);
+				});
+			};
+			handleResize();
+		}, [imgUri]);
+
+		if (aspectRatio === -1) {
+			return (
+				<View 
+					style={{ 
+						width: '100%', 
+						height: 300, 
+						display: 'flex',
+						justifyContent: 'center',
+						alignItems: 'center',
+						backgroundColor: '#ff000012',
+					}}>
+					<CustomIcon name='directory-error' size={100} color={colors.bodyText} />
+					<Text style={{ color: colors.bodyText }}>
+						{I18n.t('Image_error_preview')}
+					</Text>
+				</View>
+			);
+		}
 
 		if (encrypted && !loading && cached) {
 			return (
@@ -64,15 +116,26 @@ export const MessageImage = React.memo(
 
 		return (
 			<>
-				{valid ? (
-					<FastImage
-						style={[styles.image, { borderColor: colors.strokeLight }]}
-						source={{ uri: encodeURI(imgUri) }}
-						resizeMode={FastImage.resizeMode.cover}
-					/>
+				{valid && !aspectRatio ? (
+					<View style={{ width: 400, height: 400 }}>
+						<Text style={{ color: colors.bodyText }}>
+							{I18n.t('Loading')}
+						</Text>
+					</View>
 				) : (
-					<View style={styles.image} />
-				)}
+					<FastImage
+						style={[{
+							textAlign: 'left',
+							aspectRatio,
+							width: imgWidth,
+							height: imgHeight,
+						}]}
+						source={{ uri: encodeURI(imgUri) }}
+						resizeMode={FastImage.resizeMode.contain}
+					/>
+				)
+				}
+
 				{!cached ? (
 					<BlurComponent loading={loading} style={[styles.image, styles.imageBlurContainer]} iconName='arrow-down-circle' />
 				) : null}
@@ -89,7 +152,8 @@ const ImageContainer = ({
 	style,
 	isReply,
 	author,
-	msg
+	msg,
+	msgImages
 }: IMessageImage): React.ReactElement | null => {
 	const { id, baseUrl, user } = useContext(MessageContext);
 	const [imageCached, setImageCached] = useFile(file, id);
@@ -205,7 +269,8 @@ const ImageContainer = ({
 		if (!cached && !loading) {
 			const isImageCached = await handleGetMediaCache();
 			if (isImageCached && showAttachment) {
-				showAttachment(imageCached);
+				// showAttachment(imageCached, msgImages);
+				showAttachment(file, msgImages, id); // remove cached image from carousel
 				return;
 			}
 			if (isDownloadActive(imgUrlToCache)) {
@@ -219,7 +284,8 @@ const ImageContainer = ({
 		if (!showAttachment || !imageCached.title_link) {
 			return;
 		}
-		showAttachment(imageCached);
+		// showAttachment(imageCached, msgImages);
+		showAttachment(file, msgImages, id); // remove cached image from carousel
 	};
 
 	const image = (

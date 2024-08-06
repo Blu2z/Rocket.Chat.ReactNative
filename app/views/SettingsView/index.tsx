@@ -245,7 +245,7 @@ const SettingsView = (): React.ReactElement => {
 					<List.Item title='License' onPress={onPressLicense} showActionIndicator testID='settings-view-license' />
 					<List.Separator />
 					<List.Item
-						title={I18n.t('Version_no', { version: getReadableVersion })}
+						title={`${I18n.t('Version_no', { version: getReadableVersion })} (Gepur)`}
 						onPress={copyAppVersion}
 						testID='settings-view-version'
 						translateTitle={false}

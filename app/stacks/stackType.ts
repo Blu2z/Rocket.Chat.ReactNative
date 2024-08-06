@@ -16,5 +16,7 @@ export type TNavigation = {
 	};
 	AttachmentView: {
 		attachment: IAttachment;
+		attachments: IAttachment[];
+		currentId: string;
 	};
 };
