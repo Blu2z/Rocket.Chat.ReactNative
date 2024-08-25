@@ -2,8 +2,12 @@ import React, { useCallback } from 'react';
 import ImageView from "react-native-image-viewing";
 import { StackActions, useNavigation } from '@react-navigation/native';
 
+
+import EventEmitter from '../../lib/methods/helpers/events';
 import ImageHeader from "./ImageHeader";
+import Toast from '../Toast';
 // import { useAppSelector } from '../../lib/hooks';
+import I18n from '../../i18n';
 
 function getIdByUrl(url: string) {
 	const urlSplit = url.split('/');
@@ -65,8 +69,10 @@ export const ImageCarousel = ({ msgImages, source, onLoadEnd, currentId, file, h
 		setVisible(false);
 	}
 
-	const handleSaveImage = useCallback(() => {
-		handleSave(attachments[activeIndex]);
+	const handleSaveImage = useCallback(async() => {
+		EventEmitter.emit('ImageViewToast', { message: I18n.t('prepare_saved_to_gallery') });
+		await handleSave(attachments[activeIndex]);
+		EventEmitter.emit('ImageViewToast', { message: I18n.t('saved_to_gallery') });
 	}, [activeIndex, attachments, handleSave]);
 
 	if (!images.length) {
@@ -81,13 +87,17 @@ export const ImageCarousel = ({ msgImages, source, onLoadEnd, currentId, file, h
 			onRequestClose={handleClose}
 			doubleTapToZoomEnabled
 			HeaderComponent={({ imageIndex }) => (
-				<ImageHeader
-					count={`${imageIndex + 1} of ${images.length}`}
-					title={images[imageIndex]?.user}
-					time={images[imageIndex]?.time}
-					onRequestClose={handleClose}
-					handleSave={handleSaveImage}
-				/>)}
+				<>
+					<Toast listenerEvent='ImageViewToast' />
+					<ImageHeader
+						count={`${imageIndex + 1} of ${images.length}`}
+						title={images[imageIndex]?.user}
+						time={images[imageIndex]?.time}
+						onRequestClose={handleClose}
+						handleSave={handleSaveImage}
+					/>
+				</>
+			)}
 		/>
 	);
 

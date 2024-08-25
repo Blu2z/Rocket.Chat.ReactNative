@@ -23,15 +23,19 @@ export const LISTENER = 'Toast';
 let listener: Function;
 let toast: EasyToast | null | undefined;
 
-const Toast = (): React.ReactElement => {
+type PropsType = {
+	listenerEvent?: string;
+};
+
+const Toast = ({ listenerEvent = LISTENER }: PropsType): React.ReactElement => {
 	const { colors } = useTheme();
 
 	useEffect(() => {
-		listener = EventEmitter.addEventListener(LISTENER, showToast);
+		listener = EventEmitter.addEventListener(listenerEvent, showToast);
 		return () => {
 			EventEmitter.removeListener(LISTENER, listener);
 		};
-	}, []);
+	}, [listenerEvent]);
 
 	const getToastRef = (newToast: EasyToast | null) => (toast = newToast);
 

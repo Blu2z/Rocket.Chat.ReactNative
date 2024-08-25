@@ -31,8 +31,7 @@ export const Media = ({ element }: IImage) => {
 	// const showAttachment = (attachment: IAttachment) => Navigation.navigate('AttachmentView', { attachment });
 	const showAttachment = (attachment: IAttachment, attachments: IAttachment[], currentId: string) => Navigation.navigate('AttachmentView', { attachment, attachments, currentId });
 	const imageUrl = element?.imageUrl ?? '';
-
-	return <ImageContainer file={{ image_url: imageUrl }} imageUrl={imageUrl} showAttachment={showAttachment} />;
+	return <ImageContainer file={{ image_url: imageUrl }} showAttachment={showAttachment} />;
 };
 
 const genericImage = (element: IElement, context?: number) => {
