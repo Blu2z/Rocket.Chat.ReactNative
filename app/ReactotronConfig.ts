@@ -4,7 +4,8 @@ import Reactotron from 'reactotron-react-native';
 import { reactotronRedux } from 'reactotron-redux';
 import sagaPlugin from 'reactotron-redux-saga';
 
-if (__DEV__) {
+// if (__DEV__) {
+if (!__DEV__) {
 	const { scriptURL } = NativeModules.SourceCode;
 	const scriptHostname = scriptURL.split('://')[1].split(':')[0];
 	Reactotron.setAsyncStorageHandler?.(AsyncStorage)
