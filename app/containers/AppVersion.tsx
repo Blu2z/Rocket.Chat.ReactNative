@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 const AppVersion = React.memo(({ theme }: { theme: TSupportedThemes }) => (
 	<View style={styles.container}>
 		<Text style={[styles.text, { color: themes[theme].fontSecondaryInfo }]}>
-			{I18n.t('Version_no', { version: '' })} (Gepur)
+			{I18n.t('Version_no', { version: '' })} (Gepur 05.09.24 23:41)
 			<Text style={styles.bold}>{getReadableVersion}</Text>
 		</Text>
 	</View>
