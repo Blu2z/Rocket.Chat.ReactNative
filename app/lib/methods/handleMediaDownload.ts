@@ -243,7 +243,7 @@ const persistMessage = async (messageId: string, uri: string, encryption: boolea
 	}
 	if (batch.length) {
 		await db.write(async () => {
-			await db.batch(...batch);
+			await db.batch(batch);
 		});
 	}
 };
@@ -284,7 +284,7 @@ export function downloadMediaFile({
 
 			await persistMessage(messageId, result.uri, !!encryption);
 
-			emitter.emit(`downloadMedia${messageId}`, result.uri);
+			emitter.emit(`downloadMedia${downloadUrl}`, result.uri);
 			return resolve(result.uri);
 		} catch (e) {
 			console.error(e);

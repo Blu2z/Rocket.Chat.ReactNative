@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { LayoutChangeEvent, StyleSheet, StyleProp, ViewStyle, ImageStyle, View, Text } from 'react-native';
+import { LayoutChangeEvent, StyleSheet, StyleProp, ViewStyle, ImageStyle, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { withTiming, useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 
-import { useTheme } from '../../theme';
+// import { useTheme } from '../../theme';
 import { ImageComponent } from './ImageComponent';
 
 interface ImageViewerProps {
@@ -116,7 +116,7 @@ export const ImageViewer = ({ uri = '', imageComponentType, width, height, ...pr
 			: { type: imageComponentType, uri }
 	);
 
-	const { colors } = useTheme();
+	// const { colors } = useTheme();
 	const pureUrl = uri.split(/([&,?,=])/)
 
 	return (

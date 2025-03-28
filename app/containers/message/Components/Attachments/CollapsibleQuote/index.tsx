@@ -37,6 +37,11 @@ const styles = StyleSheet.create({
 		paddingTop: 10,
 		paddingBottom: 10
 	},
+	fieldText: {
+		fontSize: 15,
+		padding: 10,
+		...sharedStyles.textRegular
+	},
 	fieldTitle: {
 		fontSize: 15,
 		...sharedStyles.textBold
@@ -67,6 +72,11 @@ const styles = StyleSheet.create({
 	}
 });
 
+interface IMessageAttText {
+	text?: string;
+	getCustomEmoji: TGetCustomEmoji;
+}
+
 interface IMessageFields {
 	attachment: IAttachment;
 	getCustomEmoji: TGetCustomEmoji;
@@ -78,6 +88,19 @@ interface IMessageReply {
 	index: number;
 	getCustomEmoji: TGetCustomEmoji;
 }
+
+const AttText = React.memo(
+	({ text, getCustomEmoji }: IMessageAttText) => {
+		const { user } = useContext(MessageContext);
+
+		if (!text) {
+			return null;
+		}
+
+		return <Markdown msg={text} username={user.username} getCustomEmoji={getCustomEmoji} style={[styles.fieldText]} />;
+	},
+	(prevProps, nextProps) => prevProps.text === nextProps.text
+);
 
 const Fields = React.memo(
 	({ attachment, getCustomEmoji }: IMessageFields) => {
@@ -99,7 +122,6 @@ const Fields = React.memo(
 							msg={field?.value || ''}
 							username={user.username}
 							getCustomEmoji={getCustomEmoji}
-							theme={theme}
 							style={[styles.markdownFontSize]}
 						/>
 					</View>
@@ -162,6 +184,7 @@ const CollapsibleQuote = React.memo(
 							<View style={styles.authorContainer}>
 								<Text style={[styles.title, { color: fontSecondaryInfo }]}>{attachment.title}</Text>
 							</View>
+							{!collapsed && <AttText text={attachment.text} getCustomEmoji={getCustomEmoji} />}
 							{!collapsed && <Fields attachment={attachment} getCustomEmoji={getCustomEmoji} />}
 						</View>
 						<View style={styles.iconContainer}>

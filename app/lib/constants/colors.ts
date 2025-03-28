@@ -44,7 +44,7 @@ const light = {
 	statusFontInfo: '#095AD2',
 	statusFontSuccess: '#148660',
 	statusFontDanger: '#9B1325',
-	statusFontWarning: '#B88D00',
+	statusFontWarning: '#8E6300',
 	statusFontWarning2: '#2F343D',
 	statusFontService: '#974809',
 	statusFontService2: '#7F1B9F',
@@ -55,7 +55,7 @@ const light = {
 	badgeBackgroundLevel4: '#F5455C',
 
 	userPresenceOnline: '#158D65',
-	userPresenceBusy: '#DA1F37',
+	userPresenceBusy: '#D40C26',
 	userPresenceAway: '#AC892F',
 	userPresenceOffline: '#6C727A',
 	userPresenceDisabled: '#F38C39',
@@ -147,16 +147,16 @@ const dark = {
 	badgeBackgroundLevel4: '#B43C4C',
 
 	userPresenceOnline: '#1CBF89',
-	userPresenceBusy: '#C14454',
+	userPresenceBusy: '#C75765',
 	userPresenceAway: '#AC892F',
 	userPresenceOffline: '#6C727A',
 	userPresenceDisabled: '#955828',
 
-	buttonBackgroundPrimaryDefault: '#3976D1',
+	buttonBackgroundPrimaryDefault: '#095AD2',
 	buttonBackgroundPrimaryPress: '#245399',
 	buttonBackgroundPrimaryDisabled: '#1D3963',
 
-	buttonBackgroundSecondaryDefault: '#2F343D',
+	buttonBackgroundSecondaryDefault: '#353B45',
 	buttonBackgroundSecondaryPress: '#454C59',
 	buttonBackgroundSecondaryDisabled: '#2F343D',
 
@@ -239,7 +239,7 @@ const black = {
 	badgeBackgroundLevel4: '#B43C4C',
 
 	userPresenceOnline: '#1CBF89',
-	userPresenceBusy: '#C14454',
+	userPresenceBusy: '#C75765',
 	userPresenceAway: '#AC892F',
 	userPresenceOffline: '#6C727A',
 	userPresenceDisabled: '#955828',

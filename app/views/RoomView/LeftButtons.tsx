@@ -12,13 +12,17 @@ const styles = StyleSheet.create({
 	container: {
 		...Platform.select({
 			ios: {
-				minWidth: 60
+				minWidth: 34,
+				marginLeft: -12
+			},
+			android: {
+				marginHorizontal: 0,
+				marginLeft: -12
 			}
 		})
 	},
 	avatar: {
-		borderRadius: 10,
-		marginHorizontal: 15
+		borderRadius: 10
 	}
 });
 

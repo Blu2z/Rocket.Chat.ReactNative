@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect } from 'react';
 import { shallowEqual, useDispatch } from 'react-redux';
 import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useForm } from 'react-hook-form';
 
 import { useAppSelector, usePermissions } from '../../lib/hooks';
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
 	},
 	containerTextInput: {
 		paddingHorizontal: 16,
-		marginTop: 16
+		marginTop: 32
 	},
 	containerStyle: {
 		marginBottom: 16
@@ -53,7 +53,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16
 	},
 	buttonCreate: {
-		margin: 16
+		marginTop: 32,
+		marginHorizontal: 16
 	}
 });
 
@@ -93,7 +94,7 @@ const CreateChannelView = () => {
 		}
 	});
 
-	const navigation = useNavigation<StackNavigationProp<ChatsStackParamList, 'CreateChannelView'>>();
+	const navigation = useNavigation<NativeStackNavigationProp<ChatsStackParamList, 'CreateChannelView'>>();
 	const { params } = useRoute<RouteProp<ChatsStackParamList, 'CreateChannelView'>>();
 	const isTeam = params?.isTeam || false;
 	const teamId = params?.teamId;
@@ -148,6 +149,7 @@ const CreateChannelView = () => {
 				<ScrollView {...scrollPersistTaps}>
 					<View style={[styles.containerTextInput, { borderColor: colors.strokeLight }]}>
 						<ControlledFormTextInput
+							required
 							label={isTeam ? I18n.t('Team_Name') : I18n.t('Channel_Name')}
 							testID='create-channel-name'
 							returnKeyType='done'

@@ -4,15 +4,16 @@ import { FlatList, Text, View } from 'react-native';
 import { shallowEqual } from 'react-redux';
 
 import { TActionSheetOptionsItem, useActionSheet } from '../../containers/ActionSheet';
+import { sendLoadingEvent } from '../../containers/Loading';
 import ActivityIndicator from '../../containers/ActivityIndicator';
 import { CustomIcon, TIconsName } from '../../containers/CustomIcon';
 import * as HeaderButton from '../../containers/HeaderButton';
 import * as List from '../../containers/List';
-import { RadioButton } from '../../containers/RadioButton';
 import SafeAreaView from '../../containers/SafeAreaView';
 import SearchBox from '../../containers/SearchBox';
 import StatusBar from '../../containers/StatusBar';
 import UserItem from '../../containers/UserItem';
+import Radio from '../../containers/Radio';
 import { IGetRoomRoles, TSubscriptionModel, TUserModel } from '../../definitions';
 import I18n from '../../i18n';
 import { useAppSelector, usePermissions } from '../../lib/hooks';
@@ -74,15 +75,20 @@ const RoomMembersView = (): React.ReactElement => {
 	const { params } = useRoute<RouteProp<ModalStackParamList, 'RoomMembersView'>>();
 	const navigation = useNavigation<NavigationProp<ModalStackParamList, 'RoomMembersView'>>();
 
-	const { isMasterDetail, serverVersion, useRealName, user } = useAppSelector(
+	const { isMasterDetail, serverVersion, useRealName, user, loading } = useAppSelector(
 		state => ({
 			isMasterDetail: state.app.isMasterDetail,
 			useRealName: state.settings.UI_Use_Real_Name,
 			user: getUserSelector(state),
-			serverVersion: state.server.version
+			serverVersion: state.server.version,
+			loading: state.selectedUsers.loading
 		}),
 		shallowEqual
 	);
+
+	useEffect(() => {
+		sendLoadingEvent({ visible: loading });
+	}, [loading]);
 
 	const [state, updateState] = useReducer(
 		(state: IRoomMembersViewState, newState: Partial<IRoomMembersViewState>) => ({ ...state, ...newState }),
@@ -120,6 +126,15 @@ const RoomMembersView = (): React.ReactElement => {
 		fetchMembers(false);
 		return () => subscription?.unsubscribe();
 	}, []);
+
+	useEffect(() => {
+		const unsubscribe = navigation.addListener('focus', () => {
+			const { allUsers } = state;
+			fetchMembers(allUsers);
+		});
+
+		return unsubscribe;
+	}, [navigation]);
 
 	useEffect(() => {
 		const fetchRoles = () => {
@@ -174,13 +189,13 @@ const RoomMembersView = (): React.ReactElement => {
 									{
 										title: I18n.t('Online'),
 										onPress: () => toggleStatus(true),
-										right: () => <RadioButton check={allUsers} />,
+										right: () => <Radio check={allUsers} />,
 										testID: 'room-members-view-toggle-status-online'
 									},
 									{
 										title: I18n.t('All'),
 										onPress: () => toggleStatus(false),
-										right: () => <RadioButton check={!allUsers} />,
+										right: () => <Radio check={!allUsers} />,
 										testID: 'room-members-view-toggle-status-all'
 									}
 								]
@@ -381,7 +396,7 @@ const RoomMembersView = (): React.ReactElement => {
 				renderItem={({ item }) => (
 					<View style={{ backgroundColor: colors.surfaceRoom }}>
 						<UserItem
-							name={item.name as string}
+							name={item.name || item.username}
 							username={item.username}
 							onPress={() => onPressUser(item)}
 							testID={`room-members-view-item-${item.username}`}

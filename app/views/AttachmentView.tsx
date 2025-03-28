@@ -1,6 +1,5 @@
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
-import { HeaderBackground, useHeaderHeight } from '@react-navigation/elements';
-import { StackNavigationOptions } from '@react-navigation/stack';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { ResizeMode, Video } from 'expo-av';
 import React from 'react';
 import { PermissionsAndroid, useWindowDimensions, View, Text } from 'react-native';
@@ -129,24 +128,20 @@ const AttachmentView = (): React.ReactElement => {
 		} catch {
 			// Do nothing
 		}
-		const options: StackNavigationOptions = {
+		const options = {
 			title: title || '',
-			headerTitleAlign: 'center',
-			headerTitleStyle: { color: colors.fontDefault },
-			headerTintColor: colors.surfaceTint,
-			headerTitleContainerStyle: { flex: 1, maxWidth: undefined },
-			headerLeftContainerStyle: { flexGrow: undefined, flexBasis: undefined },
-			headerRightContainerStyle: { flexGrow: undefined, flexBasis: undefined },
 			headerLeft: () => (
-				<HeaderButton.CloseModal testID='close-attachment-view' navigation={navigation} color={colors.fontDefault} />
+				<HeaderButton.CloseModal
+					testID='close-attachment-view'
+					navigation={navigation}
+					color={colors.fontDefault}
+					style={{ marginRight: -12 }}
+				/>
 			),
-			headerRight: () =>
-				Allow_Save_Media_to_Gallery && !isImageBase64(attachment.image_url) ? (
-					<HeaderButton.Download testID='save-image' onPress={handleSave} color={colors.fontDefault} />
-				) : null,
-			headerBackground: () => (
-				<HeaderBackground style={{ backgroundColor: colors.surfaceNeutral, shadowOpacity: 0, elevation: 0 }} />
-			)
+			headerRight:
+				Allow_Save_Media_to_Gallery && !isImageBase64(attachment.image_url)
+					? () => <HeaderButton.Download testID='save-image' onPress={handleSave} color={colors.fontDefault} />
+					: undefined
 		};
 		navigation.setOptions(options);
 	};

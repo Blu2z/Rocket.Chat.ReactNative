@@ -18,8 +18,9 @@ export default StyleSheet.create({
 		flexDirection: 'column'
 	},
 	containerScrollView: {
-		padding: 16,
-		paddingBottom: 30
+		paddingTop: 12,
+		paddingHorizontal: 16,
+		paddingBottom: 24
 	},
 	tabletScreenContent: {
 		justifyContent: 'center',
@@ -80,7 +81,8 @@ export default StyleSheet.create({
 				fontWeight: '400'
 			},
 			android: {
-				fontFamily: 'Inter-Regular'
+				fontFamily: 'Inter-Regular',
+				letterSpacing: 0.01
 			}
 		})
 	},

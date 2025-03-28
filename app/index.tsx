@@ -2,9 +2,8 @@ import React from 'react';
 import { Dimensions, EmitterSubscription, Linking } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
-import RNScreens from 'react-native-screens';
+import { enableScreens } from 'react-native-screens';
 import { Provider } from 'react-redux';
-import Clipboard from '@react-native-clipboard/clipboard';
 
 import AppContainer from './AppContainer';
 import { appInit, appInitLocalSettings, setMasterDetail as setMasterDetailAction } from './actions/app';
@@ -16,7 +15,7 @@ import Toast from './containers/Toast';
 import TwoFactor from './containers/TwoFactor';
 import { IThemePreference } from './definitions/ITheme';
 import { DimensionsContext } from './dimensions';
-import { MIN_WIDTH_MASTER_DETAIL_LAYOUT, colors, isFDroidBuild, themes } from './lib/constants';
+import { MIN_WIDTH_MASTER_DETAIL_LAYOUT, colors, themes } from './lib/constants';
 import { getAllowAnalyticsEvents, getAllowCrashReport } from './lib/methods';
 import { debounce, isTablet } from './lib/methods/helpers';
 import { toggleAnalyticsEventsReport, toggleCrashErrorsReport } from './lib/methods/helpers/log';
@@ -36,8 +35,9 @@ import { initStore } from './lib/store/auxStore';
 import { TSupportedThemes, ThemeContext } from './theme';
 import ChangePasscodeView from './views/ChangePasscodeView';
 import ScreenLockedView from './views/ScreenLockedView';
+import { RowHeightProvider } from './lib/hooks/useRowHeight';
 
-RNScreens.enableScreens();
+enableScreens();
 initStore(store);
 
 interface IDimensions {
@@ -59,14 +59,23 @@ interface IState {
 const parseDeepLinking = (url: string) => {
 	if (url) {
 		url = url.replace(/rocketchat:\/\/|https:\/\/go.rocket.chat\//, '');
-		const regex = /^(room|auth|invite)\?/;
-		if (url.match(regex)) {
-			url = url.replace(regex, '').trim();
-			if (url) {
-				return parseQuery(url);
+		const regex = /^(room|auth|invite|shareextension)\?/;
+		const match = url.match(regex);
+		if (match) {
+			const matchedPattern = match[1];
+			const query = url.replace(regex, '').trim();
+
+			if (query) {
+				const parsedQuery = parseQuery(query);
+				return {
+					...parsedQuery,
+					type: matchedPattern === 'shareextension' ? matchedPattern : parsedQuery?.type
+				};
 			}
 		}
 	}
+
+	// Return null if the URL doesn't match or is not valid
 	return null;
 };
 
@@ -77,9 +86,7 @@ export default class Root extends React.Component<{}, IState> {
 	constructor(props: any) {
 		super(props);
 		this.init();
-		if (!isFDroidBuild) {
-			this.initCrashReport();
-		}
+		this.initCrashReport();
 		const { width, height, scale, fontScale } = Dimensions.get('window');
 		const theme = initialTheme();
 		this.state = {
@@ -121,6 +128,9 @@ export default class Root extends React.Component<{}, IState> {
 		// Open app from push notification
 		const notification = await initializePushNotifications();
 		if (notification) {
+			if ('configured' in notification) {
+				return;
+			}
 			onNotification(notification);
 			return;
 		}
@@ -131,7 +141,6 @@ export default class Root extends React.Component<{}, IState> {
 		const deepLinking = await Linking.getInitialURL();
 		const parsedDeepLinkingURL = parseDeepLinking(deepLinking!);
 		if (parsedDeepLinkingURL) {
-			Clipboard.setString(JSON.stringify(parsedDeepLinkingURL));
 			store.dispatch(deepLinkingOpen(parsedDeepLinkingURL));
 			return;
 		}
@@ -205,26 +214,28 @@ export default class Root extends React.Component<{}, IState> {
 							setTheme: this.setTheme,
 							colors: colors[theme]
 						}}>
-						<DimensionsContext.Provider
-							value={{
-								width,
-								height,
-								scale,
-								fontScale,
-								setDimensions: this.setDimensions
-							}}>
-							<GestureHandlerRootView>
-								<ActionSheetProvider>
-									<AppContainer />
-									<TwoFactor />
-									<ScreenLockedView />
-									<ChangePasscodeView />
-									<InAppNotification />
-									<Toast />
-									<Loading />
-								</ActionSheetProvider>
-							</GestureHandlerRootView>
-						</DimensionsContext.Provider>
+						<RowHeightProvider>
+							<DimensionsContext.Provider
+								value={{
+									width,
+									height,
+									scale,
+									fontScale,
+									setDimensions: this.setDimensions
+								}}>
+								<GestureHandlerRootView>
+									<ActionSheetProvider>
+										<AppContainer />
+										<TwoFactor />
+										<ScreenLockedView />
+										<ChangePasscodeView />
+										<InAppNotification />
+										<Toast />
+										<Loading />
+									</ActionSheetProvider>
+								</GestureHandlerRootView>
+							</DimensionsContext.Provider>
+						</RowHeightProvider>
 					</ThemeContext.Provider>
 				</Provider>
 			</SafeAreaProvider>

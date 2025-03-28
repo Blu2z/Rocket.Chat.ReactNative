@@ -1,12 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
 
 import * as List from '../containers/List';
 import SafeAreaView from '../containers/SafeAreaView';
 import StatusBar from '../containers/StatusBar';
 import I18n from '../i18n';
-import { ANALYTICS_EVENTS_KEY, CRASH_REPORT_KEY, isFDroidBuild } from '../lib/constants';
+import { ANALYTICS_EVENTS_KEY, CRASH_REPORT_KEY } from '../lib/constants';
 import { useAppSelector } from '../lib/hooks';
 import useServer from '../lib/methods/useServer';
 import { SettingsStackParamList } from '../stacks/types';
@@ -22,7 +22,7 @@ import {
 import Switch from '../containers/Switch';
 
 interface ISecurityPrivacyViewProps {
-	navigation: StackNavigationProp<SettingsStackParamList, 'SecurityPrivacyView'>;
+	navigation: NativeStackNavigationProp<SettingsStackParamList, 'SecurityPrivacyView'>;
 }
 
 const SecurityPrivacyView = ({ navigation }: ISecurityPrivacyViewProps): JSX.Element => {
@@ -91,28 +91,24 @@ const SecurityPrivacyView = ({ navigation }: ISecurityPrivacyViewProps): JSX.Ele
 					<List.Separator />
 				</List.Section>
 
-				{!isFDroidBuild ? (
-					<>
-						<List.Section>
-							<List.Separator />
-							<List.Item
-								title='Log_analytics_events'
-								testID='security-privacy-view-analytics-events'
-								right={() => <Switch value={analyticsEventsState} onValueChange={toggleAnalyticsEvents} />}
-								additionalAcessibilityLabel={analyticsEventsState}
-							/>
-							<List.Separator />
-							<List.Item
-								title='Send_crash_report'
-								testID='security-privacy-view-crash-report'
-								right={() => <Switch value={crashReportState} onValueChange={toggleCrashReport} />}
-								additionalAcessibilityLabel={analyticsEventsState}
-							/>
-							<List.Separator />
-							<List.Info info='Crash_report_disclaimer' />
-						</List.Section>
-					</>
-				) : null}
+				<List.Section>
+					<List.Separator />
+					<List.Item
+						title='Log_analytics_events'
+						testID='security-privacy-view-analytics-events'
+						right={() => <Switch value={analyticsEventsState} onValueChange={toggleAnalyticsEvents} />}
+						additionalAcessibilityLabel={analyticsEventsState}
+					/>
+					<List.Separator />
+					<List.Item
+						title='Send_crash_report'
+						testID='security-privacy-view-crash-report'
+						right={() => <Switch value={crashReportState} onValueChange={toggleCrashReport} />}
+						additionalAcessibilityLabel={analyticsEventsState}
+					/>
+					<List.Separator />
+					<List.Info info='Crash_report_disclaimer' />
+				</List.Section>
 			</List.Container>
 		</SafeAreaView>
 	);

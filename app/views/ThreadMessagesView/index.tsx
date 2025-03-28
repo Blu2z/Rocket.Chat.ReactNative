@@ -3,8 +3,7 @@ import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { Q } from '@nozbe/watermelondb';
 import { sanitizedRaw } from '@nozbe/watermelondb/RawRecord';
-import { StackNavigationOptions } from '@react-navigation/stack';
-import { HeaderBackButton } from '@react-navigation/elements';
+import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { Observable, Subscription } from 'rxjs';
 
 import { showActionSheetRef } from '../../containers/ActionSheet';
@@ -17,7 +16,7 @@ import StatusBar from '../../containers/StatusBar';
 import buildMessage from '../../lib/methods/helpers/buildMessage';
 import log from '../../lib/methods/helpers/log';
 import protectedFunction from '../../lib/methods/helpers/protectedFunction';
-import { themes } from '../../lib/constants';
+import { textInputDebounceTime, themes, colors } from '../../lib/constants';
 import { TSupportedThemes, withTheme } from '../../theme';
 import { getUserSelector } from '../../selectors/login';
 import SafeAreaView from '../../containers/SafeAreaView';
@@ -106,15 +105,12 @@ class ThreadMessagesView extends React.Component<IThreadMessagesViewProps, IThre
 		}
 	}
 
-	getHeader = (): StackNavigationOptions => {
-		const { isSearching } = this.state;
+	getHeader = (): NativeStackNavigationOptions => {
+		const { isSearching, currentFilter } = this.state;
 		const { navigation, isMasterDetail, theme } = this.props;
 
 		if (isSearching) {
 			return {
-				headerTitleAlign: 'left',
-				headerTitleContainerStyle: { flex: 1, marginHorizontal: 0, marginRight: 15, maxWidth: undefined },
-				headerRightContainerStyle: { flexGrow: 0 },
 				headerLeft: () => (
 					<HeaderButton.Container left>
 						<HeaderButton.Item iconName='close' onPress={this.onCancelSearchPress} />
@@ -127,22 +123,18 @@ class ThreadMessagesView extends React.Component<IThreadMessagesViewProps, IThre
 			};
 		}
 
-		const options: StackNavigationOptions = {
-			headerTitleAlign: 'center',
+		const options: NativeStackNavigationOptions = {
+			headerLeft: undefined,
 			headerTitle: I18n.t('Threads'),
-			headerTitleContainerStyle: {},
-			headerRightContainerStyle: { flexGrow: 1 },
-			headerLeft: () => (
-				<HeaderBackButton
-					labelVisible={false}
-					onPress={() => navigation.pop()}
-					tintColor={themes[theme].fontSecondaryInfo}
-					testID='header-back'
-				/>
-			),
 			headerRight: () => (
 				<HeaderButton.Container>
-					<HeaderButton.Item iconName='filter' onPress={this.showFilters} />
+					<HeaderButton.Item
+						iconName='filter'
+						onPress={this.showFilters}
+						badge={() =>
+							currentFilter !== Filter.All ? <HeaderButton.BadgeWarn color={colors[theme].buttonBackgroundDangerDefault} /> : null
+						}
+					/>
 					<HeaderButton.Item iconName='search' onPress={this.onSearchPress} testID='thread-messages-view-search-icon' />
 				</HeaderButton.Container>
 			)
@@ -218,7 +210,10 @@ class ThreadMessagesView extends React.Component<IThreadMessagesViewProps, IThre
 		new Promise<void>(resolve => {
 			const savedFilter = UserPreferences.getString(THREADS_FILTER);
 			if (savedFilter) {
-				this.setState({ currentFilter: savedFilter as Filter }, () => resolve());
+				this.setState({ currentFilter: savedFilter as Filter }, () => {
+					this.setHeader();
+					resolve();
+				});
 			}
 			resolve();
 		});
@@ -383,7 +378,7 @@ class ThreadMessagesView extends React.Component<IThreadMessagesViewProps, IThre
 	onSearchChangeText = debounce((searchText: string) => {
 		const { subscription } = this.state;
 		this.setState({ searchText }, () => this.subscribeMessages(subscription, searchText));
-	}, 300);
+	}, textInputDebounceTime);
 
 	onThreadPress = debounce(
 		(item: any) => {
@@ -448,7 +443,9 @@ class ThreadMessagesView extends React.Component<IThreadMessagesViewProps, IThre
 	onFilterSelected = (filter: Filter) => {
 		const { messages, subscription } = this.state;
 		const displayingThreads = this.getFilteredThreads(messages, subscription, filter);
-		this.setState({ currentFilter: filter, displayingThreads });
+		this.setState({ currentFilter: filter, displayingThreads }, () => {
+			this.setHeader();
+		});
 		UserPreferences.setString(THREADS_FILTER, filter);
 	};
 

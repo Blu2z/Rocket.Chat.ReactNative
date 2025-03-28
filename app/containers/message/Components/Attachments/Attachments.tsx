@@ -34,6 +34,8 @@ const Attachments: React.FC<IMessageAttachments> = React.memo(
 						author={author}
 						msg={msg}
 						msgImages={msgImages}
+						imagePreview={file.image_preview}
+						imageType={file.image_type}
 					/>
 				);
 			}

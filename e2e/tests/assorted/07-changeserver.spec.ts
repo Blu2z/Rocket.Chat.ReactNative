@@ -1,7 +1,7 @@
 import { device, waitFor, element, by } from 'detox';
 
 import data from '../../data';
-import { navigateToLogin, login, checkServer, expectValidRegisterOrRetry } from '../../helpers/app';
+import { navigateToLogin, login, checkServer, signup } from '../../helpers/app';
 import { createRandomRoom, createRandomUser, deleteCreatedUsers, IDeleteCreateUser, ITestUser } from '../../helpers/data_setup';
 
 const reopenAndCheckServer = async (server: string) => {
@@ -64,24 +64,18 @@ describe('Change server', () => {
 		await waitFor(element(by.id('rooms-list-header-servers-list')))
 			.toBeVisible()
 			.withTimeout(5000);
-		await element(by.id(`rooms-list-header-server-${data.alternateServer}`)).tap();
+		await element(by.id(`server-item-${data.alternateServer}`)).tap();
 		await waitFor(element(by.id('workspace-view')))
 			.toBeVisible()
 			.withTimeout(60000);
 		await element(by.id('workspace-view-register')).tap();
-		await waitFor(element(by.id('register-view')))
+		await waitFor(element(by.id('register-view-name')))
 			.toExist()
 			.withTimeout(2000);
 
 		// Register new user
-		const randomUser = data.randomUser();
-		await element(by.id('register-view-name')).replaceText(randomUser.name);
-		await element(by.id('register-view-username')).replaceText(randomUser.username);
-		await element(by.id('register-view-email')).replaceText(randomUser.email);
-		await element(by.id('register-view-password')).replaceText(randomUser.password);
-		await element(by.id('register-view-password')).tapReturnKey();
-		await expectValidRegisterOrRetry(device.getPlatform());
-		deleteUsersAfterAll.push({ server: data.alternateServer, username: randomUser.username });
+		const username = await signup();
+		deleteUsersAfterAll.push({ server: data.alternateServer, username });
 
 		await waitFor(element(by.id(`rooms-list-view-item-${room}`)))
 			.toBeNotVisible()
@@ -98,7 +92,7 @@ describe('Change server', () => {
 		await waitFor(element(by.id('rooms-list-header-servers-list')))
 			.toBeVisible()
 			.withTimeout(5000);
-		await element(by.id(`rooms-list-header-server-${data.server}`)).tap();
+		await element(by.id(`server-item-${data.server}`)).tap();
 		await waitFor(element(by.id('rooms-list-view')))
 			.toBeVisible()
 			.withTimeout(10000);

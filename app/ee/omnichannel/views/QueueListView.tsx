@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
-import { StackNavigationOptions, StackNavigationProp } from '@react-navigation/stack';
-import { FlatList, ListRenderItem } from 'react-native';
+import { NativeStackNavigationOptions, NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { FlatList, ListRenderItem, useWindowDimensions } from 'react-native';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import I18n from '../../../i18n';
-import RoomItem, { ROW_HEIGHT } from '../../../containers/RoomItem';
+import RoomItem from '../../../containers/RoomItem';
 import { getUserSelector } from '../../../selectors/login';
 import { useTheme } from '../../../theme';
 import { useDimensions } from '../../../dimensions';
@@ -22,16 +22,12 @@ import { MasterDetailInsideStackParamList } from '../../../stacks/MasterDetailSt
 import { getRoomAvatar, getRoomTitle, getUidDirectMessage, isIOS, isTablet } from '../../../lib/methods/helpers';
 
 type TNavigation = CompositeNavigationProp<
-	StackNavigationProp<ChatsStackParamList, 'QueueListView'>,
-	StackNavigationProp<MasterDetailInsideStackParamList>
+	NativeStackNavigationProp<ChatsStackParamList, 'QueueListView'>,
+	NativeStackNavigationProp<MasterDetailInsideStackParamList>
 >;
 
 const INITIAL_NUM_TO_RENDER = isTablet ? 20 : 12;
-const getItemLayout = (data: ArrayLike<IOmnichannelRoom> | null | undefined, index: number) => ({
-	length: ROW_HEIGHT,
-	offset: ROW_HEIGHT * index,
-	index
-});
+
 const keyExtractor = (item: IOmnichannelRoom) => item.rid;
 
 const QueueListView = React.memo(() => {
@@ -39,6 +35,7 @@ const QueueListView = React.memo(() => {
 	const getScrollRef = useRef<FlatList<IOmnichannelRoom>>(null);
 	const { colors } = useTheme();
 	const { width } = useDimensions();
+	const { fontScale } = useWindowDimensions();
 
 	const { username } = useSelector(
 		(state: IApplicationState) => ({
@@ -62,7 +59,7 @@ const QueueListView = React.memo(() => {
 	const queued = useSelector((state: IApplicationState) => getInquiryQueueSelector(state));
 
 	useEffect(() => {
-		const options: StackNavigationOptions = {
+		const options: NativeStackNavigationOptions = {
 			title: I18n.t('Queued_chats')
 		};
 		if (isMasterDetail) {
@@ -70,6 +67,15 @@ const QueueListView = React.memo(() => {
 		}
 		navigation.setOptions(options);
 	}, [isMasterDetail, navigation]);
+
+	const getItemLayout = (data: ArrayLike<IOmnichannelRoom> | null | undefined, index: number) => {
+		const rowHeight = 75 * fontScale;
+		return {
+			length: rowHeight,
+			offset: rowHeight * index,
+			index
+		};
+	};
 
 	const onPressItem = (item = {} as IOmnichannelRoom) => {
 		logEvent(events.QL_GO_ROOM);

@@ -1,40 +1,26 @@
-import { StyleSheet } from 'react-native';
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 
 import { themes } from '../../../constants';
 import { TSupportedThemes } from '../../../../theme';
 import sharedStyles from '../../../../views/Styles';
+import CustomHeader from '../../../../containers/CustomHeader';
 
-export * from './animations';
-
-export const defaultHeader = {
+export const defaultHeader: NativeStackNavigationOptions = {
 	headerBackTitleVisible: false,
-	headerBackTestID: 'header-back',
-	cardOverlayEnabled: true,
-	cardStyle: { backgroundColor: 'transparent' }
+	header: CustomHeader
 };
-
-export const cardStyle = {
-	backgroundColor: 'rgba(0,0,0,0)'
-};
-
-export const borderBottom: any = (theme: TSupportedThemes) => ({
-	borderBottomWidth: StyleSheet.hairlineWidth,
-	borderBottomColor: themes[theme].strokeDark,
-	elevation: 0
-});
 
 export const drawerStyle = {
 	width: 320
 };
 
-export const themedHeader = (theme: TSupportedThemes) => ({
+export const themedHeader = (theme: TSupportedThemes): NativeStackNavigationOptions => ({
 	headerStyle: {
-		...borderBottom(theme),
 		backgroundColor: themes[theme].surfaceNeutral
 	},
 	headerTintColor: themes[theme].fontDefault,
-	headerTitleStyle: { ...sharedStyles.textSemibold, color: themes[theme].fontTitlesLabels, fontSize: 18 }
+	headerTitleStyle: { ...sharedStyles.textBold, color: themes[theme].fontTitlesLabels, fontSize: 16 }
 });
 
 export const navigationTheme = (theme: TSupportedThemes) => {

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { I18nManager, StyleProp, StyleSheet, Text, TextStyle, View } from 'react-native';
+import { I18nManager, StyleProp, StyleSheet, Text, TextStyle, View, AccessibilityRole } from 'react-native';
 
 import Touch from '../Touch';
 import { themes } from '../../lib/constants';
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 	title: {
 		flexShrink: 1,
 		fontSize: 16,
-		...sharedStyles.textRegular
+		...sharedStyles.textMedium
 	},
 	subtitle: {
 		fontSize: 14,
@@ -69,6 +69,7 @@ interface IListItemContent {
 	heightContainer?: number;
 	styleTitle?: StyleProp<TextStyle>;
 	additionalAcessibilityLabel?: string | boolean;
+	accessibilityRole?: AccessibilityRole;
 	additionalAcessibilityLabelCheck?: boolean;
 }
 
@@ -89,7 +90,8 @@ const Content = React.memo(
 		heightContainer,
 		styleTitle,
 		additionalAcessibilityLabel,
-		additionalAcessibilityLabelCheck
+		additionalAcessibilityLabelCheck,
+		accessibilityRole
 	}: IListItemContent) => {
 		const { fontScale } = useDimensions();
 
@@ -120,11 +122,11 @@ const Content = React.memo(
 				testID={testID}
 				accessible
 				accessibilityLabel={handleAcessibilityLabel}
-				accessibilityRole='button'>
+				accessibilityRole={accessibilityRole ?? 'button'}>
 				{left ? <View style={styles.leftContainer}>{left()}</View> : null}
 				<View style={styles.textContainer}>
 					<View style={styles.textAlertContainer}>
-						<Text style={[styles.title, styleTitle, { color: color || themes[theme].fontTitlesLabels }]} numberOfLines={1}>
+						<Text style={[styles.title, styleTitle, { color: color || themes[theme].fontDefault }]} numberOfLines={1}>
 							{translateTitle && title ? I18n.t(title) : title}
 						</Text>
 						{alert ? (

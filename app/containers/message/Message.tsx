@@ -422,14 +422,71 @@ const MessageInner = React.memo((props: IMessageInner) => {
 });
 MessageInner.displayName = 'MessageInner';
 
-const Message = React.memo((props: IMessage) => {
+
+
+
+const Message = React.memo((props: IMessageTouchable & IMessage) => {
 	const { colors, theme } = useTheme();
+	const handleMentionsOnAccessibilityLabel = (label: string) => {
+		const { mentions = [], channels = [] } = props;
+
+		mentions.forEach(item => {
+			if (item?.username) {
+				label = label.replaceAll(`@${item.username}`, item.username);
+			}
+		});
+
+		channels.forEach(item => {
+			if (item?.name) {
+				label = label.replaceAll(`#${item.name}`, item.name);
+			}
+		});
+
+		return label;
+	};
+
+	// temp accessibilityLabel
+	const accessibilityLabel = useMemo(() => {
+		let label = '';
+		label = props.isInfo ? (props.msg as string) : `${props.tmid ? `thread message ${props.msg}` : props.msg}`;
+		if (props.isThreadReply) {
+			label = `replying to ${props.tmid ? `thread message ${props.msg}` : props}`;
+		}
+		if (props.isThreadSequential) {
+			label = `thread message ${props.msg}`;
+		}
+		if (props.isEncrypted) {
+			label = i18n.t('Encrypted_message');
+		}
+		if (props.isInfo) {
+			// @ts-ignore
+			label = getInfoMessage({ ...props });
+		}
+		label = handleMentionsOnAccessibilityLabel(label);
+
+		const hour = props.ts ? new Date(props.ts).toLocaleTimeString() : '';
+		const user = props.useRealName ? props.author?.name : props.author?.username || '';
+		return `${user} ${hour} ${label}`;
+	}, [
+		props.msg,
+		props.tmid,
+		props.isThreadReply,
+		props.isThreadSequential,
+		props.isEncrypted,
+		props.isInfo,
+		props.ts,
+		props.useRealName,
+		props.author,
+		props.mentions,
+		props.channels
+	]);
+
 	if (props.isThreadReply || props.isThreadSequential || props.isInfo || props.isIgnored) {
 		const thread = props.isThreadReply ? <RepliedThread {...props} /> : null;
 		return (
 			<View style={[styles.container, props.style]}>
 				{thread}
-				<View style={styles.flex}>
+				<View accessible accessibilityLabel={accessibilityLabel} style={styles.flex}>
 					<MessageAvatar small {...props} />
 					<View 
 						style={[
@@ -450,6 +507,7 @@ const Message = React.memo((props: IMessage) => {
 	}
 
 	return (
+
 		<View style={[styles.container, props.style]}>
 			<View style={{
 				// flex: 1,
@@ -458,6 +516,7 @@ const Message = React.memo((props: IMessage) => {
 				alignItems: 'flex-start',
 				justifyContent: 'flex-start',
 			}}>
+
 				<MessageAvatar {...props} />
 				<View 
 					style={[
@@ -492,6 +551,16 @@ const MessageTouchable = React.memo((props: IMessageTouchable & IMessage) => {
 	const { onPress, onLongPress } = useContext(MessageContext);
 	const { theme } = useTheme();
 
+
+	let backgroundColor = undefined;
+	if (props.isBeingEdited) {
+		backgroundColor = themes[theme].statusBackgroundWarning2;
+	}
+	if (props.highlighted) {
+		backgroundColor = themes[theme].surfaceNeutral;
+	}
+
+
 	if (props.hasError) {
 		return (
 			<View>
@@ -505,11 +574,13 @@ const MessageTouchable = React.memo((props: IMessageTouchable & IMessage) => {
 			onLongPress={onLongPress}
 			onPress={onPress}
 			disabled={(props.isInfo && !props.isThreadReply) || props.archived || props.isTemp || props.type === 'jitsi_call_started'}
+
 			style={{ backgroundColor: props.highlighted ? themes[theme].headerBackground : undefined }}
 		>
 			<View>
 				<Message {...props} />
 			</View>
+
 		</Touchable>
 	);
 });

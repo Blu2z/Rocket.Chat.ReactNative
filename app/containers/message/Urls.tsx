@@ -1,9 +1,10 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import FastImage from 'react-native-fast-image';
+import { Image as ExpoImage } from 'expo-image';
 import { dequal } from 'dequal';
 
+import { useAppSelector } from '../../lib/hooks';
 import Touchable from './Touchable';
 import openLink from '../../lib/methods/helpers/openLink';
 import sharedStyles from '../../views/Styles';
@@ -49,7 +50,7 @@ const UrlContent = ({ title, description }: { title: string; description: string
 	return (
 		<View style={styles.textContainer}>
 			{title ? (
-				<Text style={[styles.title, { color: colors.badgeBackgroundLevel2 }]} numberOfLines={2}>
+				<Text style={[styles.title, { color: colors.fontInfo }]} numberOfLines={2}>
 					{title}
 				</Text>
 			) : null}
@@ -110,10 +111,10 @@ const UrlImage = ({ image, hasContent }: { image: string; hasContent: boolean })
 
 	return (
 		<View style={containerStyle}>
-			<FastImage
+			<ExpoImage
 				source={{ uri: image }}
 				style={[imageStyle, imageLoadedState === 'loading' && styles.loading]}
-				resizeMode={FastImage.resizeMode.contain}
+				contentFit='contain'
 				onError={() => setImageLoadedState('error')}
 				onLoad={() => setImageLoadedState('done')}
 			/>
@@ -126,8 +127,34 @@ type TImageLoadedState = 'loading' | 'done' | 'error';
 const Url = ({ url }: { url: IUrl }) => {
 	const { colors, theme } = useTheme();
 	const { baseUrl, user } = useContext(MessageContext);
-	let image = url.image || url.url;
-	image = image.includes('http') ? image : `${baseUrl}/${image}?rc_uid=${user.id}&rc_token=${user.token}`;
+	const API_Embed = useAppSelector(state => state.settings.API_Embed);
+	const [imageUrl, setImageUrl] = useState('');
+
+	useEffect(() => {
+		const verifyUrlIsImage = async () => {
+			try {
+				const imageUrl = getImageUrl();
+				if (!imageUrl) return;
+
+				const response = await fetch(imageUrl, { method: 'HEAD' });
+				const contentType = response.headers.get('content-type');
+				if (contentType?.startsWith?.('image/')) {
+					setImageUrl(imageUrl);
+				}
+			} catch {
+				// do nothing
+			}
+		};
+		verifyUrlIsImage();
+	}, [url.image, url.url]);
+
+	const getImageUrl = () => {
+		const _imageUrl = url.image || url.url;
+
+		if (!_imageUrl) return null;
+		if (_imageUrl.includes('http')) return _imageUrl;
+		return `${baseUrl}/${_imageUrl}?rc_uid=${user.id}&rc_token=${user.token}`;
+	};
 
 	const onPress = () => openLink(url.url, theme);
 
@@ -138,7 +165,7 @@ const Url = ({ url }: { url: IUrl }) => {
 
 	const hasContent = !!(url.title || url.description);
 
-	if (!url || url?.ignoreParse) {
+	if (!url || url?.ignoreParse || !API_Embed) {
 		return null;
 	}
 
@@ -158,9 +185,9 @@ const Url = ({ url }: { url: IUrl }) => {
 			]}
 			background={Touchable.Ripple(colors.surfaceNeutral)}>
 			<>
-				{image ? (
+				{imageUrl ? (
 					<WidthAwareView>
-						<UrlImage image={image} hasContent={hasContent} />
+						<UrlImage image={imageUrl} hasContent={hasContent} />
 					</WidthAwareView>
 				) : null}
 				{hasContent ? <UrlContent title={url.title} description={url.description} /> : null}

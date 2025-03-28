@@ -28,7 +28,7 @@ type PropsType = {
 };
 
 const Toast = ({ listenerEvent = LISTENER }: PropsType): React.ReactElement => {
-	const { colors } = useTheme();
+	const { colors, theme } = useTheme();
 
 	useEffect(() => {
 		listener = EventEmitter.addEventListener(listenerEvent, showToast);
@@ -50,7 +50,7 @@ const Toast = ({ listenerEvent = LISTENER }: PropsType): React.ReactElement => {
 			ref={getToastRef}
 			position='center'
 			style={[styles.toast, { backgroundColor: colors.surfaceDark }]}
-			textStyle={[styles.text, { color: colors.fontWhite }]}
+			textStyle={[styles.text, { color: theme === 'light' ? colors.fontWhite : colors.fontPureBlack }]}
 			opacity={0.9}
 		/>
 	);

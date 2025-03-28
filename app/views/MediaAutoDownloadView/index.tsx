@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import * as List from '../../containers/List';
 import SafeAreaView from '../../containers/SafeAreaView';
@@ -23,7 +23,7 @@ const MediaAutoDownload = () => {
 	);
 	const [videoPreference, setVideoPreference] = useUserPreferences<MediaDownloadOption>(VIDEO_PREFERENCE_DOWNLOAD, 'wifi');
 	const [audioPreference, setAudioPreference] = useUserPreferences<MediaDownloadOption>(AUDIO_PREFERENCE_DOWNLOAD, 'wifi');
-	const navigation = useNavigation<StackNavigationProp<SettingsStackParamList, 'MediaAutoDownloadView'>>();
+	const navigation = useNavigation<NativeStackNavigationProp<SettingsStackParamList, 'MediaAutoDownloadView'>>();
 
 	useLayoutEffect(() => {
 		navigation.setOptions({
@@ -36,11 +36,13 @@ const MediaAutoDownload = () => {
 			<StatusBar />
 			<List.Container>
 				<List.Section>
+					<List.Separator />
 					<ListPicker onChangeValue={setImagesPreference} value={imagesPreference} title='Image' />
 					<List.Separator />
 					<ListPicker onChangeValue={setVideoPreference} value={videoPreference} title='Video' />
 					<List.Separator />
 					<ListPicker onChangeValue={setAudioPreference} value={audioPreference} title='Audio' />
+					<List.Separator />
 				</List.Section>
 			</List.Container>
 		</SafeAreaView>
