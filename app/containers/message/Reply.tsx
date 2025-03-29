@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import moment from 'moment';
 import { dequal } from 'dequal';
-import FastImage from 'react-native-fast-image';
+// import FastImage from 'react-native-fast-image';
 import Clipboard from '@react-native-clipboard/clipboard';
 
 import I18n from '../../i18n';
@@ -225,7 +225,8 @@ const UrlImage = React.memo(
 		}
 
 		image = image.includes('http') ? image : `${baseUrl}/${image}?rc_uid=${user.id}&rc_token=${user.token}`;
-		return <FastImage source={{ uri: image }} style={styles.image} resizeMode={FastImage.resizeMode.cover} />;
+		return null;
+		// return <FastImage source={{ uri: image }} style={styles.image} resizeMode={FastImage.resizeMode.cover} />;
 	},
 	(prevProps, nextProps) => prevProps.image === nextProps.image
 );

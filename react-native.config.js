@@ -4,6 +4,11 @@ module.exports = {
 			platforms: {
 				ios: null
 			}
+		},
+		'react-native-fast-image': {
+			platforms: {
+				ios: null
+			}
 		}
 	}
 };

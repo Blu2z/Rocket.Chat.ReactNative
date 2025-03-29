@@ -164,7 +164,7 @@
 
 // export default MessageTouchable;
 
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { View, Text, Dimensions } from 'react-native';
 import Touchable from 'react-native-platform-touchable';
 import MessageContext from './Context';

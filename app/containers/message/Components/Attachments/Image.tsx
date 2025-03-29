@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import FastImage from 'react-native-fast-image';
+// import FastImage from 'react-native-fast-image';
 
 import { StyleProp, TextStyle, View, Text, Image, Dimensions } from 'react-native';
 import I18n from 'i18n-js';
@@ -123,7 +123,7 @@ export const MessageImage = React.memo(
 						</Text>
 					</View>
 				) : (
-					<FastImage
+					<Image
 						style={[{
 							textAlign: 'left',
 							aspectRatio,
@@ -131,7 +131,7 @@ export const MessageImage = React.memo(
 							height: imgHeight,
 						}]}
 						source={{ uri: encodeURI(imgUri) }}
-						resizeMode={FastImage.resizeMode.contain}
+						// resizeMode={Image.resizeMode.contain}
 					/>
 				)
 				}

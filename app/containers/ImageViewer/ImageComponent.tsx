@@ -1,9 +1,9 @@
 // import React from 'react';
 import { ComponentType } from 'react';
 import { Image } from 'react-native';
-import { FastImageProps } from 'react-native-fast-image';
+// import { FastImageProps } from 'react-native-fast-image';
 
-import { ImageCarousel } from './ImageCarousel';
+// import { ImageCarousel } from './ImageCarousel';
 import { types } from './types';
 // import { LOCAL_DOCUMENT_DIRECTORY } from '../../lib/methods/handleMediaDownload';
 
@@ -13,17 +13,18 @@ export function ImageComponent({
 }: {
 	type?: string;
 	// uri: string;
-}): ComponentType<Partial<Image> | FastImageProps> {
+}): ComponentType<Partial<Image>> {
 	let Component;
 
 	if (type === types.REACT_NATIVE_IMAGE /* || (LOCAL_DOCUMENT_DIRECTORY && uri.startsWith(LOCAL_DOCUMENT_DIRECTORY)) */) {
 		const { Image } = require('react-native');
 		Component = Image;
 	} else if (type === 'carousel') {
-		Component = ImageCarousel;
+		Component = null;
 	} else {
-		const FastImage = require('react-native-fast-image');
-		Component = FastImage;
+		// const FastImage = require('react-native-fast-image');
+		const { Image } = require('react-native');
+		Component = Image;
 	}
 	return Component;
 }

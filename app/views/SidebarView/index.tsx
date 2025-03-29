@@ -228,7 +228,7 @@ class Sidebar extends Component<ISidebarProps, ISidebarState> {
 					onPress={() => this.sidebarNavigate(routeName)}
 					backgroundColor={this.currentItemKey === routeName ? themes[theme!].strokeLight : undefined}
 				/>
-				<List.Separator />
+				{/* <List.Separator />
 				<SidebarItem
 					text={I18n.t('ERP_Panel')}
 					left={<CustomIcon name='settings' size={20} color={themes[theme!].titleText} />}
@@ -236,7 +236,7 @@ class Sidebar extends Component<ISidebarProps, ISidebarState> {
 					testID='erp-admin'
 					theme={theme!}
 					current={this.currentItemKey === routeName}
-				/>
+				/> */}
 			</>
 		);
 	};
